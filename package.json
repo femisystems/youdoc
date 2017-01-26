@@ -1,0 +1,26 @@
+{
+  "name": "youdoc",
+  "version": "1.0.0",
+  "description": "A fullstack document management system built on NODE, EXPRESS, POSTGRESS SQLand REACT",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "Abolaji Femi",
+  "license": "ISC",
+  "devDependencies": {
+    "eslint": "^3.14.0",
+    "eslint-config-airbnb": "^14.0.0",
+    "eslint-config-airbnb-base": "^11.0.1",
+    "eslint-plugin-import": "^2.2.0",
+    "eslint-plugin-jsx-a11y": "^3.0.2",
+    "eslint-plugin-react": "^6.9.0",
+    "webpack": "^1.14.0"
+  },
+  "dependencies": {
+    "babel-core": "^6.22.1",
+    "babel-loader": "^6.2.10",
+    "babel-preset-es2015": "^6.22.0",
+    "dotenv": "^4.0.0"
+  }
+}
