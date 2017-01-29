@@ -1,0 +1,14 @@
+engines:
+  eslint:
+    enabled: true
+    channel: "eslint-3"
+  duplication:
+    enabled: false
+    config:
+      languages:
+      - javascript
+ratings:
+  paths:
+  - "server/**/**.*"
+exclude_paths:
+- server/test/

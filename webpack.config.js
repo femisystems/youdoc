@@ -1,21 +1,20 @@
 const path = require('path');
-const webpack = require('webpack');
 
 module.exports = {
-  entry: './client/app.js',
+  entry: './client/src/app.js',
   output: {
-    path: path.resolve(__dirname, 'build'),
-    filename: "app.min.js"
-  }
+    path: path.resolve(__dirname, '/client/build'),
+    filename: 'app.min.js'
+  },
   module: {
     loaders: [
       {
         test: /\.jsx?$/,
+        exclude: /(node_modules | bower_components)/,
         loader: 'babel-loader',
         query: {
-          presets: ['es2015']
+          presets: ['react', 'es2015']
         }
-
       }
     ]
   },
