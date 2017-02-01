@@ -1,7 +1,7 @@
 // Dependencies
 const express = require('express');
 const bodyParser = require('body-parser');
-const morgan = require('morgan');
+const logger = require('morgan');
 
 // Global vars
 const app = express();
@@ -9,7 +9,7 @@ const port = process.env.PORT || 5001;
 
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(bodyParser.json());
-app.use(morgan('dev'));
+app.use(logger('dev'));
 
 app.get('/', (req, res) => {
   res.send('Welcome to Youdoc api! Yippy!!!');
