@@ -5,7 +5,7 @@ const RoleRoutes = require('./RoleRoutes');
 module.exports = (app) => {
   // Home route
   app.get('/', (req, res) => {
-    res.send('Welcome');
+    res.send('Welcome!!');
   });
 
   // Use userRoutes

@@ -1,4 +1,4 @@
-const bcrypt = require('bcrypt');
+const bcrypt = require('bcrypt-node');
 
 module.exports = (sequelize, DataTypes) => {
   const User = sequelize.define('User', {
@@ -26,6 +26,11 @@ module.exports = (sequelize, DataTypes) => {
     password: {
       type: DataTypes.STRING,
       allowNull: false
+    },
+    roleId: {
+      type: DataTypes.INTEGER,
+      allowNull: false,
+      default: 2
     }
   }, {
     classMethods: {
@@ -41,10 +46,10 @@ module.exports = (sequelize, DataTypes) => {
     },
     hooks: {
       beforeCreate(user) {
-        user.password = bcrypt.hashSync(this.password, bcrypt.genSaltSync(10));
+        user.password = bcrypt.hashSync(user.password);
       },
       beforeUpdate(user) {
-        user.password = bcrypt.hashSync(this.password, bcrypt.genSaltSync(10));
+        user.password = bcrypt.hashSync(user.password);
       }
     }
   });

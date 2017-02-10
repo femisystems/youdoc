@@ -1,12 +1,15 @@
+require('dotenv').config();
+
+const env = process.env.NODE_ENV || 'development';
+
 const fs = require('fs');
 const path = require('path');
 const Sequelize = require('sequelize');
-const configPath = require('../../config/config.json');
+const config = require('../../config/Config.json')[env];
 
 const basename = path.basename(module.filename);
-const env = process.env.NODE_ENV || 'development';
-const config = path.resolve(__dirname, configPath)[env];
 const db = {};
+
 const sequelize = config.use_env_constiable ?
   new Sequelize(process.env[config.use_env_constiable]) :
   new Sequelize(config.database, config.username, config.password, config);
@@ -14,7 +17,7 @@ const sequelize = config.use_env_constiable ?
 fs.readdirSync(__dirname)
   .filter((file) => {
     return (file.indexOf('.') !== 0) &&
-    (file !== basename) &&
+    (file !== 'Index.js') &&
     (file.slice(-3) === '.js');
   })
   .forEach((file) => {

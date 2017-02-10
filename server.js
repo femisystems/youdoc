@@ -7,16 +7,13 @@ const logger = require('morgan');
 const app = express();
 const port = process.env.PORT || 5001;
 
-app.use(bodyParser.urlencoded({ extended: false }));
+app.use(bodyParser.urlencoded({ extended: true }));
 app.use(bodyParser.json());
 app.use(logger('dev'));
 
-app.get('/', (req, res) => {
-  res.send('Welcome to Youdoc api! Yippy!!!');
-});
+// Route app
+require('./server/routes')(app);
 
-app.get('/users', (req, res) => {
-  res.send('there are no existing users yet');
+app.listen(port, () => {
+  console.log(`App listening on localhost:${port}`);
 });
-
-app.listen(port);

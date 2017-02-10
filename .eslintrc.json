@@ -23,7 +23,7 @@
     "no-param-reassign": 0,
     "comma-dangle": 0,
     "curly": 2,
-    "arrow-body-style": [2, "always"],
+    "arrow-body-style": [2, "as-needed"],
     "no-shadow": [2, { "allow": ["req", "res", "err"] }],
     "valid-jsdoc": [2, {
       "requireReturn": true,
