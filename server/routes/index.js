@@ -1,6 +1,8 @@
-const UserRoutes = require('./UserRoutes');
-const DocRoutes = require('./DocRoutes');
 const RoleRoutes = require('./RoleRoutes');
+const UserRoutes = require('./UserRoutes');
+const TypeRoutes = require('./TypeRoutes');
+const DocRoutes = require('./DocRoutes');
+
 
 module.exports = (app) => {
   // Home route
@@ -10,6 +12,9 @@ module.exports = (app) => {
 
   // Use userRoutes
   app.use('/users', UserRoutes);
+
+  // Use documentTypes
+  app.use('/types', TypeRoutes);
 
   // Use DocRoutes
   app.use('/documents', DocRoutes);
