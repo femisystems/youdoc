@@ -31,6 +31,7 @@ class Authentication {
           error: err.errors
         });
       }
+
       req.decoded = decoded;
       next();
     });
@@ -45,14 +46,34 @@ class Authentication {
    * @return {null} no return value
    */
   static verifyAdmin(req, res, next) {
-    const roleId = req.decoded.roleId;
-    Db.Role.findById(roleId)
+    const query = {
+      where: {
+        id: req.decoded.roleId
+      }
+    };
+
+    Db.Roles.findOne(query)
       .then((role) => {
-        if (role.title !== 'admin') {
+        if (role.dataValues.title !== 'admin') {
           return res.status(403).send(AuthStatus.FORBIDDEN);
         }
         next();
       });
+  }
+
+  /**
+   * checkUserRouteAccess
+   * checks if the user is an admin authorising
+   * @param {Object} req - request object
+   * @param {Object} res - response object
+   * @param {Function} next - run next func
+   * @return {Null} no return value
+   */
+  static checkUserRouteAccess(req, res, next) {
+    if (req.params.id !== req.decoded.userId || req.decoded.roleId !== 1) {
+      return res.status(401).send({ status: AuthStatus.FORBIDDEN });
+    }
+    next();
   }
 }
 
