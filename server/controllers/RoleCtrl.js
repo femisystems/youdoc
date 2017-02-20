@@ -16,11 +16,7 @@ class RoleCtrl {
    * @return {Void} no return value
    */
   static createRole(req, res) {
-    if (!req.body.title) res.status(400).send({ error: 'Bad Request. No id specified' });
-
-    const roleTitle = { title: req.body.title.toLowerCase() };
-
-    Db.Role.create(roleTitle)
+    Db.Roles.create({ title: req.body.title.toLowerCase() })
       .then((newRole) => {
         res.status(201).send({
           status: RoleStatus.POSTSUCCESS,
@@ -42,7 +38,7 @@ class RoleCtrl {
    * @return {Void} no return value
    */
   static listRoles(req, res) {
-    Db.Role.findAll({})
+    Db.Roles.findAll({})
       .then((roles) => {
         if (!roles.length) return res.status(404).send({ status: RoleStatus.GETFAIL });
         res.status(200).send({
@@ -65,10 +61,10 @@ class RoleCtrl {
     const query = {
       where: {
         id: req.params.id
-      },
+      }
     };
 
-    Db.Role.findOne(query)
+    Db.Roles.findOne(query)
       .then((role) => {
         if (!role) return res.status(404).send(RoleStatus.GETFAIL);
         res.status(200).send({
@@ -92,7 +88,7 @@ class RoleCtrl {
       }
     };
 
-    Db.Role.findOne(query)
+    Db.Roles.findOne(query)
       .then((role) => {
         if (!role) return res.status(404).send(RoleStatus.GETFAIL);
 
@@ -121,7 +117,7 @@ class RoleCtrl {
       }
     };
 
-    Db.Role.findOne(query)
+    Db.Roles.findOne(query)
       .then((role) => {
         if (!role) return res.status(404).send(RoleStatus.GETFAIL);
 

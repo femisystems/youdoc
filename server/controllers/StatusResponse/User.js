@@ -34,7 +34,7 @@ const user = {
   },
   GETFAIL: {
     success: false,
-    message: 'Process failed! Unable to retrieve user(s) at this time.'
+    message: 'This user does not exist in my record!'
   },
   GHOSTLOGIN: {
     success: false,

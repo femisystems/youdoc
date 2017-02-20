@@ -8,9 +8,8 @@ const bcrypt = require('bcrypt-node');
 const secret = process.env.SECRET || '$3CRET AG3NT';
 
 /**
- * UserCtrl
- * Responsible for creating new, modifying and removing users
- * All the methods of this class are static
+ * @class UserCtrl
+ * @classdesc create and manage user operations
  */
 class UserCtrl {
 
@@ -22,7 +21,7 @@ class UserCtrl {
    * @return {Void} no return value
    */
   static createUser(req, res) {
-    Db.User.create(req.body)
+    Db.Users.create(req.body)
       .then((newUser) => {
         const payload = {
           userId: newUser.id,
@@ -40,7 +39,7 @@ class UserCtrl {
       })
       .catch(err => res.status(500).send({
         status: UserStatus.POSTFAIL,
-        errors: err.errors
+        errors: err.message
       }));
   }
 
@@ -52,16 +51,22 @@ class UserCtrl {
    * @return {Void} no return value
    */
   static listUsers(req, res) {
-    const userDetails = [
-      'id',
-      'firstName',
-      'lastName',
-      'email',
-      'username',
-      'roleId'
-    ];
+    const details = {
+      user: ['id', 'firstName', 'lastName', 'email', 'username'],
+      role: ['id', 'title']
+    };
 
-    Db.User.findAll({ attributes: userDetails })
+    const query = {
+      attributes: details.user,
+      include: [
+        {
+          model: Db.Roles,
+          attributes: details.role
+        }
+      ]
+    };
+
+    Db.Users.findAll(query)
       .then((users) => {
         if (!users.length) return res.status(404).send({ status: UserStatus.GETFAIL });
         res.status(200).send({
@@ -81,14 +86,25 @@ class UserCtrl {
    * @return {Void} no return value
    */
   static getUser(req, res) {
+    const details = {
+      user: ['id', 'firstName', 'lastName', 'email', 'username'],
+      role: ['id', 'title']
+    };
+
     const query = {
       where: {
         id: req.params.id
       },
-      attributes: ['firstName', 'lastName', 'username', 'email']
+      attributes: details.user,
+      include: [
+        {
+          model: Db.Roles,
+          attributes: details.role
+        }
+      ]
     };
 
-    Db.User.findOne(query)
+    Db.Users.findOne(query)
       .then((user) => {
         if (!user) return res.status(404).send({ status: UserStatus.GETFAIL });
         res.status(200).send({
@@ -102,51 +118,14 @@ class UserCtrl {
   }
 
   /**
-   * getUserDocs
-   * This method retries documents belong to specific user
-   * @param {Object} req - request object
-   * @param {Object} res - response object
-   * @return {Void} no return value
-   */
-  static getUserDocs(req, res) {
-    Db.User.findById(req.params.id)
-      .then((user) => {
-        if (!user) return res.status(404).send({ status: UserStatus.GETFAIL });
-
-        // query the document db
-        const query = {
-          where: {
-            userId: user.id
-          }
-        };
-
-        Db.Document.findAll(query)
-          .then((documents) => {
-            if (!documents.length) {
-              return res.status(404).send({
-                msg: `User ${user.username} has no documents yet.`,
-              });
-            }
-            res.send({ msg: 'Document(s) successfully retrieved' });
-          })
-          .catch((err) => {
-            res.status(500).send({ msg: 'Process failed', error: err.errors });
-          });
-      })
-      .catch((err) => {
-        res.status(500).send({ status: UserStatus.GETFAIL, error: err.errors });
-      });
-  }
-
-  /**
    * editUser
    * This method edits a user object
    * @param {Object} req - request object
    * @param {Object} res - response object
    * @return {Void} no return value
    */
-  static editUser(req, res) {
-    Db.User.findById(req.params.id)
+  static updateUser(req, res) {
+    Db.Users.findById(req.params.id)
       .then((user) => {
         if (!user) return res.status(404).send({ status: UserStatus.GETFAIL });
 
@@ -174,7 +153,7 @@ class UserCtrl {
    * @return {Void} no return value
    */
   static deleteUser(req, res) {
-    Db.User.findById(req.params.id)
+    Db.Users.findById(req.params.id)
       .then((user) => {
         if (!user) return res.status(404).send({ status: UserStatus.GETFAIL });
 
@@ -200,10 +179,8 @@ class UserCtrl {
       query = { where: { email: req.body.userIdentity } };
     }
 
-    Db.User.findOne(query)
+    Db.Users.findOne(query)
       .then((user) => {
-        console.log('user information: ', user.password, req.body.password);
-        console.log('compare result', bcrypt.compareSync(req.body.password, user.password));
         if (user && bcrypt.compareSync(req.body.password, user.password)) {
           const payload = {
             userId: user.dataValues.id,
@@ -240,22 +217,6 @@ class UserCtrl {
       status: UserStatus.LOGOUTSUCCESS
     });
   }
-
-  /**
-   * verifyPassword
-   * This method checks for the validity of the password of a user
-   * @param {Object} user - user object
-   * @param {String} password - password
-   * @return {Boolean} true/false
-   */
-  static verifyPassword(user, password) {
-    console.log('user is: ', user)
-    bcrypt.compare(password, user.dataValues.password, (err, res) => {
-      if (!err) console.log(res);
-      return res;
-    });
-  }
-
 }
 
 module.exports = UserCtrl;
