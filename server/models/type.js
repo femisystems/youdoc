@@ -2,8 +2,7 @@ module.exports = (sequelize, DataTypes) => {
   const Types = sequelize.define('Types', {
     title: {
       type: DataTypes.STRING,
-      allowNull: false,
-      unique: true
+      allowNull: false
     },
     ownerId: {
       type: DataTypes.INTEGER,
@@ -17,10 +16,7 @@ module.exports = (sequelize, DataTypes) => {
           as: 'documents'
         });
         Types.belongsTo(models.Users, {
-          foreignKey: {
-            as: 'ownerId',
-            notNull: true
-          },
+          foreignKey: 'ownerId',
           onDelete: 'CASCADE'
         });
       }
