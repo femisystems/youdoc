@@ -18,6 +18,10 @@ module.exports = (sequelize, DataTypes) => {
       type: DataTypes.INTEGER,
       allowNull: false
     },
+    ownerRoleId: {
+      type: DataTypes.INTEGER,
+      allowNull: false
+    },
     typeId: {
       type: DataTypes.INTEGER,
       allowNull: false
@@ -29,10 +33,6 @@ module.exports = (sequelize, DataTypes) => {
       validate: {
         isIn: [['public', 'private', 'role']]
       }
-    },
-    updatedBy: {
-      type: DataTypes.INTEGER,
-      allowNull: false
     }
   }, {
     classMethods: {

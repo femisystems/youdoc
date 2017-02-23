@@ -8,11 +8,11 @@ module.exports = {
         type: Sequelize.INTEGER
       },
       title: {
-        type: Sequelize.TEXT,
+        type: Sequelize.STRING,
         allowNull: false
       },
       content: {
-        type: Sequelize.STRING,
+        type: Sequelize.TEXT,
         allowNull: false
       },
       accessLevel: {
@@ -44,7 +44,7 @@ module.exports = {
           as: 'typeId'
         }
       },
-      updatedBy: {
+      ownerRoleId: {
         type: Sequelize.INTEGER,
         allowNull: false
       }
