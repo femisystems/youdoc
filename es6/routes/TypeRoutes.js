@@ -1,8 +1,8 @@
-import Router from 'express';
+import express from 'express';
 import TypeCtrl from '../controllers/TypeCtrl';
 import Auth from '../middleware/Auth';
 
-Router = Router.Router();
+const Router = express.Router();
 
 Router.route('/')
   .get(Auth.verifyUser, TypeCtrl.listTypes)

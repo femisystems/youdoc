@@ -1,10 +1,10 @@
-const RoleRoutes = require('./RoleRoutes');
-const UserRoutes = require('./UserRoutes');
-const TypeRoutes = require('./TypeRoutes');
-const DocRoutes = require('./DocRoutes');
+import RoleRoutes from './RoleRoutes';
+import UserRoutes from './UserRoutes';
+import TypeRoutes from './TypeRoutes';
+import DocRoutes from './DocRoutes';
 
 
-module.exports = (app) => {
+export default (app) => {
   // Home route
   app.get('/', (req, res) => {
     res.send('Welcome!!');

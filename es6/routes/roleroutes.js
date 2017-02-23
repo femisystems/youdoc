@@ -1,8 +1,8 @@
-import Router from 'express';
+import express from 'express';
 import RoleCtrl from '../controllers/RoleCtrl';
 import Auth from '../middleware/Auth';
 
-Router = Router.Router();
+const Router = express.Router();
 
 // Roles
 Router.route('/')

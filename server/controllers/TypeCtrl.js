@@ -1,11 +1,22 @@
 'use strict';
 
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+
 var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
 
-function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+var _Index = require('../models/Index');
 
-var Db = require('../models/Index');
-var Status = require('../middleware/ActionStatus');
+var _Index2 = _interopRequireDefault(_Index);
+
+var _ActionStatus = require('../middleware/ActionStatus');
+
+var _ActionStatus2 = _interopRequireDefault(_ActionStatus);
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
 
 var details = {
   owner: ['id', 'username'],
@@ -38,10 +49,10 @@ var TypeCtrl = function () {
         ownerId: 1
       };
 
-      Db.Types.create(body).then(function (type) {
-        return Status.postOk(res, 201, true, 'type', type);
+      _Index2.default.Types.create(body).then(function (type) {
+        return _ActionStatus2.default.postOk(res, 201, true, 'type', type);
       }).catch(function (err) {
-        return Status.postFail(res, 500, false, 'type', err);
+        return _ActionStatus2.default.postFail(res, 500, false, 'type', err);
       });
     }
 
@@ -58,22 +69,22 @@ var TypeCtrl = function () {
     value: function listTypes(req, res) {
       var query = {
         include: [{
-          model: Db.Users,
+          model: _Index2.default.Users,
           attributes: details.owner,
           include: [{
-            model: Db.Roles,
+            model: _Index2.default.Roles,
             attributes: details.role
           }]
         }]
       };
 
-      Db.Types.findAll(query).then(function (types) {
+      _Index2.default.Types.findAll(query).then(function (types) {
         if (types.length < 1) {
-          return Status.notFound(res, 404, false, 'type');
+          return _ActionStatus2.default.notFound(res, 404, false, 'type');
         }
-        Status.getOk(res, 200, true, 'type', types);
+        _ActionStatus2.default.getOk(res, 200, true, 'type', types);
       }).catch(function (err) {
-        return Status.postFail(res, 500, false, 'type', err);
+        return _ActionStatus2.default.postFail(res, 500, false, 'type', err);
       });
     }
 
@@ -93,22 +104,22 @@ var TypeCtrl = function () {
           id: req.params.id
         },
         include: [{
-          model: Db.Users,
+          model: _Index2.default.Users,
           attributes: details.owner,
           include: [{
-            model: Db.Roles,
+            model: _Index2.default.Roles,
             attributes: details.role
           }]
         }]
       };
 
-      Db.Types.findOne(query).then(function (type) {
+      _Index2.default.Types.findOne(query).then(function (type) {
         if (!type) {
-          return Status.notFound(res, 404, false, 'type');
+          return _ActionStatus2.default.notFound(res, 404, false, 'type');
         }
-        Status.getOk(res, 200, true, 'type', type);
+        _ActionStatus2.default.getOk(res, 200, true, 'type', type);
       }).catch(function (err) {
-        return Status.getFail(res, 500, false, 'type', err);
+        return _ActionStatus2.default.getFail(res, 500, false, 'type', err);
       });
     }
 
@@ -123,20 +134,20 @@ var TypeCtrl = function () {
   }, {
     key: 'updateType',
     value: function updateType(req, res) {
-      Db.Types.findById(req.params.id).then(function (type) {
+      _Index2.default.Types.findById(req.params.id).then(function (type) {
         if (type) {
           type.update(req.body).then(function (updatedType) {
             if (updatedType) {
-              return Status.putOk(res, 200, true, 'type', updatedType);
+              return _ActionStatus2.default.putOk(res, 200, true, 'type', updatedType);
             }
           }).catch(function (err) {
-            return Status.putFail(res, 500, false, 'type', err);
+            return _ActionStatus2.default.putFail(res, 500, false, 'type', err);
           });
         } else {
-          Status.notFound(res, 404, false, 'type');
+          _ActionStatus2.default.notFound(res, 404, false, 'type');
         }
       }).catch(function (err) {
-        return Status.getFail(res, 500, false, 'type', err);
+        return _ActionStatus2.default.getFail(res, 500, false, 'type', err);
       });
     }
 
@@ -157,10 +168,10 @@ var TypeCtrl = function () {
         }
       };
 
-      Db.Types.destroy(query).then(function () {
-        return Status.deleteOk(res, true, 'type');
+      _Index2.default.Types.destroy(query).then(function () {
+        return _ActionStatus2.default.deleteOk(res, true, 'type');
       }).catch(function (err) {
-        return Status.deleteFail(res, 500, false, 'type', err);
+        return _ActionStatus2.default.deleteFail(res, 500, false, 'type', err);
       });
     }
   }]);
@@ -168,4 +179,4 @@ var TypeCtrl = function () {
   return TypeCtrl;
 }();
 
-module.exports = TypeCtrl;
+exports.default = TypeCtrl;

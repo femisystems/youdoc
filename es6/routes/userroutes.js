@@ -1,9 +1,9 @@
-import Router from 'express';
+import express from 'express';
 import UserCtrl from '../controllers/UserCtrl';
 import DocCtrl from '../controllers/DocCtrl';
 import Auth from '../middleware/Auth';
 
-Router = Router.Router();
+const Router = express.Router();
 
 Router.route('/')
   .get(Auth.verifyUser, Auth.verifyAdmin, UserCtrl.listUsers)

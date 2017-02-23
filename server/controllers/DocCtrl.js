@@ -1,6 +1,20 @@
 'use strict';
 
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+
 var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
+
+var _Index = require('../models/Index');
+
+var _Index2 = _interopRequireDefault(_Index);
+
+var _ActionStatus = require('../middleware/ActionStatus');
+
+var _ActionStatus2 = _interopRequireDefault(_ActionStatus);
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
 
@@ -8,14 +22,10 @@ function _possibleConstructorReturn(self, call) { if (!self) { throw new Referen
 
 function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
 
-var Db = require('../models/Index');
-var Status = require('../middleware/ActionStatus');
-
 /**
  * @class DocCtrl
  * @classdesc Create and manage documents
  */
-
 var DocCtrl = function (_Status) {
   _inherits(DocCtrl, _Status);
 
@@ -45,10 +55,10 @@ var DocCtrl = function (_Status) {
         typeId: req.body.typeId
       };
 
-      Db.Documents.create(newDocument).then(function (document) {
-        Status.postOk(res, 201, true, 'document', document);
+      _Index2.default.Documents.create(newDocument).then(function (document) {
+        _ActionStatus2.default.postOk(res, 201, true, 'document', document);
       }).catch(function (err) {
-        Status.postFail(res, 501, false, 'document', err);
+        _ActionStatus2.default.postFail(res, 501, false, 'document', err);
       });
     }
 
@@ -63,13 +73,13 @@ var DocCtrl = function (_Status) {
   }, {
     key: 'listDocs',
     value: function listDocs(req, res) {
-      Db.Documents.findAll().then(function (documents) {
+      _Index2.default.Documents.findAll().then(function (documents) {
         if (documents.length < 1) {
-          return Status.notFound(res, 404, false, 'document');
+          return _ActionStatus2.default.notFound(res, 404, false, 'document');
         }
-        Status.getOk(res, 200, true, 'document', documents);
+        _ActionStatus2.default.getOk(res, 200, true, 'document', documents);
       }).catch(function (err) {
-        return Status.getFail(res, 500, false, 'document', err);
+        return _ActionStatus2.default.getFail(res, 500, false, 'document', err);
       });
     }
 
@@ -84,10 +94,10 @@ var DocCtrl = function (_Status) {
   }, {
     key: 'getDoc',
     value: function getDoc(req, res) {
-      Db.Documents.findById(req.params.id).then(function (document) {
-        Status.getOk(res, 200, true, 'document', document);
+      _Index2.default.Documents.findById(req.params.id).then(function (document) {
+        _ActionStatus2.default.getOk(res, 200, true, 'document', document);
       }).catch(function (err) {
-        return Status.getFail(res, 500, false, 'document', err);
+        return _ActionStatus2.default.getFail(res, 500, false, 'document', err);
       });
     }
 
@@ -102,11 +112,11 @@ var DocCtrl = function (_Status) {
   }, {
     key: 'getUserDocs',
     value: function getUserDocs(req, res) {
-      Db.Users.findById(req.params.id).then(function (user) {
+      _Index2.default.Users.findById(req.params.id).then(function (user) {
         var query = {
           attributes: { exclude: ['ownerRoleId'] },
           include: [{
-            model: Db.Users,
+            model: _Index2.default.Users,
             attributes: ['id', 'username', 'roleId']
           }]
         };
@@ -131,16 +141,16 @@ var DocCtrl = function (_Status) {
           };
         }
 
-        Db.Documents.findAll(query).then(function (documents) {
+        _Index2.default.Documents.findAll(query).then(function (documents) {
           if (documents.length < 1) {
-            return Status.notFound(res, 404, false, 'document');
+            return _ActionStatus2.default.notFound(res, 404, false, 'document');
           }
-          Status.getOk(res, 200, true, 'document', documents);
+          _ActionStatus2.default.getOk(res, 200, true, 'document', documents);
         }).catch(function (err) {
-          return Status.getFail(res, 500, false, 'document', err);
+          return _ActionStatus2.default.getFail(res, 500, false, 'document', err);
         });
       }).catch(function (err) {
-        return Status.getFail(res, 500, false, 'document', err);
+        return _ActionStatus2.default.getFail(res, 500, false, 'document', err);
       });
     }
 
@@ -161,10 +171,10 @@ var DocCtrl = function (_Status) {
         }
       };
 
-      Db.Documents.update(query, req.body).then(function (document) {
-        Status.putOk(res, 200, true, 'document', document);
+      _Index2.default.Documents.update(query, req.body).then(function (document) {
+        _ActionStatus2.default.putOk(res, 200, true, 'document', document);
       }).catch(function (err) {
-        return Status.putFail(res, 500, false, 'document', err);
+        return _ActionStatus2.default.putFail(res, 500, false, 'document', err);
       });
     }
 
@@ -185,10 +195,10 @@ var DocCtrl = function (_Status) {
         }
       };
 
-      Db.Documents.destroy(query).then(function () {
-        return Status.deleteOk(res, 200, true, 'document');
+      _Index2.default.Documents.destroy(query).then(function () {
+        return _ActionStatus2.default.deleteOk(res, 200, true, 'document');
       }).catch(function (err) {
-        return Status.deleteFail(res, 500, false, 'document', err);
+        return _ActionStatus2.default.deleteFail(res, 500, false, 'document', err);
       });
     }
 
@@ -206,16 +216,16 @@ var DocCtrl = function (_Status) {
       var query = DocCtrl.buildQuery(req, res);
 
       if (query) {
-        Db.Documents.findAll(query).then(function (documents) {
+        _Index2.default.Documents.findAll(query).then(function (documents) {
           if (documents.length > 0) {
-            return Status.getOk(res, 200, true, 'document', documents);
+            return _ActionStatus2.default.getOk(res, 200, true, 'document', documents);
           }
-          Status.notFound(res, 404, false, 'document');
+          _ActionStatus2.default.notFound(res, 404, false, 'document');
         }).catch(function (err) {
-          return Status.getFail(res, 500, false, 'document', err);
+          return _ActionStatus2.default.getFail(res, 500, false, 'document', err);
         });
       } else {
-        Status.queryFail(res, 400, false);
+        _ActionStatus2.default.queryFail(res, 400, false);
       }
     }
 
@@ -294,7 +304,7 @@ var DocCtrl = function (_Status) {
           typeId: keys.typeId
         });
         query.include = [{
-          model: Db.Types,
+          model: _Index2.default.Types,
           attributes: ['id', 'title']
         }];
       }
@@ -304,7 +314,7 @@ var DocCtrl = function (_Status) {
 
       // append owner details
       query.include.push({
-        model: Db.Users,
+        model: _Index2.default.Users,
         attributes: ['id', 'firstName', 'lastName', 'email', 'username']
       });
 
@@ -313,6 +323,6 @@ var DocCtrl = function (_Status) {
   }]);
 
   return DocCtrl;
-}(Status);
+}(_ActionStatus2.default);
 
-module.exports = DocCtrl;
+exports.default = DocCtrl;

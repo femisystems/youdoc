@@ -62,7 +62,7 @@ gulp.task('watch', () => {
   gulp.watch(`${dir.src}/**/*.js`, ['build']);
   // gulp.watch(`${dir.src}/js/*.js`).on('change', bsync.reload);
   // gulp.watch(`${dir.dest}/*.js`).on('change', bsync.reload);
-  // gulp.watch('./server/**/*.js', childProcess.exec('rs'));
+  gulp.watch(`${serverDir.src}/**/*.js`, ['transpile']);
 });
 
 // gulp.task('serve', () => childProcess.exec('babel -w ./server/Server.js'));

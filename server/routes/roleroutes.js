@@ -1,13 +1,29 @@
 'use strict';
 
-var Router = require('express').Router();
-var RoleCtrl = require('../controllers/RoleCtrl');
-var Auth = require('../middleware/Auth');
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+
+var _express = require('express');
+
+var _express2 = _interopRequireDefault(_express);
+
+var _RoleCtrl = require('../controllers/RoleCtrl');
+
+var _RoleCtrl2 = _interopRequireDefault(_RoleCtrl);
+
+var _Auth = require('../middleware/Auth');
+
+var _Auth2 = _interopRequireDefault(_Auth);
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+var Router = _express2.default.Router();
 
 // Roles
-Router.route('/').get(Auth.verifyUser, Auth.verifyAdmin, RoleCtrl.listRoles).post(Auth.verifyUser, Auth.verifyAdmin, RoleCtrl.createRole);
+Router.route('/').get(_Auth2.default.verifyUser, _Auth2.default.verifyAdmin, _RoleCtrl2.default.listRoles).post(_Auth2.default.verifyUser, _Auth2.default.verifyAdmin, _RoleCtrl2.default.createRole);
 
 // Single role
-Router.route('/:id').get(Auth.verifyUser, Auth.verifyAdmin, RoleCtrl.getRole).put(Auth.verifyUser, Auth.verifyAdmin, RoleCtrl.editRole).delete(Auth.verifyUser, Auth.verifyAdmin, RoleCtrl.deleteRole);
+Router.route('/:id').get(_Auth2.default.verifyUser, _Auth2.default.verifyAdmin, _RoleCtrl2.default.getRole).put(_Auth2.default.verifyUser, _Auth2.default.verifyAdmin, _RoleCtrl2.default.editRole).delete(_Auth2.default.verifyUser, _Auth2.default.verifyAdmin, _RoleCtrl2.default.deleteRole);
 
-module.exports = Router;
+exports.default = Router;

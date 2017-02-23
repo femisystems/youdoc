@@ -2,6 +2,7 @@
 import express from 'express';
 import bodyParser from 'body-parser';
 import logger from 'morgan';
+import Router from './routes';
 
 // Global vars
 const app = express();
@@ -12,8 +13,6 @@ app.use(bodyParser.json());
 app.use(logger('dev'));
 
 // Route app
-require('./routes')(app);
+Router(app);
 
-app.listen(port, () => {
-  console.log(`App listening on localhost:${port}`);
-});
+app.listen(port);

@@ -1,8 +1,8 @@
-import Router from 'express';
+import express from 'express';
 import DocCtrl from '../controllers/DocCtrl';
 import Auth from '../middleware/Auth';
 
-Router = Router.Router();
+const Router = express.Router();
 
 // Documents
 Router.route('/')

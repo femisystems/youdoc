@@ -1,17 +1,40 @@
 'use strict';
 
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+
 var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
+
+var _dotenv = require('dotenv');
+
+var _dotenv2 = _interopRequireDefault(_dotenv);
+
+var _jsonwebtoken = require('jsonwebtoken');
+
+var _jsonwebtoken2 = _interopRequireDefault(_jsonwebtoken);
+
+var _bcryptNode = require('bcrypt-node');
+
+var _bcryptNode2 = _interopRequireDefault(_bcryptNode);
+
+var _Index = require('../models/Index');
+
+var _Index2 = _interopRequireDefault(_Index);
+
+var _ActionStatus = require('../middleware/ActionStatus');
+
+var _ActionStatus2 = _interopRequireDefault(_ActionStatus);
+
+var _AuthStatus = require('../middleware/AuthStatus');
+
+var _AuthStatus2 = _interopRequireDefault(_AuthStatus);
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
 
-require('dotenv').config();
-
-var Db = require('../models/Index');
-var jwt = require('jsonwebtoken');
-var bcrypt = require('bcrypt-node');
-var Status = require('../middleware/ActionStatus');
-var AuthStatus = require('../middleware/AuthStatus');
-
+_dotenv2.default.config({ silent: true });
 var secret = process.env.SECRET || '$3CRET AG3NT';
 
 /**
@@ -36,18 +59,18 @@ var UserCtrl = function () {
      * @return {Void} no return value
      */
     value: function createUser(req, res) {
-      Db.Users.create(req.body).then(function (newUser) {
+      _Index2.default.Users.create(req.body).then(function (newUser) {
         var payload = {
           userId: newUser.id,
           username: newUser.username,
           roleId: newUser.roleId
         };
 
-        var token = jwt.sign(payload, secret, { expiresIn: '24h' });
+        var token = _jsonwebtoken2.default.sign(payload, secret, { expiresIn: '24h' });
         var credential = { token: token, expiresIn: '24 hours' };
-        Status.postOk(res, 201, true, 'user', { credential: credential, newUser: newUser });
+        _ActionStatus2.default.postOk(res, 201, true, 'user', { credential: credential, newUser: newUser });
       }).catch(function (err) {
-        return Status.postFail(res, 501, false, 'user', err);
+        return _ActionStatus2.default.postFail(res, 501, false, 'user', err);
       });
     }
 
@@ -70,18 +93,18 @@ var UserCtrl = function () {
       var query = {
         attributes: details.user,
         include: [{
-          model: Db.Roles,
+          model: _Index2.default.Roles,
           attributes: details.role
         }]
       };
 
-      Db.Users.findAll(query).then(function (users) {
+      _Index2.default.Users.findAll(query).then(function (users) {
         if (users.length < 1) {
-          return Status.notFound(res, 404, false, 'user');
+          return _ActionStatus2.default.notFound(res, 404, false, 'user');
         }
-        Status.getOk(res, 200, true, 'user', users);
+        _ActionStatus2.default.getOk(res, 200, true, 'user', users);
       }).catch(function (err) {
-        return Status.getFail(res, 500, false, 'user', err);
+        return _ActionStatus2.default.getFail(res, 500, false, 'user', err);
       });
     }
 
@@ -107,18 +130,18 @@ var UserCtrl = function () {
         },
         attributes: details.user,
         include: [{
-          model: Db.Roles,
+          model: _Index2.default.Roles,
           attributes: details.role
         }]
       };
 
-      Db.Users.findOne(query).then(function (user) {
+      _Index2.default.Users.findOne(query).then(function (user) {
         if (!user) {
-          return Status.notFound(res, 404, false, 'user');
+          return _ActionStatus2.default.notFound(res, 404, false, 'user');
         }
-        Status.getOk(res, 200, true, 'user', user);
+        _ActionStatus2.default.getOk(res, 200, true, 'user', user);
       }).catch(function (err) {
-        return Status.getFail(res, 500, false, 'user', err);
+        return _ActionStatus2.default.getFail(res, 500, false, 'user', err);
       });
     }
 
@@ -133,18 +156,18 @@ var UserCtrl = function () {
   }, {
     key: 'updateUser',
     value: function updateUser(req, res) {
-      Db.Users.findById(req.params.id).then(function (user) {
-        if (!user) return res.status(404).send({ status: UserStatus.GETFAIL });
+      _Index2.default.Users.findById(req.params.id).then(function (user) {
+        if (!user) return _ActionStatus2.default.notFound(res, 404, false, 'user');
 
         user.update(req.body).then(function (updatedUser) {
           if (updatedUser) {
-            Status.putOk(res, 200, true, 'user', updatedUser);
+            _ActionStatus2.default.putOk(res, 200, true, 'user', updatedUser);
           }
         }).catch(function (err) {
-          return Status.putFail(res, 501, false, 'user', err);
+          return _ActionStatus2.default.putFail(res, 501, false, 'user', err);
         });
       }).catch(function (err) {
-        return Status.getFail(res, 500, false, 'user', err);
+        return _ActionStatus2.default.getFail(res, 500, false, 'user', err);
       });
     }
 
@@ -159,14 +182,14 @@ var UserCtrl = function () {
   }, {
     key: 'deleteUser',
     value: function deleteUser(req, res) {
-      Db.Users.findById(req.params.id).then(function (user) {
-        if (!user) return res.status(404).send({ status: UserStatus.GETFAIL });
+      _Index2.default.Users.findById(req.params.id).then(function (user) {
+        if (!user) return _ActionStatus2.default.notFound(res, 404, false, 'user');
 
         user.destroy({ force: true }).then(function () {
-          return Status.deleteOk(res, true, 'user');
+          return _ActionStatus2.default.deleteOk(res, true, 'user');
         });
       }).catch(function (err) {
-        return Status.getFail(res, 500, false, 'user', err);
+        return _ActionStatus2.default.getFail(res, 500, false, 'user', err);
       });
     }
 
@@ -186,21 +209,21 @@ var UserCtrl = function () {
         query = { where: { email: req.body.userIdentity } };
       }
 
-      Db.Users.findOne(query).then(function (user) {
-        if (user && bcrypt.compareSync(req.body.password, user.password)) {
+      _Index2.default.Users.findOne(query).then(function (user) {
+        if (user && _bcryptNode2.default.compareSync(req.body.password, user.password)) {
           var payload = {
             userId: user.dataValues.id,
             username: user.dataValues.username,
             roleId: user.dataValues.roleId
           };
 
-          var token = jwt.sign(payload, secret, { expiresIn: '24h' });
+          var token = _jsonwebtoken2.default.sign(payload, secret, { expiresIn: '24h' });
           var credential = { token: token, expiresIn: '24 hours' };
-          return AuthStatus.loginOk(res, 200, true, credential);
+          return _AuthStatus2.default.loginOk(res, 200, true, credential);
         }
-        AuthStatus.ghostLogin(res, 400, false);
+        _AuthStatus2.default.ghostLogin(res, 400, false);
       }).catch(function (err) {
-        return AuthStatus.loginFail(res, 500, false, err);
+        return _AuthStatus2.default.loginFail(res, 500, false, err);
       });
     }
 
@@ -215,11 +238,11 @@ var UserCtrl = function () {
   }, {
     key: 'logout',
     value: function logout(req, res) {
-      AuthStatus.logoutOk(res, true);
+      _AuthStatus2.default.logoutOk(res, true);
     }
   }]);
 
   return UserCtrl;
 }();
 
-module.exports = UserCtrl;
+exports.default = UserCtrl;
