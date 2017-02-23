@@ -22,14 +22,10 @@ class Authentication {
   static verifyUser(req, res, next) {
     const token = req.headers.authorization || req.headers['x-access-token'];
 
-    if (!token) return res.status(401).send(AuthStatus.UNAUTHORIZED);
-
+    if (!token) return AuthStatus.unauthorized(res, 401, false);
     jwt.verify(token, secret, (err, decoded) => {
       if (err) {
-        return res.status(501).send({
-          status: AuthStatus.FAIL,
-          error: err.errors
-        });
+        return AuthStatus.authFail(res, 501, false, err);
       }
 
       req.decoded = decoded;
@@ -46,16 +42,10 @@ class Authentication {
    * @return {null} no return value
    */
   static verifyAdmin(req, res, next) {
-    const query = {
-      where: {
-        id: req.decoded.roleId
-      }
-    };
-
-    Db.Roles.findOne(query)
+    Db.Roles.findById(req.decoded.roleId)
       .then((role) => {
         if (role.dataValues.title !== 'admin') {
-          return res.status(403).send(AuthStatus.FORBIDDEN);
+          return AuthStatus.forbid(res, 403, false);
         }
         next();
       });
@@ -63,7 +53,7 @@ class Authentication {
 
   /**
    * checkUserRouteAccess
-   * checks if the user is an admin authorising
+   * checks if the user is authorised
    * @param {Object} req - request object
    * @param {Object} res - response object
    * @param {Function} next - run next func
@@ -74,7 +64,7 @@ class Authentication {
       req.decoded.roleId === 1) {
       next();
     } else {
-      return res.status(403).send(AuthStatus.FORBIDDEN);
+      return AuthStatus.forbid(res, 403, false);
     }
   }
 
