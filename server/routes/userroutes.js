@@ -14,15 +14,12 @@ Router.route('/:id')
   .delete(Auth.verifyUser, Auth.verifyAdmin, UserCtrl.deleteUser);
 
 // All documents created by a single user
-Router.get('/:id/documents',
-  Auth.verifyUser,
-  DocCtrl.getUserDocs
-);
+Router.get('/:id/documents', Auth.verifyUser, DocCtrl.getUserDocs);
 
 // Login
 Router.post('/login', UserCtrl.login);
 
 // Logout
-Router.post('/logout', Auth.verifyUser, UserCtrl.logout);
+Router.post('/logout', Auth.verifyUser, Auth.logout, UserCtrl.logout);
 
 module.exports = Router;

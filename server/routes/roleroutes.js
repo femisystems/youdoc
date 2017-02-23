@@ -4,13 +4,12 @@ const Auth = require('../middlewares/Auth');
 
 // Roles
 Router.route('/')
-  .get(Auth.verifyUser, RoleCtrl.listRoles)
-  // .post(Auth.verifyUser, Auth.verifyAdmin, RoleCtrl.createRole);
-  .post(RoleCtrl.createRole);
+  .get(Auth.verifyUser, Auth.verifyAdmin, RoleCtrl.listRoles)
+  .post(Auth.verifyUser, Auth.verifyAdmin, RoleCtrl.createRole);
 
 // Single role
 Router.route('/:id')
-  .get(Auth.verifyUser, RoleCtrl.getRole)
+  .get(Auth.verifyUser, Auth.verifyAdmin, RoleCtrl.getRole)
   .put(Auth.verifyUser, Auth.verifyAdmin, RoleCtrl.editRole)
   .delete(Auth.verifyUser, Auth.verifyAdmin, RoleCtrl.deleteRole);
 
