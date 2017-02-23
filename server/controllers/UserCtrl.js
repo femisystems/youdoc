@@ -1,9 +1,10 @@
 require('dotenv').config();
 
 const Db = require('../models/Index');
-const UserStatus = require('./StatusResponse/User');
 const jwt = require('jsonwebtoken');
 const bcrypt = require('bcrypt-node');
+const Status = require('../middlewares/ActionStatus');
+const AuthStatus = require('../middlewares/AuthStatus');
 
 const secret = process.env.SECRET || '$3CRET AG3NT';
 
@@ -21,7 +22,8 @@ class UserCtrl {
    * @return {Void} no return value
    */
   static createUser(req, res) {
-    Db.Users.create(req.body)
+    Db.Users
+      .create(req.body)
       .then((newUser) => {
         const payload = {
           userId: newUser.id,
@@ -30,17 +32,10 @@ class UserCtrl {
         };
 
         const token = jwt.sign(payload, secret, { expiresIn: '24h' });
-        res.status(201).send({
-          status: UserStatus.POSTSUCCESS,
-          token,
-          expiresIn: '24 hours',
-          data: newUser
-        });
+        const credential = { token, expiresIn: '24 hours' };
+        Status.postOk(res, 201, true, 'user', { credential, newUser });
       })
-      .catch(err => res.status(500).send({
-        status: UserStatus.POSTFAIL,
-        errors: err.message
-      }));
+      .catch(err => Status.postFail(res, 501, false, 'user', err));
   }
 
   /**
@@ -66,16 +61,15 @@ class UserCtrl {
       ]
     };
 
-    Db.Users.findAll(query)
+    Db.Users
+      .findAll(query)
       .then((users) => {
-        if (!users.length) return res.status(404).send({ status: UserStatus.GETFAIL });
-        res.status(200).send({
-          status: UserStatus.GETSUCCESS,
-          data: users
-        });
-      }).catch((err) => {
-        res.status(500).send({ status: UserStatus.GETFAIL, error: err.errors });
-      });
+        if (users.length < 1) {
+          return Status.notFound(res, 404, false, 'user');
+        }
+        Status.getOk(res, 200, true, 'user', users);
+      })
+      .catch(err => Status.getFail(res, 500, false, 'user', err));
   }
 
   /**
@@ -104,17 +98,15 @@ class UserCtrl {
       ]
     };
 
-    Db.Users.findOne(query)
+    Db.Users
+      .findOne(query)
       .then((user) => {
-        if (!user) return res.status(404).send({ status: UserStatus.GETFAIL });
-        res.status(200).send({
-          status: UserStatus.GETSUCCESS,
-          data: user
-        });
+        if (!user) {
+          return Status.notFound(res, 404, false, 'user');
+        }
+        Status.getOk(res, 200, true, 'user', user);
       })
-      .catch((err) => {
-        res.status(500).send({ status: UserStatus.GETFAIL, error: err.errors });
-      });
+      .catch(err => Status.getFail(res, 500, false, 'user', err));
   }
 
   /**
@@ -129,20 +121,16 @@ class UserCtrl {
       .then((user) => {
         if (!user) return res.status(404).send({ status: UserStatus.GETFAIL });
 
-        user.update(req.body)
-          .then(updatedUser => res.status(200).send({
-            status: UserStatus.PUTSUCCESS,
-            data: updatedUser
-          }))
-          .catch(err => res.status(501).send({
-            status: UserStatus.PUTFAIL,
-            error: err.errors
-          }));
+        user
+          .update(req.body)
+          .then((updatedUser) => {
+            if (updatedUser) {
+              Status.putOk(res, 200, true, 'user', updatedUser);
+            }
+          })
+          .catch(err => Status.putFail(res, 501, false, 'user', err));
       })
-      .catch(err => res.status(500).send({
-        status: UserStatus.GETFAIL,
-        error: err.errors
-      }));
+     .catch(err => Status.getFail(res, 500, false, 'user', err));
   }
 
   /**
@@ -158,12 +146,9 @@ class UserCtrl {
         if (!user) return res.status(404).send({ status: UserStatus.GETFAIL });
 
         user.destroy({ force: true })
-          .then(() => res.send({ status: UserStatus.DELSUCCESS }));
+          .then(() => Status.deleteOk(res, true, 'user'));
       })
-      .catch(err => res.status(500).send({
-        status: UserStatus.GETFAIL,
-        error: err.errors
-      }));
+      .catch(err => Status.getFail(res, 500, false, 'user', err));
   }
 
   /**
@@ -189,20 +174,12 @@ class UserCtrl {
           };
 
           const token = jwt.sign(payload, secret, { expiresIn: '24h' });
-          return res.status(200).send({
-            status: UserStatus.LOGINSUCCESS,
-            token,
-            expiresIn: '24 hours',
-          });
+          const credential = { token, expiresIn: '24 hours' };
+          return AuthStatus.loginOk(res, 200, true, credential);
         }
-        res.status(501).send({ status: UserStatus.GHOSTLOGIN });
+        AuthStatus.ghostLogin(res, 400, false);
       })
-      .catch((err) => {
-        res.status(501).send({
-          status: UserStatus.LOGINFAIL,
-          error: err.errors
-        });
-      });
+      .catch(err => AuthStatus.loginFail(res, 500, false, err));
   }
 
   /**
@@ -213,9 +190,7 @@ class UserCtrl {
    * @return {Void} no return value
    */
   static logout(req, res) {
-    res.send({
-      status: UserStatus.LOGOUTSUCCESS
-    });
+    AuthStatus.logoutOk(res, true);
   }
 }
 

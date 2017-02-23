@@ -1,5 +1,5 @@
 const Db = require('../models/Index');
-const RoleStatus = require('./StatusResponse/Role');
+const Status = require('../middlewares/ActionStatus');
 
 /**
  * RoleCtrl
@@ -16,18 +16,10 @@ class RoleCtrl {
    * @return {Void} no return value
    */
   static createRole(req, res) {
-    Db.Roles.create({ title: req.body.title.toLowerCase() })
-      .then((newRole) => {
-        res.status(201).send({
-          status: RoleStatus.POSTSUCCESS,
-          role: newRole
-        });
-      }).catch((err) => {
-        res.status(400).send({
-          status: RoleStatus.POSTFAIL,
-          error: err.errors
-        });
-      });
+    Db.Roles
+      .create({ title: req.body.title.toLowerCase() })
+      .then(newRole => Status.postOk(res, 201, true, 'role', newRole))
+      .catch(err => Status.postFail(res, 501, false, 'role', err));
   }
 
   /**
@@ -40,14 +32,12 @@ class RoleCtrl {
   static listRoles(req, res) {
     Db.Roles.findAll({})
       .then((roles) => {
-        if (!roles.length) return res.status(404).send({ status: RoleStatus.GETFAIL });
-        res.status(200).send({
-          status: RoleStatus.GETSUCCESS,
-          data: roles
-        });
-      }).catch((err) => {
-        res.status(500).send({ status: RoleStatus.GETFAIL, error: err.errors });
-      });
+        if (roles.length < 1) {
+          return Status.notFound(res, 404, false, 'role');
+        }
+        Status.getOk(res, 200, true, 'role', roles);
+      })
+      .catch(err => Status.getFail(res, 500, false, 'role', err));
   }
 
   /**
@@ -58,20 +48,14 @@ class RoleCtrl {
    * @return {Void} no return value
    */
   static getRole(req, res) {
-    const query = {
-      where: {
-        id: req.params.id
-      }
-    };
-
-    Db.Roles.findOne(query)
+    Db.Roles.findById(req.params.id)
       .then((role) => {
-        if (!role) return res.status(404).send(RoleStatus.GETFAIL);
-        res.status(200).send({
-          status: RoleStatus.GETSUCCESS,
-          roleDetail: role
-        });
-      });
+        if (!role) {
+          return Status.notFound(res, 404, false, 'role');
+        }
+        Status.getOk(res, 200, true, 'role', role);
+      })
+      .catch(err => Status.getFail(res, 500, false, 'role', err));
   }
 
   /**
@@ -82,25 +66,22 @@ class RoleCtrl {
    * @return {Void} no return value
    */
   static editRole(req, res) {
-    const query = {
-      where: {
-        id: req.params.id
-      }
-    };
-
-    Db.Roles.findOne(query)
+    Db.Roles
+      .findById(req.params.id)
       .then((role) => {
-        if (!role) return res.status(404).send(RoleStatus.GETFAIL);
+        if (!role) {
+          return Status.notFound(res, 404, false, 'role');
+        }
 
         role.update(req.body)
           .then((updatedRole) => {
-            if (!updatedRole) return res.status(501).send(RoleStatus.PUTFAIL);
-            res.status(200).send({
-              status: RoleStatus.PUTSUCCESS,
-              role: updatedRole
-            });
-          });
-      });
+            if (updatedRole) {
+              return Status.putOk(res, 200, true, 'role', updatedRole);
+            }
+          })
+          .catch(err => Status.putFail(res, 501, false, 'role', err));
+      })
+      .catch(err => Status.putFail(res, 500, false, 'role', err));
   }
 
   /**
@@ -111,18 +92,14 @@ class RoleCtrl {
    * @return {Void} no return value
    */
   static deleteRole(req, res) {
-    const query = {
-      where: {
-        id: req.params.id
-      }
-    };
-
-    Db.Roles.findOne(query)
+    Db.Roles.findById(req.params.id)
       .then((role) => {
-        if (!role) return res.status(404).send(RoleStatus.GETFAIL);
+        if (!role) {
+          return Status.notFound(res, 404, false, 'role');
+        }
 
         role.destroy()
-          .then(() => res.status(200).send(RoleStatus.DELSUCCESS));
+          .then(() => Status.deleteOk(res, true, 'role'));
       });
   }
 

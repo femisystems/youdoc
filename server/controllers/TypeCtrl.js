@@ -1,11 +1,16 @@
 const Db = require('../models/Index');
+const Status = require('../middlewares/ActionStatus');
+
+const details = {
+  owner: ['id', 'username'],
+  role: ['id', 'title']
+};
 
 /**
  * @class TypeCtrl
  * @classdesc Creates and manages document types
  */
 class TypeCtrl {
-
   /**
    * createType
    * creates a new type
@@ -16,16 +21,13 @@ class TypeCtrl {
   static createType(req, res) {
     const body = {
       title: req.body.title.toLowerCase(),
-      ownerId: parseInt(req.decoded.userId, 10)
+      ownerId: 1
     };
 
-    Db.Types.create(body)
-      .then((type) => {
-        res.status(201).send({ status: 'success', type });
-      })
-      .catch((err) => {
-        res.status(500).send({ status: 'fail', error: err.errors });
-      });
+    Db.Types
+      .create(body)
+      .then(type => Status.postOk(res, 201, true, 'type', type))
+      .catch(err => Status.postFail(res, 500, false, 'type', err));
   }
 
   /**
@@ -36,14 +38,30 @@ class TypeCtrl {
    * @return {Null} no return value
    */
   static listTypes(req, res) {
-    Db.Types.findAll()
+    const query = {
+      include: [
+        {
+          model: Db.Users,
+          attributes: details.owner,
+          include: [
+            {
+              model: Db.Roles,
+              attributes: details.role
+            }
+          ]
+        }
+      ]
+    };
+
+    Db.Types
+      .findAll(query)
       .then((types) => {
-        if (!types.length) return res.status(404).send({ status: 'fail', message: 'No types yet' });
-        res.send({ status: 'success', types });
+        if (types.length < 1) {
+          return Status.notFound(res, 404, false, 'type');
+        }
+        Status.getOk(res, 200, true, 'type', types);
       })
-      .catch((err) => {
-        res.status(500).send({ status: 'fail', error: err.errors });
-      });
+      .catch(err => Status.postFail(res, 500, false, 'type', err));
   }
 
   /**
@@ -57,17 +75,30 @@ class TypeCtrl {
     const query = {
       where: {
         id: req.params.id
-      }
+      },
+      include: [
+        {
+          model: Db.Users,
+          attributes: details.owner,
+          include: [
+            {
+              model: Db.Roles,
+              attributes: details.role
+            }
+          ]
+        }
+      ]
     };
 
-    Db.Types.findOne(query)
+    Db.Types
+      .findOne(query)
       .then((type) => {
-        if (!type) return res.status(404).send({ status: 'fail', message: 'Type not found' });
-        res.send({ status: 'success', type });
+        if (!type) {
+          return Status.notFound(res, 404, false, 'type');
+        }
+        Status.getOk(res, 200, true, 'type', type);
       })
-      .catch((err) => {
-        res.status(500).send({ status: 'fail', error: err.errors });
-      });
+      .catch(err => Status.getFail(res, 500, false, 'type', err));
   }
 
   /**
@@ -78,19 +109,22 @@ class TypeCtrl {
    * @return {Void} no return value
    */
   static updateType(req, res) {
-    const query = {
-      where: {
-        id: req.params.id
-      }
-    };
-
-    Db.Types.update(query, req.body)
-      .then((role) => {
-        res.send({ status: 'success', role });
+    Db.Types
+      .findById(req.params.id)
+      .then((type) => {
+        if (type) {
+          type.update(req.body)
+            .then((updatedType) => {
+              if (updatedType) {
+                return Status.putOk(res, 200, true, 'type', updatedType);
+              }
+            })
+            .catch(err => Status.putFail(res, 500, false, 'type', err));
+        } else {
+          Status.notFound(res, 404, false, 'type');
+        }
       })
-      .catch((err) => {
-        res.status(500).send({ status: 'fail', error: err.errors });
-      });
+      .catch(err => Status.getFail(res, 500, false, 'type', err));
   }
 
   /**
@@ -107,13 +141,10 @@ class TypeCtrl {
       }
     };
 
-    Db.Types.destroy(query)
-      .then(() => {
-        res.send({ status: 'success', message: 'Successfully deleted' });
-      })
-      .catch((err) => {
-        res.status(500).send({ status: 'fail', error: err.errors });
-      });
+    Db.Types
+      .destroy(query)
+      .then(() => Status.deleteOk(res, true, 'type'))
+      .catch(err => Status.deleteFail(res, 500, false, 'type', err));
   }
 }
 

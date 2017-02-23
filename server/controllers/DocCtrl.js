@@ -1,11 +1,11 @@
 const Db = require('../models/Index');
-const DocStatus = require('./StatusResponse/Doc');
+const Status = require('../middlewares/ActionStatus');
 
 /**
  * @class DocCtrl
  * @classdesc Create and manage documents
  */
-class DocCtrl {
+class DocCtrl extends Status {
   /**
    * createDoc
    * create a new document
@@ -17,24 +17,19 @@ class DocCtrl {
     const newDocument = {
       title: req.body.title,
       content: req.body.content,
-      accessLevel: req.body.accessLevel,
+      accessLevel: req.body.accessLevel || 'private',
       ownerId: req.decoded.userId,
-      typeId: req.body.typeId,
-      updatedBy: req.decoded.userId
+      ownerRoleId: req.decoded.roleId,
+      typeId: req.body.typeId
     };
 
-    Db.Documents.create(newDocument)
+    Db.Documents
+      .create(newDocument)
       .then((document) => {
-        res.status(201).send({
-          msg: 'document saved',
-          doc: document
-        });
+        Status.postOk(res, 201, true, 'document', document);
       })
       .catch((err) => {
-        res.status(501).send({
-          msg: 'Process failed',
-          error: err.errors
-        });
+        Status.postFail(res, 501, false, 'document', err);
       });
   }
 
@@ -46,17 +41,15 @@ class DocCtrl {
    * @return {Void} no return value
    */
   static listDocs(req, res) {
-    Db.Documents.findAll()
+    Db.Documents
+      .findAll()
       .then((documents) => {
-        if (!documents.length) return res.status(404).send({ msg: 'No docs yet' });
-        res.send(documents);
+        if (documents.length < 1) {
+          return Status.notFound(res, 404, false, 'document');
+        }
+        Status.getOk(res, 200, true, 'document', documents);
       })
-      .catch((err) => {
-        res.status(501).send({
-          msg: 'Process failed',
-          error: err.errors
-        });
-      });
+      .catch(err => Status.getFail(res, 500, false, 'document', err));
   }
 
   /**
@@ -67,83 +60,66 @@ class DocCtrl {
    * @return {Void} no return value
    */
   static getDoc(req, res) {
-    const query = {
-      where: {
-        id: req.params.id
-      }
-    };
-
-    Db.Documents.findOne(query)
+    Db.Documents
+      .findById(req.params.id)
       .then((document) => {
-        res.send({
-          status: 'success',
-          document
-        });
+        Status.getOk(res, 200, true, 'document', document);
       })
-      .catch((err) => {
-        res.status(500).send({
-          status: 'fail',
-          error: err.errors
-        });
-      });
+     .catch(err => Status.getFail(res, 500, false, 'document', err));
   }
 
   /**
-   * getDoc
+   * getUserDocs
    * find document by user id
    * @param {Object} req - request object
    * @param {Object} res - response object
    * @return {Void} no return value
    */
   static getUserDocs(req, res) {
-    const query = DocCtrl.queryBuilder(req);
-    Db.Documents.find(query)
-      .then((documents) => {
-        if (!documents.length) {
-          return res.status(404).send({
-            message: 'No documents found for this user'
-          });
+    Db.Users
+      .findById(req.params.id)
+      .then((user) => {
+        const query = {
+          attributes: { exclude: ['ownerRoleId'] },
+          include: [
+            {
+              model: Db.Users,
+              attributes: ['id', 'username', 'roleId']
+            }
+          ]
+        };
+
+        // if user is self or admin => return all docs
+        if ((req.decoded.roleId === 1) || (parseInt(req.params.id, 10) === req.decoded.userId)) {
+          query.where = {
+            ownerId: parseInt(req.params.id, 10)
+          };
+        } else if (req.decoded.roleId === user.dataValues.roleId) {
+          // if user shares same role => send public and rolebased docs
+          query.where = {
+            ownerId: parseInt(req.params.id, 10),
+            $not: { accessLevel: 'private' },
+            ownerRoleId: req.decoded.roleId
+          };
+        } else {
+          // default => send public docs
+          query.where = {
+            ownerId: parseInt(req.params.id, 10),
+            accessLevel: 'public'
+          };
         }
-        res.send({
-          status: 'success',
-          documents
-        });
-      })
-      .catch((err) => {
-        res.status(500).send({
-          status: 'fail',
-          error: err.errors
-        });
-      });
-  }
 
-  /**
-   * getGenreDocs
-   * find document by genre id
-   * @param {Object} req - request object
-   * @param {Object} res - response object
-   * @return {Void} no return value
-   */
-  static getTypeDocs(req, res) {
-    const query = {
-      where: {
-        typeId: req.params.id
-      }
-    };
-
-    Db.Documents.findAll(query)
-      .then((documents) => {
-        res.send({
-          status: 'success',
-          documents
-        });
+        Db.Documents
+          .findAll(query)
+          .then((documents) => {
+            if (documents.length < 1) {
+              return Status.notFound(res, 404, false, 'document');
+            }
+            Status.getOk(res, 200, true, 'document', documents);
+          })
+          .catch(err => Status.getFail(res, 500, false, 'document', err));
       })
-      .catch((err) => {
-        res.status(500).send({
-          status: 'fail',
-          error: err.errors
-        });
-      });
+      .catch(err => Status.getFail(res, 500, false, 'document', err));
   }
 
   /**
@@ -160,16 +136,12 @@ class DocCtrl {
       }
     };
 
-    Db.Documents.update(query, req.body)
+    Db.Documents
+      .update(query, req.body)
       .then((document) => {
-        res.send({ status: 'success', document });
+        Status.putOk(res, 200, true, 'document', document);
       })
-      .catch((err) => {
-        res.status(500).send({
-          status: 'fail',
-          error: err.errors
-        });
-      });
+      .catch(err => Status.putFail(res, 500, false, 'document', err));
   }
 
   /**
@@ -186,83 +158,133 @@ class DocCtrl {
       }
     };
 
-    Db.Documents.destroy(query)
-      .then(() => {
-        res.send(DocStatus.DELSUCCESS);
-      })
-      .catch((err) => {
-        res.status(500).send({ status: 'fail', error: err.errors });
-      });
+    Db.Documents
+      .destroy(query)
+      .then(() => Status.deleteOk(res, 200, true, 'document'))
+      .catch(err => Status.deleteFail(res, 500, false, 'document', err));
   }
 
   /**
-   * compareRoles
-   * upon request, compares if requester role level === owner role level
-   * @param {String} requesterRoleId - requester roleId
-   * @param {String} ownerId - doc owner roleId
-   * @return {Boolean} true/false
-   */
-  static compareRoles(requesterRoleId, ownerId) {
-    const ree = Db.Users.findById(ownerId)
-      .then((user) => {
-        return user.dataValues.roleId === requesterRoleId;
-      });
-    console.log(ree);
-
-  }
-
-  /**
-   * queryBuilder
-   * builds document request query based on role and permission
+   * search
+   * search documents table based on query params
    * @param {Object} req - request object
-   * @return {Object} query - clean query
+   * @param {Object} res - response object
+   * @return {Void} no return value
    */
-  static queryBuilder(req) {
-    Db.Users.findById(req.params.id)
-      .then((user) => {
-        if (parseInt(req.params.id, 10) === req.decoded.userId ||
-          req.decoded.roleId === 1) {
-          /**
-           * if user or admin tries to view user documents
-           * return all documents regardless of their access level
-           */
-          query = {
-            where: {
-              ownerId: req.params.id
+  static search(req, res) {
+    const query = DocCtrl.buildQuery(req, res);
+
+    if (query) {
+      Db.Documents
+        .findAll(query)
+        .then((documents) => {
+          if (documents.length > 0) {
+            return Status.getOk(res, 200, true, 'document', documents);
+          }
+          Status.notFound(res, 404, false, 'document');
+        })
+        .catch(err => Status.getFail(res, 500, false, 'document', err));
+    } else {
+      Status.queryFail(res, 400, false);
+    }
+  }
+
+  /**
+   * buildQuery
+   * remove/destroy doc by id
+   * @param {Object} req - request object
+   * @param {Object} res - response object
+   * @return {Void} no return value
+   */
+  static buildQuery(req, res) {
+    const query = {};
+    const keys = {
+      queryString: req.query.q,
+      page: req.query.page || 1,
+      limit: req.query.limit || 10,
+      ownerId: req.query.ownerId || req.decoded.userId,
+      sortBy: req.query.sortBy || 'createdAt',
+      order: req.query.order || 'ASC',
+      typeId: req.query.type
+    };
+
+    if (Object.keys(req.query).length < 1) {
+      res.status(400).send({ msg: 'Search parameters cannot be empty' });
+    }
+
+    // if requester is an admin
+    if (req.decoded.roleId === 1) {
+      query.where = {
+        $and: [{ ownerId: keys.ownerId }]
+      };
+    } else if (parseInt(keys.ownerId, 10) === req.decoded.userId) {
+      query.where = {
+        $and: [{
+          $or: [{ accessLevel: 'public' }, { ownerId: req.decoded.userId }]
+        }]
+      };
+    } else {
+      query.where = {
+        $and: [{
+          $or: [
+            { accessLevel: 'public' },
+            {
+              $and: [{
+                ownerRoleId: req.decoded.roleId,
+                $not: { accessLevel: 'private' }
+              }]
             }
-          };
-        } else if (DocCtrl.compareRoles(req.decoded.roleId, req.params.id)) {
-          /**
-           * else if user shares the same role with requester
-           * return all 'public' and 'role' level documents
-           */
-          query = {
-            where: {
-              $and: {
-                ownerId: req.params.id,
-                accessLevel: {
-                  $like: {
-                    $any: ['role', 'public']
-                  }
-                }
-              }
-            }
-          };
-        } else {
-          /**
-           * finally, if user shares no common attribute with requester
-           * return public documents only.
-           */
-          query = {
-            where: {
-              $and: { ownerId: req.params.id, accessLevel: 'public' }
-            }
-          };
-        }
+          ]
+        }]
+      };
+    }
+
+    // if queryString != null, append to base query
+    if (keys.queryString) {
+      query.where.$and.push({
+        $or: [
+          { title: { $ilike: `%${keys.queryString}%` } },
+          { content: { $ilike: `%${keys.queryString}%` } }
+        ]
       });
+    }
+
+    // if limit exists, append to base query
+    if (keys.page && keys.page > 0) {
+      query.limit = keys.limit;
+    } else {
+      res.send({ msg: 'limit cannot be null' });
+    }
+
+    // if page exists, append to base query
+    if (keys.page > 0) {
+      query.offset = (keys.page - 1) * keys.limit;
+    }
+
+    // if type exists, append to base query
+    if (keys.typeId) {
+      query.where.$and.push({
+        typeId: keys.typeId
+      });
+      query.include = [
+        {
+          model: Db.Types,
+          attributes: ['id', 'title']
+        }
+      ];
+    }
+
+    // append sorting and ordering
+    query.order = [[keys.sortBy, keys.order]];
+
+    // append owner details
+    query.include.push({
+      model: Db.Users,
+      attributes: ['id', 'firstName', 'lastName', 'email', 'username']
+    });
+
     return query;
   }
-
 }
 
 module.exports = DocCtrl;
