@@ -1,2 +1,4 @@
+'use strict';
+
 process.env.NODE_ENV = 'test';
-const RoleDb = require('../models/Index').Role;
+var RoleDb = require('../models/Index').Role;

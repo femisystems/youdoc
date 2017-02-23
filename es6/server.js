@@ -1,7 +1,7 @@
 // Dependencies
-const express = require('express');
-const bodyParser = require('body-parser');
-const logger = require('morgan');
+import express from 'express';
+import bodyParser from 'body-parser';
+import logger from 'morgan';
 
 // Global vars
 const app = express();
@@ -12,7 +12,7 @@ app.use(bodyParser.json());
 app.use(logger('dev'));
 
 // Route app
-require('./server/routes')(app);
+require('./routes')(app);
 
 app.listen(port, () => {
   console.log(`App listening on localhost:${port}`);

@@ -168,4 +168,4 @@ class ActionStatus {
   }
 }
 
-module.exports = ActionStatus;
+export default ActionStatus;

@@ -1,197 +1,225 @@
+'use strict';
+
+var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
+
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
 require('dotenv').config();
 
-const Db = require('../models/Index');
-const jwt = require('jsonwebtoken');
-const bcrypt = require('bcrypt-node');
-const Status = require('../middlewares/ActionStatus');
-const AuthStatus = require('../middlewares/AuthStatus');
+var Db = require('../models/Index');
+var jwt = require('jsonwebtoken');
+var bcrypt = require('bcrypt-node');
+var Status = require('../middleware/ActionStatus');
+var AuthStatus = require('../middleware/AuthStatus');
 
-const secret = process.env.SECRET || '$3CRET AG3NT';
+var secret = process.env.SECRET || '$3CRET AG3NT';
 
 /**
  * @class UserCtrl
  * @classdesc create and manage user operations
  */
-class UserCtrl {
 
-  /**
-   * createUser
-   * This method creates a new user
-   * @param {Object} req - request object
-   * @param {Object} res - response object
-   * @return {Void} no return value
-   */
-  static createUser(req, res) {
-    Db.Users
-      .create(req.body)
-      .then((newUser) => {
-        const payload = {
+var UserCtrl = function () {
+  function UserCtrl() {
+    _classCallCheck(this, UserCtrl);
+  }
+
+  _createClass(UserCtrl, null, [{
+    key: 'createUser',
+
+
+    /**
+     * createUser
+     * This method creates a new user
+     * @param {Object} req - request object
+     * @param {Object} res - response object
+     * @return {Void} no return value
+     */
+    value: function createUser(req, res) {
+      Db.Users.create(req.body).then(function (newUser) {
+        var payload = {
           userId: newUser.id,
           username: newUser.username,
           roleId: newUser.roleId
         };
 
-        const token = jwt.sign(payload, secret, { expiresIn: '24h' });
-        const credential = { token, expiresIn: '24 hours' };
-        Status.postOk(res, 201, true, 'user', { credential, newUser });
-      })
-      .catch(err => Status.postFail(res, 501, false, 'user', err));
-  }
+        var token = jwt.sign(payload, secret, { expiresIn: '24h' });
+        var credential = { token: token, expiresIn: '24 hours' };
+        Status.postOk(res, 201, true, 'user', { credential: credential, newUser: newUser });
+      }).catch(function (err) {
+        return Status.postFail(res, 501, false, 'user', err);
+      });
+    }
 
-  /**
-   * listUsers
-   * This method retrieves the list of users
-   * @param {Object} req - request object
-   * @param {Object} res - response object
-   * @return {Void} no return value
-   */
-  static listUsers(req, res) {
-    const details = {
-      user: ['id', 'firstName', 'lastName', 'email', 'username'],
-      role: ['id', 'title']
-    };
+    /**
+     * listUsers
+     * This method retrieves the list of users
+     * @param {Object} req - request object
+     * @param {Object} res - response object
+     * @return {Void} no return value
+     */
 
-    const query = {
-      attributes: details.user,
-      include: [
-        {
+  }, {
+    key: 'listUsers',
+    value: function listUsers(req, res) {
+      var details = {
+        user: ['id', 'firstName', 'lastName', 'email', 'username'],
+        role: ['id', 'title']
+      };
+
+      var query = {
+        attributes: details.user,
+        include: [{
           model: Db.Roles,
           attributes: details.role
-        }
-      ]
-    };
+        }]
+      };
 
-    Db.Users
-      .findAll(query)
-      .then((users) => {
+      Db.Users.findAll(query).then(function (users) {
         if (users.length < 1) {
           return Status.notFound(res, 404, false, 'user');
         }
         Status.getOk(res, 200, true, 'user', users);
-      })
-      .catch(err => Status.getFail(res, 500, false, 'user', err));
-  }
+      }).catch(function (err) {
+        return Status.getFail(res, 500, false, 'user', err);
+      });
+    }
 
-  /**
-   * getUser
-   * This method retrieves a single user by Id
-   * @param {Object} req - request object
-   * @param {Object} res - response object
-   * @return {Void} no return value
-   */
-  static getUser(req, res) {
-    const details = {
-      user: ['id', 'firstName', 'lastName', 'email', 'username'],
-      role: ['id', 'title']
-    };
+    /**
+     * getUser
+     * This method retrieves a single user by Id
+     * @param {Object} req - request object
+     * @param {Object} res - response object
+     * @return {Void} no return value
+     */
 
-    const query = {
-      where: {
-        id: req.params.id
-      },
-      attributes: details.user,
-      include: [
-        {
+  }, {
+    key: 'getUser',
+    value: function getUser(req, res) {
+      var details = {
+        user: ['id', 'firstName', 'lastName', 'email', 'username'],
+        role: ['id', 'title']
+      };
+
+      var query = {
+        where: {
+          id: req.params.id
+        },
+        attributes: details.user,
+        include: [{
           model: Db.Roles,
           attributes: details.role
-        }
-      ]
-    };
+        }]
+      };
 
-    Db.Users
-      .findOne(query)
-      .then((user) => {
+      Db.Users.findOne(query).then(function (user) {
         if (!user) {
           return Status.notFound(res, 404, false, 'user');
         }
         Status.getOk(res, 200, true, 'user', user);
-      })
-      .catch(err => Status.getFail(res, 500, false, 'user', err));
-  }
-
-  /**
-   * editUser
-   * This method edits a user object
-   * @param {Object} req - request object
-   * @param {Object} res - response object
-   * @return {Void} no return value
-   */
-  static updateUser(req, res) {
-    Db.Users.findById(req.params.id)
-      .then((user) => {
-        if (!user) return res.status(404).send({ status: UserStatus.GETFAIL });
-
-        user
-          .update(req.body)
-          .then((updatedUser) => {
-            if (updatedUser) {
-              Status.putOk(res, 200, true, 'user', updatedUser);
-            }
-          })
-          .catch(err => Status.putFail(res, 501, false, 'user', err));
-      })
-     .catch(err => Status.getFail(res, 500, false, 'user', err));
-  }
-
-  /**
-   * deleteUser
-   * This method destroys a user object
-   * @param {Object} req - request object
-   * @param {Object} res - response object
-   * @return {Void} no return value
-   */
-  static deleteUser(req, res) {
-    Db.Users.findById(req.params.id)
-      .then((user) => {
-        if (!user) return res.status(404).send({ status: UserStatus.GETFAIL });
-
-        user.destroy({ force: true })
-          .then(() => Status.deleteOk(res, true, 'user'));
-      })
-      .catch(err => Status.getFail(res, 500, false, 'user', err));
-  }
-
-  /**
-   * login
-   * This method logs a user into the system
-   * @param {Object} req - request object
-   * @param {Object} res - response object
-   * @return {Void} no return value
-   */
-  static login(req, res) {
-    let query = { where: { username: req.body.userIdentity } };
-    if (/^[a-z0-9_.]+@[a-z]+\.[a-z]+$/i.test(req.body.userIdentity)) {
-      query = { where: { email: req.body.userIdentity } };
+      }).catch(function (err) {
+        return Status.getFail(res, 500, false, 'user', err);
+      });
     }
 
-    Db.Users.findOne(query)
-      .then((user) => {
+    /**
+     * editUser
+     * This method edits a user object
+     * @param {Object} req - request object
+     * @param {Object} res - response object
+     * @return {Void} no return value
+     */
+
+  }, {
+    key: 'updateUser',
+    value: function updateUser(req, res) {
+      Db.Users.findById(req.params.id).then(function (user) {
+        if (!user) return res.status(404).send({ status: UserStatus.GETFAIL });
+
+        user.update(req.body).then(function (updatedUser) {
+          if (updatedUser) {
+            Status.putOk(res, 200, true, 'user', updatedUser);
+          }
+        }).catch(function (err) {
+          return Status.putFail(res, 501, false, 'user', err);
+        });
+      }).catch(function (err) {
+        return Status.getFail(res, 500, false, 'user', err);
+      });
+    }
+
+    /**
+     * deleteUser
+     * This method destroys a user object
+     * @param {Object} req - request object
+     * @param {Object} res - response object
+     * @return {Void} no return value
+     */
+
+  }, {
+    key: 'deleteUser',
+    value: function deleteUser(req, res) {
+      Db.Users.findById(req.params.id).then(function (user) {
+        if (!user) return res.status(404).send({ status: UserStatus.GETFAIL });
+
+        user.destroy({ force: true }).then(function () {
+          return Status.deleteOk(res, true, 'user');
+        });
+      }).catch(function (err) {
+        return Status.getFail(res, 500, false, 'user', err);
+      });
+    }
+
+    /**
+     * login
+     * This method logs a user into the system
+     * @param {Object} req - request object
+     * @param {Object} res - response object
+     * @return {Void} no return value
+     */
+
+  }, {
+    key: 'login',
+    value: function login(req, res) {
+      var query = { where: { username: req.body.userIdentity } };
+      if (/^[a-z0-9_.]+@[a-z]+\.[a-z]+$/i.test(req.body.userIdentity)) {
+        query = { where: { email: req.body.userIdentity } };
+      }
+
+      Db.Users.findOne(query).then(function (user) {
         if (user && bcrypt.compareSync(req.body.password, user.password)) {
-          const payload = {
+          var payload = {
             userId: user.dataValues.id,
             username: user.dataValues.username,
             roleId: user.dataValues.roleId
           };
 
-          const token = jwt.sign(payload, secret, { expiresIn: '24h' });
-          const credential = { token, expiresIn: '24 hours' };
+          var token = jwt.sign(payload, secret, { expiresIn: '24h' });
+          var credential = { token: token, expiresIn: '24 hours' };
           return AuthStatus.loginOk(res, 200, true, credential);
         }
         AuthStatus.ghostLogin(res, 400, false);
-      })
-      .catch(err => AuthStatus.loginFail(res, 500, false, err));
-  }
+      }).catch(function (err) {
+        return AuthStatus.loginFail(res, 500, false, err);
+      });
+    }
 
-  /**
-   * logout
-   * This method logs a user out of the system
-   * @param {Object} req - request object
-   * @param {Object} res - response object
-   * @return {Void} no return value
-   */
-  static logout(req, res) {
-    AuthStatus.logoutOk(res, true);
-  }
-}
+    /**
+     * logout
+     * This method logs a user out of the system
+     * @param {Object} req - request object
+     * @param {Object} res - response object
+     * @return {Void} no return value
+     */
+
+  }, {
+    key: 'logout',
+    value: function logout(req, res) {
+      AuthStatus.logoutOk(res, true);
+    }
+  }]);
+
+  return UserCtrl;
+}();
 
 module.exports = UserCtrl;

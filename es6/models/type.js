@@ -1,7 +1,5 @@
-'use strict';
-
-module.exports = function (sequelize, DataTypes) {
-  var Types = sequelize.define('Types', {
+module.exports = (sequelize, DataTypes) => {
+  const Types = sequelize.define('Types', {
     title: {
       type: DataTypes.STRING,
       allowNull: false
@@ -12,7 +10,7 @@ module.exports = function (sequelize, DataTypes) {
     }
   }, {
     classMethods: {
-      associate: function associate(models) {
+      associate(models) {
         Types.hasMany(models.Documents, {
           foreignKey: 'typeId',
           as: 'documents'

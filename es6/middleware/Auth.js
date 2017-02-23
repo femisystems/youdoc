@@ -1,8 +1,9 @@
-require('dotenv').config();
-const Db = require('../models/Index');
-const jwt = require('jsonwebtoken');
-const AuthStatus = require('./AuthStatus');
+import dotenv from 'dotenv';
+import jwt from 'jsonwebtoken';
+import Db from '../models/Index';
+import AuthStatus from './AuthStatus';
 
+dotenv.config({ silent: true });
 const secret = process.env.SECRET || '$3CRET AG3NT';
 
 /**
@@ -89,4 +90,4 @@ class Authentication {
   }
 }
 
-module.exports = Authentication;
+export default Authentication;

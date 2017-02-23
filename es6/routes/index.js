@@ -1,13 +1,12 @@
-'use strict';
+const RoleRoutes = require('./RoleRoutes');
+const UserRoutes = require('./UserRoutes');
+const TypeRoutes = require('./TypeRoutes');
+const DocRoutes = require('./DocRoutes');
 
-var RoleRoutes = require('./RoleRoutes');
-var UserRoutes = require('./UserRoutes');
-var TypeRoutes = require('./TypeRoutes');
-var DocRoutes = require('./DocRoutes');
 
-module.exports = function (app) {
+module.exports = (app) => {
   // Home route
-  app.get('/', function (req, res) {
+  app.get('/', (req, res) => {
     res.send('Welcome!!');
   });
 

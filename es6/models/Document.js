@@ -1,7 +1,5 @@
-'use strict';
-
-module.exports = function (sequelize, DataTypes) {
-  var Documents = sequelize.define('Documents', {
+module.exports = (sequelize, DataTypes) => {
+  const Documents = sequelize.define('Documents', {
     title: {
       type: DataTypes.STRING,
       allowNull: false,
@@ -38,7 +36,7 @@ module.exports = function (sequelize, DataTypes) {
     }
   }, {
     classMethods: {
-      associate: function associate(models) {
+      associate(models) {
         Documents.belongsTo(models.Users, {
           foreignKey: 'ownerId',
           onDelete: 'CASCADE'

@@ -1,9 +1,7 @@
-'use strict';
+const bcrypt = require('bcrypt-node');
 
-var bcrypt = require('bcrypt-node');
-
-module.exports = function (sequelize, DataTypes) {
-  var Users = sequelize.define('Users', {
+module.exports = (sequelize, DataTypes) => {
+  const Users = sequelize.define('Users', {
     firstName: {
       type: DataTypes.STRING,
       allowNull: false,
@@ -71,7 +69,7 @@ module.exports = function (sequelize, DataTypes) {
     }
   }, {
     classMethods: {
-      associate: function associate(models) {
+      associate(models) {
         Users.hasMany(models.Documents, {
           foreignKey: 'ownerId',
           as: 'documents'
@@ -83,13 +81,13 @@ module.exports = function (sequelize, DataTypes) {
         Users.belongsTo(models.Roles, {
           foreignKey: 'roleId'
         });
-      }
+      },
     },
     hooks: {
-      beforeCreate: function beforeCreate(user) {
+      beforeCreate(user) {
         user.password = bcrypt.hashSync(user.password, bcrypt.genSaltSync());
       },
-      beforeUpdate: function beforeUpdate(user) {
+      beforeUpdate(user) {
         user.password = bcrypt.hashSync(user.password, bcrypt.genSaltSync());
       }
     }

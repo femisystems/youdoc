@@ -110,4 +110,4 @@ class AuthStatus {
   }
 }
 
-module.exports = AuthStatus;
+export default AuthStatus;
