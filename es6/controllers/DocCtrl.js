@@ -199,7 +199,7 @@ class DocCtrl extends Status {
   static buildQuery(req, res) {
     const query = {};
     const keys = {
-      queryString: req.query.q,
+      queryString: req.query.q.match(/\w+/g),
       page: req.query.page || 1,
       limit: req.query.limit || 10,
       ownerId: req.query.ownerId || req.decoded.userId,
@@ -243,8 +243,8 @@ class DocCtrl extends Status {
     if (keys.queryString) {
       query.where.$and.push({
         $or: [
-          { title: { $ilike: `%${keys.queryString}%` } },
-          { content: { $ilike: `%${keys.queryString}%` } }
+          { title: { $ilike: { $any: `%${keys.queryString}%` } } },
+          { content: { $ilike: { $any: `%${keys.queryString}%` } } }
         ]
       });
     }
