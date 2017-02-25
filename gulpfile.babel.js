@@ -3,7 +3,7 @@ import gulp from 'gulp';
 import sass from 'gulp-sass';
 import autoprefixer from 'gulp-autoprefixer';
 import sourcemaps from 'gulp-sourcemaps';
-// import childProcess from 'child_process';
+import childProcess from 'child_process';
 import webpack from 'webpack-stream';
 import nodemon from 'gulp-nodemon';
 import dotenv from 'dotenv';

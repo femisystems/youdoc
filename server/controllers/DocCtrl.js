@@ -242,7 +242,7 @@ var DocCtrl = function (_Status) {
     value: function buildQuery(req, res) {
       var query = {};
       var keys = {
-        queryString: req.query.q,
+        queryString: req.query.q.match(/\w+/g),
         page: req.query.page || 1,
         limit: req.query.limit || 10,
         ownerId: req.query.ownerId || req.decoded.userId,
@@ -282,7 +282,7 @@ var DocCtrl = function (_Status) {
       // if queryString != null, append to base query
       if (keys.queryString) {
         query.where.$and.push({
-          $or: [{ title: { $ilike: '%' + keys.queryString + '%' } }, { content: { $ilike: '%' + keys.queryString + '%' } }]
+          $or: [{ title: { $ilike: { $any: '%' + keys.queryString + '%' } } }, { content: { $ilike: { $any: '%' + keys.queryString + '%' } } }]
         });
       }
 

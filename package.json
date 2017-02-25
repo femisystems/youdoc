@@ -6,7 +6,16 @@
   "scripts": {
     "testing": "babel-watch ./server.js",
     "start": "gulp",
-    "test": "./node_modules/.bin/istanbul cover ./node_modules/.bin/_mocha server/test"
+    "migrate-db": "sequelize db:migrate",
+    "seed-db": "sequelize db:seed:all",
+    "test": "NODE_ENV=test ./node_modules/.bin/istanbul cover ./node_modules/.bin/_mocha server/test",
+    "jest-test": "NODE_ENV=test jest es6/test",
+    "setup-db-test": "npm run create-db-test && npm run migrate-db-test",
+    "migrate-db-test": "sequelize db:migrate --env test",
+    "seed-db-test": "npm run seed-role && npm run seed-admin && npm run seed-type",
+    "seed-role": "sequelize db:seed --seed 20170223122049-roles.js --env test",
+    "seed-admin": "sequelize db:seed --seed 20170223122057-admin.js --env test",
+    "seed-type": "sequelize db:seed --seed 20170223122105-types.js --env test"
   },
   "author": "Abolaji Femi",
   "license": "ISC",
@@ -24,10 +33,13 @@
     "eslint-plugin-import": "^2.2.0",
     "eslint-plugin-jsx-a11y": "^3.0.2",
     "eslint-plugin-react": "^6.9.0",
+    "faker": "^4.1.0",
     "gulp": "^3.9.1",
     "gulp-babel": "^6.1.2",
     "istanbul": "^0.4.5",
+    "jest": "^19.0.2",
     "mocha": "^3.2.0",
+    "supertest": "^3.0.0",
     "webpack": "^1.14.0"
   },
   "dependencies": {
@@ -43,6 +55,7 @@
     "body-parser": "^1.16.0",
     "dotenv": "^4.0.0",
     "express": "^4.14.0",
+    "faker": "^4.1.0",
     "gulp-autoprefixer": "^3.1.1",
     "gulp-nodemon": "^2.2.1",
     "gulp-sass": "^3.1.0",
