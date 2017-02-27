@@ -10,15 +10,16 @@ var _faker2 = _interopRequireDefault(_faker);
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
-var admin = [
-// admin 1
-{
+var admin = {
+  id: 1,
   firstName: _faker2.default.name.firstName(),
   lastName: _faker2.default.name.lastName(),
   email: _faker2.default.internet.email(),
   username: 'admin',
   password: 'password',
-  roleId: 1
-}];
+  roleId: 1,
+  createdAt: new Date(),
+  updatedAt: new Date()
+};
 
 exports.default = admin;

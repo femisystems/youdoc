@@ -11,8 +11,6 @@ Router.route('/')
 
 // Single role
 Router.route('/:id')
-  .get(Auth.verifyUser, Auth.verifyAdmin, RoleCtrl.getRole)
-  .put(Auth.verifyUser, Auth.verifyAdmin, RoleCtrl.editRole)
-  .delete(Auth.verifyUser, Auth.verifyAdmin, RoleCtrl.deleteRole);
+  .get(Auth.verifyUser, Auth.verifyAdmin, RoleCtrl.getRole);
 
 export default Router;

@@ -2,7 +2,8 @@ module.exports = (sequelize, DataTypes) => {
   const Types = sequelize.define('Types', {
     title: {
       type: DataTypes.STRING,
-      allowNull: false
+      allowNull: false,
+      unique: true
     },
     ownerId: {
       type: DataTypes.INTEGER,

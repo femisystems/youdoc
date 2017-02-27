@@ -6,9 +6,6 @@ module.exports = (sequelize, DataTypes) => {
       type: DataTypes.STRING,
       allowNull: false,
       validate: {
-        isAlpha: {
-          msg: 'Firstname must be alphabets only'
-        },
         len: {
           args: [2, 15],
           msg: 'Firstname must be 2 to 15 characters long.'
@@ -19,9 +16,6 @@ module.exports = (sequelize, DataTypes) => {
       type: DataTypes.STRING,
       allowNull: false,
       validate: {
-        isAlpha: {
-          msg: 'Lastname must be alphabets only'
-        },
         len: {
           args: [2, 15],
           msg: 'Lastname must be 2 to 15 characters long.'
@@ -41,22 +35,13 @@ module.exports = (sequelize, DataTypes) => {
     username: {
       type: DataTypes.STRING,
       allowNull: false,
-      unique: true,
-      validate: {
-        isAlpha: {
-          msg: 'Firstname must be alphabets only'
-        },
-        len: {
-          args: [2, 10],
-          msg: 'Username should be 6 to 10 characters long.'
-        }
-      }
+      unique: true
     },
     password: {
       type: DataTypes.STRING,
       allowNull: false,
       validate: {
-        is: {
+        len: {
           args: [/^(.){8,32}$/igm],
           msg: 'Password must be at least 8 characters long.'
         }

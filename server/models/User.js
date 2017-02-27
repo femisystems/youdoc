@@ -58,7 +58,7 @@ module.exports = function (sequelize, DataTypes) {
       type: DataTypes.STRING,
       allowNull: false,
       validate: {
-        is: {
+        len: {
           args: [/^(.){8,32}$/igm],
           msg: 'Password must be at least 8 characters long.'
         }

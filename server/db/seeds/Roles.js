@@ -3,37 +3,26 @@
 Object.defineProperty(exports, "__esModule", {
   value: true
 });
-
-var types = [{
+var roles = [{
   id: 1,
-  title: 'agenda',
-  ownerId: 1,
+  title: 'admin',
   createdAt: new Date(),
   updatedAt: new Date()
 }, {
   id: 2,
-  title: 'memo',
-  ownerId: 1,
+  title: 'consultant',
   createdAt: new Date(),
   updatedAt: new Date()
 }, {
   id: 3,
-  title: 'note',
-  ownerId: 1,
+  title: 'facilitator',
   createdAt: new Date(),
   updatedAt: new Date()
 }, {
   id: 4,
-  title: 'proposal',
-  ownerId: 1,
-  createdAt: new Date(),
-  updatedAt: new Date()
-}, {
-  id: 5,
-  title: 'report',
-  ownerId: 1,
+  title: 'fellow',
   createdAt: new Date(),
   updatedAt: new Date()
 }];
 
-exports.default = types;
+exports.default = roles;

@@ -16,8 +16,11 @@ class RoleCtrl {
    * @return {Void} no return value
    */
   static createRole(req, res) {
+    const roleData = req.body;
+    roleData.title = roleData.title.toLowerCase();
+
     Db.Roles
-      .create({ title: req.body.title.toLowerCase() })
+      .create(roleData)
       .then(newRole => Status.postOk(res, 201, true, 'role', newRole))
       .catch(err => Status.postFail(res, 501, false, 'role', err));
   }
@@ -56,51 +59,6 @@ class RoleCtrl {
         Status.getOk(res, 200, true, 'role', role);
       })
       .catch(err => Status.getFail(res, 500, false, 'role', err));
-  }
-
-  /**
-   * editRole
-   * This method edits a role
-   * @param {Object} req - request object
-   * @param {Object} res - response object
-   * @return {Void} no return value
-   */
-  static editRole(req, res) {
-    Db.Roles
-      .findById(req.params.id)
-      .then((role) => {
-        if (!role) {
-          return Status.notFound(res, 404, false, 'role');
-        }
-
-        role.update(req.body)
-          .then((updatedRole) => {
-            if (updatedRole) {
-              return Status.putOk(res, 200, true, 'role', updatedRole);
-            }
-          })
-          .catch(err => Status.putFail(res, 501, false, 'role', err));
-      })
-      .catch(err => Status.putFail(res, 500, false, 'role', err));
-  }
-
-  /**
-   * deleteRole
-   * This method deletes a role from the db
-   * @param {Object} req - request object
-   * @param {Object} res - response object
-   * @return {Void} no return value
-   */
-  static deleteRole(req, res) {
-    Db.Roles.findById(req.params.id)
-      .then((role) => {
-        if (!role) {
-          return Status.notFound(res, 404, false, 'role');
-        }
-
-        role.destroy()
-          .then(() => Status.deleteOk(res, true, 'role'));
-      });
   }
 }
 

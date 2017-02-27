@@ -6,8 +6,8 @@ import Auth from '../middleware/Auth';
 const Router = express.Router();
 
 Router.route('/')
-  .get(Auth.verifyUser, Auth.verifyAdmin, UserCtrl.listUsers)
-  .post(UserCtrl.createUser);
+  .post(UserCtrl.createUser)
+  .get(Auth.verifyUser, Auth.verifyAdmin, UserCtrl.listUsers);
 
 // Single user
 Router.route('/:id')
@@ -19,9 +19,9 @@ Router.route('/:id')
 Router.get('/:id/documents', Auth.verifyUser, DocCtrl.getUserDocs);
 
 // Login
-Router.post('/login', UserCtrl.login);
+Router.post('/login', Auth.login);
 
 // Logout
-Router.post('/logout', Auth.verifyUser, Auth.logout, UserCtrl.logout);
+Router.post('/logout', Auth.verifyUser, Auth.logout);
 
 export default Router;

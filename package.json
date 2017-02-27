@@ -8,7 +8,7 @@
     "start": "gulp",
     "migrate-db": "sequelize db:migrate",
     "seed-db": "sequelize db:seed:all",
-    "test": "NODE_ENV=test istanbul cover _mocha -- es6/test/models/*.js --compilers js:babel-core/register",
+    "test": "NODE_ENV=test istanbul cover _mocha -- es6/test/api/user.test.js --compilers js:babel-core/register",
     "setup-db-test": "npm run create-db-test && npm run migrate-db-test",
     "migrate-db-test": "sequelize db:migrate --env test",
     "seed-db-test": "npm run seed-role && npm run seed-admin && npm run seed-type",

@@ -1,29 +1,29 @@
 import { expect } from 'chai';
-import Db from '../../models/Index';
-import seed from '../../db/seeds/Role';
+import { Roles } from '../../models/Index';
+import roleSeeds from '../../db/seeds/Roles';
 
-describe('#RoleTest', () => {
+describe('ROLE MODEL TEST', () => {
   // setup
-  before(() => Db.Roles.bulkCreate(seed));
+  beforeEach(() => Roles.bulkCreate(roleSeeds));
 
   // teardown
-  after(() => Db.Roles.sequelize.sync({ force: true }));
+  afterEach(() => Roles.sequelize.sync({ force: true }));
 
-  // create role
-  describe('#Create', () => {
+  // read a role
+  describe('#Read', () => {
     it('1. Admin role was successfully created', () => {
-      Db.Roles
+      Roles
         .findOne({ title: 'admin' })
         .then(role => expect(role.id).to.equal(1));
     });
     it('2. Other roles(consultant, facilitator, fellow) were successfully created', () => {
-      Db.Roles
+      Roles
         .findAll()
-        .then((roles) => {
-          expect(roles.length).to.equal(4);
-          expect(roles[1].title).to.equal('consultant');
-          expect(roles[2].title).to.equal('facilitator');
-          expect(roles[3].title).to.equal('fellow');
+        .then((allRoles) => {
+          expect(allRoles.length).to.equal(4);
+          expect(allRoles[1].title).to.equal('consultant');
+          expect(allRoles[2].title).to.equal('facilitator');
+          expect(allRoles[3].title).to.equal('fellow');
         });
     });
   });
@@ -38,7 +38,7 @@ describe('#RoleTest', () => {
         updatedAt: new Date()
       };
 
-      Db.Roles
+      Roles
       .create(role5)
       .then(role => expect(role).to.not.exist)
       .catch((err) => {
@@ -49,7 +49,7 @@ describe('#RoleTest', () => {
     it('2. Should not create a role with null data', () => {
       const role6 = {};
 
-      Db.Roles
+      Roles
       .create(role6)
       .then(role => expect(role).to.not.exist)
       .catch((err) => {
@@ -64,7 +64,7 @@ describe('#RoleTest', () => {
         updatedAt: new Date()
       };
 
-      Db.Roles
+      Roles
       .create(role7)
       .then()
       .catch((err) => {
@@ -79,7 +79,7 @@ describe('#RoleTest', () => {
       const adminRoleId = 1;
       const update = { title: 'superAdmin' };
 
-      Db.Roles
+      Roles
         .findById(adminRoleId)
         .then((role) => {
           role.update(update)
@@ -93,12 +93,12 @@ describe('#RoleTest', () => {
     it('1. Should delete role by id', () => {
       const consultantRoleId = 2;
 
-      Db.Roles
+      Roles
         .findById(consultantRoleId)
         .then((role) => {
           role.destroy()
             .then(() => {
-              Db.Roles
+              Roles
                 .findById(consultantRoleId)
                 .then()
                 .catch(err => expect(err.message).to.equal('relation "Roles" does not exist'));
