@@ -195,10 +195,6 @@ class DocCtrl extends Status {
       order: req.query.order || 'ASC'
     };
 
-    // if (Object.keys(req.query).length < 1) {
-    //   res.status(400).send({ msg: 'Search parameters cannot be empty' });
-    // }
-
     // if requester is an admin
     if (req.decoded.roleId === 1) {
       query.where = {
