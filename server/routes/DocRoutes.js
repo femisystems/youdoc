@@ -6,7 +6,7 @@ const Router = express.Router();
 
 // Documents
 Router.route('/')
-  .get(Auth.verifyUser, Auth.verifyAdmin, DocCtrl.listDocs)
+  .get(Auth.verifyUser, DocCtrl.listDocs)
   .post(Auth.verifyUser, DocCtrl.createDoc);
 
 // Search

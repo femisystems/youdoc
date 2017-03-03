@@ -32,8 +32,10 @@ class DocCtrl extends Status {
    * @return {Void} no return value
    */
   static listDocs(req, res) {
+    const query = DocCtrl.buildQuery(req, res);
+
     Db.Documents
-      .findAll()
+      .findAll(query)
       .then((documents) => {
         if (documents.length < 1) {
           return Status.notFound(res, 404, false, 'document');
@@ -186,7 +188,6 @@ class DocCtrl extends Status {
    */
   static buildQuery(req, res) {
     const query = {};
-    const queryStrings = req.query.q.toLowerCase().match(/\w+/g);
     const keys = {
       page: req.query.page || 1,
       limit: req.query.limit || 10,
@@ -194,9 +195,9 @@ class DocCtrl extends Status {
       order: req.query.order || 'ASC'
     };
 
-    if (Object.keys(req.query).length < 1) {
-      res.status(400).send({ msg: 'Search parameters cannot be empty' });
-    }
+    // if (Object.keys(req.query).length < 1) {
+    //   res.status(400).send({ msg: 'Search parameters cannot be empty' });
+    // }
 
     // if requester is an admin
     if (req.decoded.roleId === 1) {
