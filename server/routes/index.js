@@ -1,42 +1,24 @@
-'use strict';
+import RoleRoutes from './RoleRoutes';
+import UserRoutes from './UserRoutes';
+import TypeRoutes from './TypeRoutes';
+import DocRoutes from './DocRoutes';
 
-Object.defineProperty(exports, "__esModule", {
-  value: true
-});
 
-var _RoleRoutes = require('./RoleRoutes');
-
-var _RoleRoutes2 = _interopRequireDefault(_RoleRoutes);
-
-var _UserRoutes = require('./UserRoutes');
-
-var _UserRoutes2 = _interopRequireDefault(_UserRoutes);
-
-var _TypeRoutes = require('./TypeRoutes');
-
-var _TypeRoutes2 = _interopRequireDefault(_TypeRoutes);
-
-var _DocRoutes = require('./DocRoutes');
-
-var _DocRoutes2 = _interopRequireDefault(_DocRoutes);
-
-function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
-
-exports.default = function (app) {
+export default (app) => {
   // Home route
-  app.get('/', function (req, res) {
+  app.get('/', (req, res) => {
     res.send('Welcome!!');
   });
 
   // Use userRoutes
-  app.use('/users', _UserRoutes2.default);
+  app.use('/users', UserRoutes);
 
   // Use documentTypes
-  app.use('/types', _TypeRoutes2.default);
+  app.use('/types', TypeRoutes);
 
   // Use DocRoutes
-  app.use('/documents', _DocRoutes2.default);
+  app.use('/documents', DocRoutes);
 
   // Role routes
-  app.use('/roles', _RoleRoutes2.default);
+  app.use('/roles', RoleRoutes);
 };

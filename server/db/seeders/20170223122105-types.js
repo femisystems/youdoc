@@ -1,16 +1,40 @@
-'use strict';
-
-var _Types = require('../seeds/Types');
-
-var _Types2 = _interopRequireDefault(_Types);
-
-function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
-
 module.exports = {
-  up: function up(queryInterface) {
-    return queryInterface.bulkInsert('Types', _Types2.default, {});
+  up(queryInterface) {
+    return queryInterface.bulkInsert('Types', [
+      {
+        id: 1,
+        title: 'agenda',
+        ownerId: 1,
+        createdAt: new Date(),
+        updatedAt: new Date()
+      }, {
+        id: 2,
+        title: 'memo',
+        ownerId: 1,
+        createdAt: new Date(),
+        updatedAt: new Date()
+      }, {
+        id: 3,
+        title: 'note',
+        ownerId: 1,
+        createdAt: new Date(),
+        updatedAt: new Date()
+      }, {
+        id: 4,
+        title: 'proposal',
+        ownerId: 1,
+        createdAt: new Date(),
+        updatedAt: new Date()
+      }, {
+        id: 5,
+        title: 'report',
+        ownerId: 1,
+        createdAt: new Date(),
+        updatedAt: new Date()
+      }
+    ], {});
   },
-  down: function down(queryInterface) {
+  down(queryInterface) {
     return queryInterface.bulkDelete('Types', null, {});
   }
 };

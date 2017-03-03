@@ -1,20 +1,24 @@
-'use strict';
-
-module.exports = function (sequelize, DataTypes) {
-  var Documents = sequelize.define('Documents', {
+module.exports = (sequelize, DataTypes) => {
+  const Documents = sequelize.define('Documents', {
     title: {
       type: DataTypes.STRING,
       allowNull: false,
       validate: {
-        len: {
-          args: [1, 32],
-          msg: 'Document title should be 1 to 32 characters long.'
+        notEmpty: {
+          args: true,
+          msg: 'Document title cannot be empty'
         }
       }
     },
     content: {
       type: DataTypes.TEXT,
-      allowNull: false
+      allowNull: false,
+      validate: {
+        notEmpty: {
+          args: true,
+          msg: 'Content cannot be empty'
+        }
+      }
     },
     ownerId: {
       type: DataTypes.INTEGER,
@@ -33,15 +37,19 @@ module.exports = function (sequelize, DataTypes) {
       allowNull: false,
       defaultValue: 'public',
       validate: {
-        isIn: [['public', 'private', 'role']]
+        isIn: {
+          args: [['public', 'private', 'role']],
+          msg: 'access level can only be public, private or role'
+        }
       }
     }
   }, {
     classMethods: {
-      associate: function associate(models) {
+      associate(models) {
         Documents.belongsTo(models.Users, {
           foreignKey: 'ownerId',
-          onDelete: 'CASCADE'
+          onDelete: 'CASCADE',
+          onUpdate: 'CASCADE'
         });
         Documents.belongsTo(models.Types, {
           foreignKey: 'typeId'

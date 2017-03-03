@@ -1,134 +1,176 @@
-'use strict';
+import dotenv from 'dotenv';
+import bcrypt from 'bcrypt-node';
+import jwt from 'jsonwebtoken';
+import Db from '../models/Index';
+import AuthStatus from './AuthStatus';
+import Status from './ActionStatus';
 
-Object.defineProperty(exports, "__esModule", {
-  value: true
-});
-
-var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
-
-var _dotenv = require('dotenv');
-
-var _dotenv2 = _interopRequireDefault(_dotenv);
-
-var _jsonwebtoken = require('jsonwebtoken');
-
-var _jsonwebtoken2 = _interopRequireDefault(_jsonwebtoken);
-
-var _Index = require('../models/Index');
-
-var _Index2 = _interopRequireDefault(_Index);
-
-var _AuthStatus = require('./AuthStatus');
-
-var _AuthStatus2 = _interopRequireDefault(_AuthStatus);
-
-function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
-
-function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
-
-_dotenv2.default.config({ silent: true });
-var secret = process.env.SECRET || '$3CRET AG3NT';
+dotenv.config({ silent: true });
+const secret = process.env.SECRET || '$3CRET AG3NT';
 
 /**
  * Authentication
  * Authenticates and grants access based on usertype
  */
+class Authentication {
 
-var Authentication = function () {
-  function Authentication() {
-    _classCallCheck(this, Authentication);
+  /**
+   * verifyUser
+   * checks if the user is valid before authorising
+   * @param {Object} req - request object
+   * @param {Object} res - response object
+   * @param {Function} next - run next func
+   * @return {null} no return value
+   */
+  static verifyUser(req, res, next) {
+    const token = req.headers.authorization || req.headers['x-access-token'];
+
+    if (!token) return AuthStatus.unauthorized(res, 401, false);
+    jwt.verify(token, secret, (err, decoded) => {
+      if (err) {
+        return AuthStatus.authFail(res, 501, false, err);
+      }
+
+      req.decoded = decoded;
+      next();
+    });
   }
 
-  _createClass(Authentication, null, [{
-    key: 'verifyUser',
-
-
-    /**
-     * verifyUser
-     * checks if the user is valid before authorising
-     * @param {Object} req - request object
-     * @param {Object} res - response object
-     * @param {Function} next - run next func
-     * @return {null} no return value
-     */
-    value: function verifyUser(req, res, next) {
-      var token = req.headers.authorization || req.headers['x-access-token'];
-
-      if (!token) return _AuthStatus2.default.unauthorized(res, 401, false);
-      _jsonwebtoken2.default.verify(token, secret, function (err, decoded) {
-        if (err) {
-          return _AuthStatus2.default.authFail(res, 501, false, err);
-        }
-
-        req.decoded = decoded;
-        next();
-      });
-    }
-
-    /**
-     * verifyAdmin
-     * checks if the user is an admin authorising
-     * @param {Object} req - request object
-     * @param {Object} res - response object
-     * @param {Function} next - run next func
-     * @return {null} no return value
-     */
-
-  }, {
-    key: 'verifyAdmin',
-    value: function verifyAdmin(req, res, next) {
-      _Index2.default.Roles.findById(req.decoded.roleId).then(function (role) {
+  /**
+   * verifyAdmin
+   * checks if the user is an admin authorising
+   * @param {Object} req - request object
+   * @param {Object} res - response object
+   * @param {Function} next - run next func
+   * @return {null} no return value
+   */
+  static verifyAdmin(req, res, next) {
+    Db.Roles
+      .findById(req.decoded.roleId)
+      .then((role) => {
         if (role.dataValues.title !== 'admin') {
-          return _AuthStatus2.default.forbid(res, 403, false);
+          return AuthStatus.forbid(res, 403, false);
         }
         next();
       });
+  }
+
+  /**
+   * checkUserRouteAccess
+   * checks if the user is authorised to access user route
+   * @param {Object} req - request object
+   * @param {Object} res - response object
+   * @param {Function} next - run next func
+   * @return {Null|Object} response object | no return value
+   */
+  static checkUserRouteAccess(req, res, next) {
+    if ((String(req.decoded.userId) === String(req.params.id)) ||
+      String(req.decoded.roleId) === '1') {
+      next();
+    } else {
+      return AuthStatus.forbid(res, 403, false);
+    }
+  }
+
+  /**
+   * checkDocReadAccess
+   * checks if the user is authorised to read doc route
+   * @param {Object} req - request object
+   * @param {Object} res - response object
+   * @param {Function} next - run next func
+   * @return {Null|Object} response object | no return value
+   */
+  static checkDocReadAccess(req, res, next) {
+    Db.Documents
+      .findById(req.params.id)
+      .then((document) => {
+        if (document !== null) {
+          if ((document.ownerId === req.decoded.userId) ||
+            (req.decoded.roleId === 1) ||
+            ((req.decoded.roleId === document.ownerRoleId) && (document.accessLevel === 'role')) ||
+            (document.accessLevel === 'public')
+            ) {
+            return next();
+          }
+          AuthStatus.forbid(res, 403, false);
+        }
+        Status.notFound(res, 404, false, 'document');
+      })
+      .catch(err => Status.getFail(res, 500, false, 'document', err));
+  }
+
+  /**
+   * checkDocWriteAccess
+   * checks if the user is authorised to make changes to doc
+   * @param {Object} req - request object
+   * @param {Object} res - response object
+   * @param {Function} next - run next func
+   * @return {Null|Object} response object | no return value
+   */
+  static checkDocWriteAccess(req, res, next) {
+    Db.Documents
+      .findById(req.params.id)
+      .then((document) => {
+        if (document !== null) {
+          if ((document.ownerId === req.decoded.userId) || (req.decoded.roleId === 1)) {
+            next();
+          } else {
+            AuthStatus.forbid(res, 403, false);
+          }
+        } else {
+          Status.notFound(res, 404, false, 'document');
+        }
+      })
+      .catch(err => Status.getFail(res, 500, false, 'document', err));
+  }
+
+  /**
+   * login
+   * This method logs a user into the system
+   * @param {Object} req - request object
+   * @param {Object} res - response object
+   * @return {Void} no return value
+   */
+  static login(req, res) {
+    let query = { where: { username: req.body.userIdentity } };
+    if (/^[a-z0-9_.]+@[a-z]+\.[a-z]+$/i.test(req.body.userIdentity)) {
+      query = { where: { email: req.body.userIdentity } };
     }
 
-    /**
-     * checkUserRouteAccess
-     * checks if the user is authorised
-     * @param {Object} req - request object
-     * @param {Object} res - response object
-     * @param {Function} next - run next func
-     * @return {Null|Object} response object | no return value
-     */
+    Db.Users.findOne(query)
+      .then((user) => {
+        if (user && bcrypt.compareSync(req.body.password, user.password)) {
+          const payload = {
+            userId: user.dataValues.id,
+            username: user.dataValues.username,
+            roleId: user.dataValues.roleId
+          };
 
-  }, {
-    key: 'checkUserRouteAccess',
-    value: function checkUserRouteAccess(req, res, next) {
-      if (String(req.decoded.userId) === req.params.id || req.decoded.roleId === 1) {
-        next();
-      } else {
-        return _AuthStatus2.default.forbid(res, 403, false);
-      }
-    }
+          const token = jwt.sign(payload, secret, { expiresIn: '24h' });
+          const credential = { token, expiresIn: '24 hours' };
+          return AuthStatus.loginOk(res, 200, true, credential);
+        }
+        AuthStatus.ghostLogin(res, 400, false);
+      })
+      .catch(err => AuthStatus.loginFail(res, 500, false, err));
+  }
 
-    /**
-     * checkUserRouteAccess
-     * checks if the user is an admin authorising
-     * @param {Object} req - request object
-     * @param {Object} res - response object
-     * @param {Function} next - run next func
-     * @return {Null|Object} response object | no return value
-     */
+  /**
+   * checkUserRouteAccess
+   * checks if the user is an admin authorising
+   * @param {Object} req - request object
+   * @param {Object} res - response object
+   * @param {Function} next - run next func
+   * @return {Null|Object} response object | no return value
+   */
+  static logout(req, res) {
+    const token = req.headers.authorization || req.headers['x-access-token'];
+    const decoded = req.decoded;
+    if (token) delete req.headers.authorization;
+    if (req.headers['x-access-token']) delete req.headers['x-access-token'];
+    if (decoded) delete req.decoded;
+    AuthStatus.logoutOk(res, true);
+  }
+}
 
-  }, {
-    key: 'logout',
-    value: function logout(req, res, next) {
-      var token = req.headers.authorization || req.headers['x-access-token'];
-      var decoded = req.decoded;
-
-      if (token && decoded) {
-        delete req.headers.authorization;
-        delete req.headers['x-access-token'];
-        delete req.decoded;
-        next();
-      }
-    }
-  }]);
-
-  return Authentication;
-}();
-
-exports.default = Authentication;
+export default Authentication;

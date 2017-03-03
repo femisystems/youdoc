@@ -1,41 +1,27 @@
-'use strict';
+import express from 'express';
+import UserCtrl from '../controllers/UserCtrl';
+import DocCtrl from '../controllers/DocCtrl';
+import Auth from '../middleware/Auth';
 
-Object.defineProperty(exports, "__esModule", {
-  value: true
-});
+const Router = express.Router();
 
-var _express = require('express');
-
-var _express2 = _interopRequireDefault(_express);
-
-var _UserCtrl = require('../controllers/UserCtrl');
-
-var _UserCtrl2 = _interopRequireDefault(_UserCtrl);
-
-var _DocCtrl = require('../controllers/DocCtrl');
-
-var _DocCtrl2 = _interopRequireDefault(_DocCtrl);
-
-var _Auth = require('../middleware/Auth');
-
-var _Auth2 = _interopRequireDefault(_Auth);
-
-function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
-
-var Router = _express2.default.Router();
-
-Router.route('/').get(_Auth2.default.verifyUser, _Auth2.default.verifyAdmin, _UserCtrl2.default.listUsers).post(_UserCtrl2.default.createUser);
+Router.route('/')
+  .post(UserCtrl.createUser)
+  .get(Auth.verifyUser, Auth.verifyAdmin, UserCtrl.listUsers);
 
 // Single user
-Router.route('/:id').get(_Auth2.default.verifyUser, _Auth2.default.checkUserRouteAccess, _UserCtrl2.default.getUser).put(_Auth2.default.verifyUser, _Auth2.default.checkUserRouteAccess, _UserCtrl2.default.updateUser).delete(_Auth2.default.verifyUser, _Auth2.default.verifyAdmin, _UserCtrl2.default.deleteUser);
+Router.route('/:id')
+  .get(Auth.verifyUser, Auth.checkUserRouteAccess, UserCtrl.getUser)
+  .put(Auth.verifyUser, Auth.checkUserRouteAccess, UserCtrl.updateUser)
+  .delete(Auth.verifyUser, Auth.verifyAdmin, UserCtrl.deleteUser);
 
 // All documents created by a single user
-Router.get('/:id/documents', _Auth2.default.verifyUser, _DocCtrl2.default.getUserDocs);
+Router.get('/:id/documents', Auth.verifyUser, DocCtrl.getUserDocs);
 
 // Login
-Router.post('/login', _UserCtrl2.default.login);
+Router.post('/login', Auth.login);
 
 // Logout
-Router.post('/logout', _Auth2.default.verifyUser, _Auth2.default.logout, _UserCtrl2.default.logout);
+Router.post('/logout', Auth.verifyUser, Auth.logout);
 
-exports.default = Router;
+export default Router;

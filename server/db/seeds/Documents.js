@@ -1,134 +1,173 @@
-'use strict';
+import faker from 'faker';
 
-Object.defineProperty(exports, "__esModule", {
-  value: true
-});
+const validDocs = [
+  {
+    id: 1,
+    title: 'welcome',
+    content: faker.lorem.paragraph(),
+    accessLevel: 'public',
+    createdAt: new Date(),
+    updatedAt: new Date(),
+    ownerId: 1,
+    typeId: 1,
+    ownerRoleId: 1
+  }, {
+    id: 2,
+    title: faker.company.catchPhrase(),
+    content: faker.lorem.paragraph(),
+    accessLevel: 'private',
+    createdAt: new Date(),
+    updatedAt: new Date(),
+    ownerId: 1,
+    typeId: 2,
+    ownerRoleId: 1
+  },
 
-var _faker = require('faker');
+  // consultant 1
+  {
+    id: 3,
+    title: faker.company.catchPhrase(),
+    content: faker.lorem.paragraph(),
+    accessLevel: 'public',
+    createdAt: new Date(),
+    updatedAt: new Date(),
+    ownerId: 1,
+    typeId: 3,
+    ownerRoleId: 2
+  },
 
-var _faker2 = _interopRequireDefault(_faker);
+  // facilitator 2
+  {
+    id: 4,
+    title: faker.company.catchPhrase(),
+    content: faker.lorem.paragraph(),
+    accessLevel: 'private',
+    createdAt: new Date(),
+    updatedAt: new Date(),
+    ownerId: 3,
+    typeId: 4,
+    ownerRoleId: 3
+  }, {
+    id: 5,
+    title: faker.company.catchPhrase(),
+    content: faker.lorem.paragraph(),
+    accessLevel: 'role',
+    createdAt: new Date(),
+    updatedAt: new Date(),
+    ownerId: 4,
+    typeId: 1,
+    ownerRoleId: 3
+  },
 
-function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+  // fellow 3
+  {
+    id: 6,
+    title: faker.company.catchPhrase(),
+    content: faker.lorem.paragraph(),
+    accessLevel: 'public',
+    createdAt: new Date(),
+    updatedAt: new Date(),
+    ownerId: 4,
+    typeId: 2,
+    ownerRoleId: 4
+  }, {
+    id: 7,
+    title: faker.company.catchPhrase(),
+    content: faker.lorem.paragraph(),
+    accessLevel: 'private',
+    createdAt: new Date(),
+    updatedAt: new Date(),
+    ownerId: 4,
+    typeId: 3,
+    ownerRoleId: 4
+  }, {
+    id: 8,
+    title: faker.company.catchPhrase(),
+    content: faker.lorem.paragraph(),
+    accessLevel: 'role',
+    createdAt: new Date(),
+    updatedAt: new Date(),
+    ownerId: 4,
+    typeId: 4,
+    ownerRoleId: 4
+  }, {
+    id: 9,
+    title: faker.company.catchPhrase(),
+    content: faker.lorem.paragraph(),
+    accessLevel: 'public',
+    createdAt: new Date(),
+    updatedAt: new Date(),
+    ownerId: 5,
+    typeId: 1,
+    ownerRoleId: 4
+  }, {
+    id: 10,
+    title: faker.company.catchPhrase(),
+    content: faker.lorem.paragraph(),
+    accessLevel: 'private',
+    createdAt: new Date(),
+    updatedAt: new Date(),
+    ownerId: 5,
+    typeId: 2,
+    ownerRoleId: 4
+  }, {
+    id: 11,
+    title: faker.company.catchPhrase(),
+    content: faker.lorem.paragraph(),
+    accessLevel: 'role',
+    createdAt: new Date(),
+    updatedAt: new Date(),
+    ownerId: 5,
+    typeId: 3,
+    ownerRoleId: 4
+  }
+];
 
-var documents = [{
-  id: 1,
-  title: _faker2.default.company.catchPhrase(),
-  content: _faker2.default.lorem.paragraph(),
-  accessLevel: 'public',
-  createdAt: new Date(),
-  updatedAt: new Date(),
-  ownerId: 1,
-  typeId: Math.floor(Math.random() * 6),
-  ownerRoleId: 1
-},
+const invalidDocs = [
+  {
+    id: 14,
+    title: '',
+    content: faker.lorem.paragraph(),
+    accessLevel: 'public',
+    createdAt: new Date(),
+    updatedAt: new Date(),
+    ownerId: 1,
+    typeId: 1,
+    ownerRoleId: 1
+  }, {
+    id: 14,
+    title: faker.company.catchPhrase(),
+    content: '',
+    accessLevel: 'public',
+    createdAt: new Date(),
+    updatedAt: new Date(),
+    ownerId: 1,
+    typeId: 2,
+    ownerRoleId: 1
+  }, {
+    id: 14,
+    title: faker.company.catchPhrase(),
+    content: faker.lorem.paragraph(),
+    accessLevel: '',
+    createdAt: new Date(),
+    updatedAt: new Date(),
+    ownerId: 1,
+    typeId: 2,
+    ownerRoleId: 1
+  }, {
+    id: 14,
+    title: faker.company.catchPhrase(),
+    content: faker.lorem.paragraph(),
+    accessLevel: 'public',
+    createdAt: new Date(),
+    updatedAt: new Date(),
+    ownerId: 1,
+    typeId: null,
+    ownerRoleId: 1
+  }
+];
 
-// consultant 1
-{
-  id: 2,
-  title: _faker2.default.company.catchPhrase(),
-  content: _faker2.default.lorem.paragraph(),
-  accessLevel: 'public',
-  createdAt: new Date(),
-  updatedAt: new Date(),
-  ownerId: 2,
-  typeId: Math.floor(Math.random() * 6),
-  ownerRoleId: 2
-},
-
-// facilitator 2
-{
-  id: 3,
-  title: _faker2.default.company.catchPhrase(),
-  content: _faker2.default.lorem.paragraph(),
-  accessLevel: 'public',
-  createdAt: new Date(),
-  updatedAt: new Date(),
-  ownerId: 3,
-  typeId: Math.floor(Math.random() * 6),
-  ownerRoleId: 3
-}, {
-  id: 4,
-  title: _faker2.default.company.catchPhrase(),
-  content: _faker2.default.lorem.paragraph(),
-  accessLevel: 'role',
-  createdAt: new Date(),
-  updatedAt: new Date(),
-  ownerId: 4,
-  typeId: Math.floor(Math.random() * 6),
-  ownerRoleId: 3
-}, {
-  id: 5,
-  title: _faker2.default.company.catchPhrase(),
-  content: _faker2.default.lorem.paragraph(),
-  accessLevel: 'private',
-  createdAt: new Date(),
-  updatedAt: new Date(),
-  ownerId: 4,
-  typeId: Math.floor(Math.random() * 6),
-  ownerRoleId: 3
-},
-
-// fellow 3
-{
-  id: 6,
-  title: _faker2.default.company.catchPhrase(),
-  content: _faker2.default.lorem.paragraph(),
-  accessLevel: 'public',
-  createdAt: new Date(),
-  updatedAt: new Date(),
-  ownerId: 5,
-  typeId: Math.floor(Math.random() * 6),
-  ownerRoleId: 4
-}, {
-  id: 7,
-  title: _faker2.default.company.catchPhrase(),
-  content: _faker2.default.lorem.paragraph(),
-  accessLevel: 'private',
-  createdAt: new Date(),
-  updatedAt: new Date(),
-  ownerId: 5,
-  typeId: Math.floor(Math.random() * 6),
-  ownerRoleId: 4
-}, {
-  id: 8,
-  title: _faker2.default.company.catchPhrase(),
-  content: _faker2.default.lorem.paragraph(),
-  accessLevel: 'role',
-  createdAt: new Date(),
-  updatedAt: new Date(),
-  ownerId: 6,
-  typeId: Math.floor(Math.random() * 6),
-  ownerRoleId: 4
-}, {
-  id: 9,
-  title: _faker2.default.company.catchPhrase(),
-  content: _faker2.default.lorem.paragraph(),
-  accessLevel: 'public',
-  createdAt: new Date(),
-  updatedAt: new Date(),
-  ownerId: 6,
-  typeId: Math.floor(Math.random() * 6),
-  ownerRoleId: 4
-}, {
-  id: 10,
-  title: _faker2.default.company.catchPhrase(),
-  content: _faker2.default.lorem.paragraph(),
-  accessLevel: 'private',
-  createdAt: new Date(),
-  updatedAt: new Date(),
-  ownerId: 7,
-  typeId: Math.floor(Math.random() * 6),
-  ownerRoleId: 4
-}, {
-  id: 11,
-  title: _faker2.default.company.catchPhrase(),
-  content: _faker2.default.lorem.paragraph(),
-  accessLevel: 'role',
-  createdAt: new Date(),
-  updatedAt: new Date(),
-  ownerId: 7,
-  typeId: Math.floor(Math.random() * 6),
-  ownerRoleId: 4
-}];
-
-exports.default = documents;
+export default {
+  validDocs,
+  invalidDocs
+};

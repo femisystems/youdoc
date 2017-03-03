@@ -1,16 +1,11 @@
-'use strict';
+const bcrypt = require('bcrypt-node');
 
-var bcrypt = require('bcrypt-node');
-
-module.exports = function (sequelize, DataTypes) {
-  var Users = sequelize.define('Users', {
+module.exports = (sequelize, DataTypes) => {
+  const Users = sequelize.define('Users', {
     firstName: {
       type: DataTypes.STRING,
       allowNull: false,
       validate: {
-        isAlpha: {
-          msg: 'Firstname must be alphabets only'
-        },
         len: {
           args: [2, 15],
           msg: 'Firstname must be 2 to 15 characters long.'
@@ -21,9 +16,6 @@ module.exports = function (sequelize, DataTypes) {
       type: DataTypes.STRING,
       allowNull: false,
       validate: {
-        isAlpha: {
-          msg: 'Lastname must be alphabets only'
-        },
         len: {
           args: [2, 15],
           msg: 'Lastname must be 2 to 15 characters long.'
@@ -43,16 +35,7 @@ module.exports = function (sequelize, DataTypes) {
     username: {
       type: DataTypes.STRING,
       allowNull: false,
-      unique: true,
-      validate: {
-        isAlpha: {
-          msg: 'Firstname must be alphabets only'
-        },
-        len: {
-          args: [2, 10],
-          msg: 'Username should be 6 to 10 characters long.'
-        }
-      }
+      unique: true
     },
     password: {
       type: DataTypes.STRING,
@@ -71,7 +54,7 @@ module.exports = function (sequelize, DataTypes) {
     }
   }, {
     classMethods: {
-      associate: function associate(models) {
+      associate(models) {
         Users.hasMany(models.Documents, {
           foreignKey: 'ownerId',
           as: 'documents'
@@ -83,13 +66,13 @@ module.exports = function (sequelize, DataTypes) {
         Users.belongsTo(models.Roles, {
           foreignKey: 'roleId'
         });
-      }
+      },
     },
     hooks: {
-      beforeCreate: function beforeCreate(user) {
+      beforeCreate(user) {
         user.password = bcrypt.hashSync(user.password, bcrypt.genSaltSync());
       },
-      beforeUpdate: function beforeUpdate(user) {
+      beforeUpdate(user) {
         user.password = bcrypt.hashSync(user.password, bcrypt.genSaltSync());
       }
     }

@@ -1,83 +1,112 @@
-'use strict';
+import faker from 'faker';
 
-Object.defineProperty(exports, "__esModule", {
-  value: true
-});
+const validUsers = [
+  // admin user
+  {
+    id: 1,
+    firstName: faker.name.firstName(),
+    lastName: faker.name.lastName(),
+    email: 'admin@youdoc.com',
+    username: 'admin',
+    password: 'password',
+    roleId: 1,
+    createdAt: new Date(),
+    updatedAt: new Date()
+  },
 
-var _faker = require('faker');
+  // consultant 1
+  {
+    id: 2,
+    firstName: faker.name.firstName(),
+    lastName: faker.name.lastName(),
+    email: 'uniqueuser@youdoc.com',
+    username: 'uniqueuser',
+    password: 'password',
+    roleId: 2,
+    createdAt: new Date(),
+    updatedAt: new Date()
+  },
 
-var _faker2 = _interopRequireDefault(_faker);
+  // facilitator 2
+  {
+    id: 3,
+    firstName: faker.name.firstName(),
+    lastName: faker.name.lastName(),
+    email: faker.internet.email(),
+    username: faker.internet.userName(),
+    password: 'password',
+    roleId: 3,
+    createdAt: new Date(),
+    updatedAt: new Date()
+  },
 
-function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+  // fellow 3
+  {
+    id: 4,
+    firstName: faker.name.firstName(),
+    lastName: faker.name.lastName(),
+    email: faker.internet.email(),
+    username: faker.internet.userName(),
+    password: 'password',
+    roleId: 4,
+    createdAt: new Date(),
+    updatedAt: new Date()
+  }, {
+    id: 5,
+    firstName: faker.name.firstName(),
+    lastName: faker.name.lastName(),
+    email: faker.internet.email(),
+    username: faker.internet.userName(),
+    password: 'password',
+    roleId: 4,
+    createdAt: new Date(),
+    updatedAt: new Date()
+  }
+];
 
-var users = [
-// consultant 1
-{
-  id: 2,
-  firstName: _faker2.default.name.firstName(),
-  lastName: _faker2.default.name.lastName(),
-  email: 'uniqueuser@youdoc.com',
-  username: 'uniqueuser',
-  password: 'password',
-  roleId: 2,
-  createdAt: new Date(),
-  updatedAt: new Date()
-},
+const invalidUsers = [
+  // null constraint
+  {
+    id: 6,
+    firstName: '',
+    lastName: faker.name.lastName(),
+    email: faker.internet.email(),
+    username: faker.internet.userName(),
+    password: 'password',
+    roleId: 4,
+    createdAt: new Date(),
+    updatedAt: new Date()
+  },
 
-// facilitator 2
-{
-  id: 3,
-  firstName: _faker2.default.name.firstName(),
-  lastName: _faker2.default.name.lastName(),
-  email: _faker2.default.internet.email(),
-  username: _faker2.default.internet.userName(),
-  password: 'password',
-  roleId: 3,
-  createdAt: new Date(),
-  updatedAt: new Date()
-}, {
-  id: 4,
-  firstName: _faker2.default.name.firstName(),
-  lastName: _faker2.default.name.lastName(),
-  email: _faker2.default.internet.email(),
-  username: _faker2.default.internet.userName(),
-  password: 'password',
-  roleId: 3,
-  createdAt: new Date(),
-  updatedAt: new Date()
-},
+  // existing email
+  {
+    id: 6,
+    firstName: faker.name.firstName(),
+    lastName: faker.name.lastName(),
+    email: 'admin@youdoc.com',
+    username: faker.internet.userName(),
+    password: 'password',
+    roleId: 4,
+    createdAt: new Date(),
+    updatedAt: new Date()
+  },
 
-// fellow 3
-{
-  id: 5,
-  firstName: _faker2.default.name.firstName(),
-  lastName: _faker2.default.name.lastName(),
-  email: _faker2.default.internet.email(),
-  username: _faker2.default.internet.userName(),
-  password: 'password',
-  roleId: 4,
-  createdAt: new Date(),
-  updatedAt: new Date()
-}, {
-  id: 6,
-  firstName: _faker2.default.name.firstName(),
-  lastName: _faker2.default.name.lastName(),
-  email: _faker2.default.internet.email(),
-  username: _faker2.default.internet.userName(),
-  password: 'password',
-  roleId: 4,
-  createdAt: new Date(),
-  updatedAt: new Date()
-}, {
-  id: 7,
-  firstName: _faker2.default.name.firstName(),
-  lastName: _faker2.default.name.lastName(),
-  email: _faker2.default.internet.email(),
-  username: _faker2.default.internet.userName(),
-  password: 'password',
-  roleId: 4,
-  createdAt: new Date(),
-  updatedAt: new Date()
-}];
+  // existing username
+  {
+    id: 6,
+    firstName: faker.name.firstName(),
+    lastName: faker.name.lastName(),
+    email: faker.internet.email(),
+    username: 'admin',
+    password: 'password',
+    roleId: 4,
+    createdAt: new Date(),
+    updatedAt: new Date()
+  }
 
-exports.default = users;
+];
+
+export default {
+  validUsers,
+  invalidUsers
+};
