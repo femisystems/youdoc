@@ -1,5 +1,5 @@
 import express from 'express';
-import TypeCtrl from '../controllers/TypeCtrl';
+import TypeCtrl from '../controllers/Type';
 import Auth from '../middleware/Auth';
 
 const Router = express.Router();

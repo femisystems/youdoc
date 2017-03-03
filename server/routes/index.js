@@ -1,7 +1,7 @@
-import RoleRoutes from './RoleRoutes';
-import UserRoutes from './UserRoutes';
-import TypeRoutes from './TypeRoutes';
-import DocRoutes from './DocRoutes';
+import RoleRoutes from './Role';
+import UserRoutes from './User';
+import TypeRoutes from './Type';
+import DocRoutes from './Document';
 
 
 export default (app) => {
