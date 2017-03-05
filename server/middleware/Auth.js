@@ -29,7 +29,7 @@ class Authentication {
     if (!token) return AuthStatus.unauthorized(res, 401, false);
     jwt.verify(token, secret, (err, decoded) => {
       if (err) {
-        return AuthStatus.authFail(res, 501, false, err);
+        return AuthStatus.authFail(res, 500, false, err);
       }
 
       req.decoded = decoded;
@@ -47,14 +47,10 @@ class Authentication {
    */
   static verifyAdmin(req, res, next) {
     if (req.user) return next();
-    Db.Roles
-      .findOne({ where: { title: req.decoded.role } })
-      .then((role) => {
-        if (role.dataValues.title !== 'admin') {
-          return AuthStatus.forbid(res, 403, false);
-        }
-        next();
-      });
+    if (!Utils.isAdmin(req)) {
+      return AuthStatus.forbid(res, 403, false);
+    }
+    next();
   }
 
   /**

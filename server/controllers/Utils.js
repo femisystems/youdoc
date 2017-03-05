@@ -22,6 +22,7 @@ class Utils {
    * builds query for user search based on access levels
    * @param {Object} req - request object
    * @param {Object} res - request object
+   * @param {Function} next - run next func
    * @return {Bool} true/false
    */
   static buildUserSearchQuery(req, res, next) {
@@ -187,21 +188,22 @@ class Utils {
           {
             title: {
               $ilike: {
-                $any: req.query.q.split(/\s+/g)
+                $any: req.query.q.split(' ')
               }
             }
           },
           {
             content: {
               $ilike: {
-                $any: req.query.q.split(/\s+/g)
+                $any: req.query.q.split(' ')
               }
             }
           }
         ]
       });
+      // console.log('here is the query:', req.query.q.split(' '));
     }
-
+    
     // if limit exists, append to base query or use default limit
     if (keys.limit && keys.limit > 0) {
       query.limit = keys.limit;

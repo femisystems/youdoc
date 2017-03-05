@@ -20,7 +20,7 @@ class AuthStatus {
   }
 
   /**
-   * authFail(501)
+   * authFail(500)
    * @param {Object} res - response object
    * @param {Number} code - status code
    * @param {Boolean} status - true/false
@@ -67,7 +67,7 @@ class AuthStatus {
   }
 
   /**
-   * loginFail(501)
+   * loginFail(500)
    * @param {Object} res - response object
    * @param {Number} code - status code
    * @param {Boolean} status - true/false

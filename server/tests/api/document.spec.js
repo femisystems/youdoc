@@ -96,7 +96,8 @@ describe('DOCUMENT API', () => {
           .set('authorization', admin.token)
           .send(newDoc)
           .end((err, res) => {
-            expect(res.statusCode).to.equal(501);
+            console.log(res);
+            expect(res.statusCode).to.equal(500);
             expect(res.body.success).to.equal(false);
             expect(res.body.error.message).to.equal('Validation error: Document title cannot be empty');
             done();
@@ -111,7 +112,7 @@ describe('DOCUMENT API', () => {
           .set('authorization', admin.token)
           .send(newDoc)
           .end((err, res) => {
-            expect(res.statusCode).to.equal(501);
+            expect(res.statusCode).to.equal(500);
             expect(res.body.success).to.equal(false);
             expect(res.body.error.message).to.equal('Validation error: Content cannot be empty');
             done();
@@ -126,7 +127,7 @@ describe('DOCUMENT API', () => {
           .set('authorization', admin.token)
           .send(newDoc)
           .end((err, res) => {
-            expect(res.statusCode).to.equal(501);
+            expect(res.statusCode).to.equal(500);
             expect(res.body.success).to.equal(false);
             expect(res.body.error.message).to.equal('Validation error: access level can only be public, private or role');
             done();
@@ -141,7 +142,7 @@ describe('DOCUMENT API', () => {
           .set('authorization', admin.token)
           .send(newDoc)
           .end((err, res) => {
-            expect(res.statusCode).to.equal(501);
+            expect(res.statusCode).to.equal(500);
             expect(res.body.success).to.equal(false);
             expect(res.body.msg).to.equal('Oops! Unable to create document(s). Please try again.');
             done();

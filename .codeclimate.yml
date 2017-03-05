@@ -2,6 +2,9 @@ engines:
   eslint:
     enabled: true
     channel: "eslint-3"
+    checks:
+      import/no-unresolved:
+        enabled: false
   duplication:
     enabled: false
     config:
@@ -9,6 +12,6 @@ engines:
       - javascript
 ratings:
   paths:
-  - "server/**/**.*"
+  - "**.js"
 exclude_paths:
-- server/test/
+- server/tests/**/*

@@ -88,7 +88,7 @@ describe('USER API', () => {
         .post('/users')
         .send(invalidUsers[0])
         .end((err, res) => {
-          expect(res.statusCode).to.equal(501);
+          expect(res.statusCode).to.equal(500);
           expect(res.body.success).to.equal(false);
           expect(res.body.error.errors[0].message).to.equal('Firstname must be 2 to 15 characters long.');
           done();
@@ -99,7 +99,7 @@ describe('USER API', () => {
         .post('/users')
         .send(invalidUsers[1])
         .end((err, res) => {
-          expect(res.statusCode).to.equal(501);
+          expect(res.statusCode).to.equal(500);
           expect(res.body.success).to.equal(false);
           expect(res.body.error.parent.detail).to.equal('Key (email)=(admin@youdoc.com) already exists.');
           done();
@@ -110,7 +110,7 @@ describe('USER API', () => {
         .post('/users')
         .send(invalidUsers[2])
         .end((err, res) => {
-          expect(res.statusCode).to.equal(501);
+          expect(res.statusCode).to.equal(500);
           expect(res.body.success).to.equal(false);
           expect(res.body.error.parent.detail).to.equal('Key (username)=(admin) already exists.');
           done();

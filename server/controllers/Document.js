@@ -19,7 +19,7 @@ class DocCtrl extends Status {
         Status.postOk(res, 201, true, 'document', document);
       })
       .catch((err) => {
-        Status.postFail(res, 501, false, 'document', err);
+        Status.postFail(res, 500, false, 'document', err);
       });
   }
 

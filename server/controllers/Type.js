@@ -66,21 +66,18 @@ class TypeCtrl {
    * @return {Void} no return value
    */
   static updateType(req, res) {
-    const query = req.params.id;
+    const query = { where: { id: req.params.id } };
 
     Db.Types.findOne(query)
       .then((type) => {
-        if (type) {
-          type.update(req.body)
-            .then((updatedType) => {
-              if (updatedType) {
-                return Status.putOk(res, 200, true, 'type', updatedType);
-              }
-            })
-            .catch(err => Status.putFail(res, 500, false, 'type', err));
-        } else {
-          Status.notFound(res, 404, false, 'type');
-        }
+        if (!type) return Status.notFound(res, 404, false, 'type');
+        type.update(req.body)
+          .then((updatedType) => {
+            if (updatedType) {
+              Status.putOk(res, 200, true, 'type', updatedType);
+            }
+          })
+          .catch(err => Status.putFail(res, 500, false, 'type', err));
       })
       .catch(err => Status.getFail(res, 500, false, 'type', err));
   }

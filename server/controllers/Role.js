@@ -20,7 +20,7 @@ class RoleCtrl {
     Db.Roles
       .create(req.body)
       .then(newRole => Status.postOk(res, 201, true, 'role', newRole))
-      .catch(err => Status.postFail(res, 501, false, 'role', err));
+      .catch(err => Status.postFail(res, 500, false, 'role', err));
   }
 
   /**
@@ -84,7 +84,7 @@ class RoleCtrl {
               Status.putOk(res, 200, true, 'role', updatedUser);
             }
           })
-          .catch(err => Status.putFail(res, 501, false, 'role', err));
+          .catch(err => Status.putFail(res, 500, false, 'role', err));
       })
      .catch(err => Status.getFail(res, 500, false, 'role', err));
   }

@@ -188,7 +188,7 @@ describe('TYPE API', () => {
           });
       });
       it('2. Should not update a non-existing type', (done) => {
-        const id = 7;
+        const id = 10;
         const update = { title: 'New title' };
 
         request

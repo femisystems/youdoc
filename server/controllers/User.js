@@ -33,7 +33,7 @@ class UserCtrl {
         const credential = { token, expiresIn: '24 hours' };
         Status.postOk(res, 201, true, 'user', { credential, newUser });
       })
-      .catch(err => Status.postFail(res, 501, false, 'user', err));
+      .catch(err => Status.postFail(res, 500, false, 'user', err));
   }
 
   /**
@@ -84,7 +84,7 @@ class UserCtrl {
       .then((updatedUser) => {
         Status.putOk(res, 200, true, 'user', updatedUser);
       })
-      .catch(err => Status.putFail(res, 501, false, 'user', err));
+      .catch(err => Status.putFail(res, 500, false, 'user', err));
   }
 
   /**

@@ -17,11 +17,11 @@
   },
   "production": {
     "use_env_constiable": "DATABASE_URL",
-    "dialect":"postgres",
-    "ssl":true,
+    "dialect": "postgres",
+    "ssl": true,
     "dialectOptions":{
       "ssl": {
-        "require":true
+        "require": false
       }
     }
   }

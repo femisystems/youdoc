@@ -98,7 +98,7 @@ describe('ROLE API', () => {
           .set('authorization', admin.token)
           .send(invalidRoles[1])
           .end((err, res) => {
-            expect(res.statusCode).to.equal(501);
+            expect(res.statusCode).to.equal(500);
             expect(res.body.success).to.equal(false);
             expect(res.body.error.errors[0].message).to.equal('Title cannot be empty');
             done();
@@ -110,7 +110,7 @@ describe('ROLE API', () => {
           .set('authorization', admin.token)
           .send(invalidRoles[0])
           .end((err, res) => {
-            expect(res.statusCode).to.equal(501);
+            expect(res.statusCode).to.equal(500);
             expect(res.body.success).to.equal(false);
             expect(res.body.error.errors[0].message).to.equal('title must be unique');
             done();
