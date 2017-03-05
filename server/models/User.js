@@ -1,6 +1,6 @@
-const bcrypt = require('bcrypt-node');
+import bcrypt from 'bcrypt-node';
 
-module.exports = (sequelize, DataTypes) => {
+const userModel = (sequelize, DataTypes) => {
   const Users = sequelize.define('Users', {
     firstName: {
       type: DataTypes.STRING,
@@ -47,10 +47,10 @@ module.exports = (sequelize, DataTypes) => {
         }
       }
     },
-    roleId: {
-      type: DataTypes.INTEGER,
+    role: {
+      type: DataTypes.STRING,
       allowNull: false,
-      default: 2
+      default: 'fellow'
     }
   }, {
     classMethods: {
@@ -64,7 +64,7 @@ module.exports = (sequelize, DataTypes) => {
           as: 'types'
         });
         Users.belongsTo(models.Roles, {
-          foreignKey: 'roleId'
+          foreignKey: 'role'
         });
       },
     },
@@ -79,3 +79,5 @@ module.exports = (sequelize, DataTypes) => {
   });
   return Users;
 };
+
+export default userModel;

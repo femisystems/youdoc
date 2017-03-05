@@ -215,7 +215,20 @@ describe('USER API', () => {
           done();
         });
     });
-    it('4. PUT /users/:id => Admin should be able to edit user details', (done) => {
+    it('4. GET /users/:id => Should return 500 if request fails', (done) => {
+      const id = 'id';
+
+      request
+        .get(`/users/${id}`)
+        .set('authorization', admin.token)
+        .end((err, res) => {
+          expect(res.statusCode).to.equal(500);
+          expect(res.body.success).to.equal(false);
+          expect(res.body.msg).to.equal('Sorry! Unable to reach user(s). Please try again.');
+          done();
+        });
+    });
+    it('5. PUT /users/:id => Admin should be able to edit user details', (done) => {
       const id = 2;
       const update = { firstName: 'Jon', lastName: 'Doe' };
 
@@ -230,7 +243,7 @@ describe('USER API', () => {
           done();
         });
     });
-    it('5. DELETE /users/:id => Admin should be able to remove user(s)', (done) => {
+    it('6. DELETE /users/:id => Admin should be able to remove user(s)', (done) => {
       const id = 3;
 
       request
@@ -243,7 +256,20 @@ describe('USER API', () => {
           done();
         });
     });
-    it('6. DELETE /users/:id => Admin should not be able to delete self', (done) => {
+    it('7. DELETE /users/:id => Should return 500 if delete request fails', (done) => {
+      const id = 'id';
+
+      request
+        .delete(`/users/${id}`)
+        .set('authorization', admin.token)
+        .end((err, res) => {
+          expect(res.statusCode).to.equal(500);
+          expect(res.body.success).to.equal(false);
+          expect(res.body.msg).to.equal('Sorry! Unable to reach user(s). Please try again.');
+          done();
+        });
+    });
+    it('8. DELETE /users/:id => Admin should not be able to delete self', (done) => {
       const adminId = admin.id;
 
       request
@@ -256,6 +282,19 @@ describe('USER API', () => {
           done();
         });
     });
+    it('9. DELETE /users/:id => Admin should not be able to delete non-existing user', (done) => {
+      const id = 100;
+
+      request
+        .delete(`/users/${id}`)
+        .set('authorization', admin.token)
+        .end((err, res) => {
+          expect(res.statusCode).to.equal(404);
+          expect(res.body.success).to.equal(false);
+          expect(res.body.msg).to.equal('Sorry! user(s) not found.');
+          done();
+        });
+    });
   });
 
   describe('USERS', () => {
@@ -264,9 +303,9 @@ describe('USER API', () => {
         .get('/users')
         .set('authorization', user.token)
         .end((err, res) => {
-          expect(res.statusCode).to.equal(403);
-          expect(res.body.success).to.equal(false);
-          expect(res.body.msg).to.equal('Forbidden! This is a restricted content');
+          expect(res.statusCode).to.equal(200);
+          expect(res.body.success).to.equal(true);
+          expect(res.body.msg).to.equal('user(s) successfully retrieved.');
           done();
         });
     });
@@ -283,16 +322,16 @@ describe('USER API', () => {
           done();
         });
     });
-    it('5. GET /users/:id => Users should not be able to view details of other users', (done) => {
+    it('5. GET /users/:id => Users should be able to view details of other users', (done) => {
       const userId = 1;
 
       request
         .get(`/users/${userId}`)
         .set('authorization', user.token)
         .end((err, res) => {
-          expect(res.statusCode).to.equal(403);
-          expect(res.body.success).to.equal(false);
-          expect(res.body.msg).to.equal('Forbidden! This is a restricted content');
+          expect(res.statusCode).to.equal(200);
+          expect(res.body.success).to.equal(true);
+          expect(res.body.msg).to.equal('user(s) successfully retrieved.');
           done();
         });
     });

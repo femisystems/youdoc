@@ -47,7 +47,7 @@ describe('DOCUMENT API', () => {
         .then(() => {
           Db.Types.bulkCreate(types)
           .then(() => {
-            Db.Documents.bulkCreate(documents)
+            Db.Documents.create(documents[0])
             .then(() => {
               request.post('/users/login')
                 .send({
@@ -79,17 +79,7 @@ describe('DOCUMENT API', () => {
         request
           .post('/documents')
           .set('authorization', admin.token)
-          .send({
-            id: 12,
-            title: faker.company.catchPhrase(),
-            content: faker.lorem.paragraph(),
-            accessLevel: 'private',
-            createdAt: new Date(),
-            updatedAt: new Date(),
-            ownerId: admin.id,
-            typeId: 2,
-            ownerRoleId: admin.roleId
-          })
+          .send(documents[1])
           .end((err, res) => {
             expect(res.statusCode).to.equal(201);
             expect(res.body.success).to.equal(true);
@@ -98,51 +88,62 @@ describe('DOCUMENT API', () => {
           });
       });
       it('2. Should not create document without title', (done) => {
+        const newDoc = Object.assign({}, invalidDocs[0]);
+        newDoc.id = 3;
+
         request
           .post('/documents')
           .set('authorization', admin.token)
-          .send(invalidDocs[0])
+          .send(newDoc)
           .end((err, res) => {
             expect(res.statusCode).to.equal(501);
             expect(res.body.success).to.equal(false);
-            expect(res.body.msg).to.equal('Oops! Unable to create document(s). Please try again.');
-            expect(res.body.error.errors[0].message).to.equal('Document title cannot be empty');
+            expect(res.body.error.message).to.equal('Validation error: Document title cannot be empty');
             done();
           });
       });
       it('3. Should not create document without content', (done) => {
+        const newDoc = Object.assign({}, invalidDocs[1]);
+        newDoc.id = 4;
+
         request
           .post('/documents')
           .set('authorization', admin.token)
-          .send(invalidDocs[1])
+          .send(newDoc)
           .end((err, res) => {
             expect(res.statusCode).to.equal(501);
             expect(res.body.success).to.equal(false);
-            expect(res.body.error.errors[0].message).to.equal('Content cannot be empty');
+            expect(res.body.error.message).to.equal('Validation error: Content cannot be empty');
             done();
           });
       });
       it('4. Should not create document without accessLevel', (done) => {
+        const newDoc = Object.assign({}, invalidDocs[2]);
+        newDoc.id = 5;
+
         request
           .post('/documents')
           .set('authorization', admin.token)
-          .send(invalidDocs[2])
+          .send(newDoc)
           .end((err, res) => {
             expect(res.statusCode).to.equal(501);
             expect(res.body.success).to.equal(false);
-            expect(res.body.error.errors[0].message).to.equal('access level can only be public, private or role');
+            expect(res.body.error.message).to.equal('Validation error: access level can only be public, private or role');
             done();
           });
       });
-      it('5. Should not create document without typeid', (done) => {
+      it('5. Should not create document without type', (done) => {
+        const newDoc = Object.assign({}, invalidDocs[3]);
+        newDoc.id = 6;
+
         request
           .post('/documents')
           .set('authorization', admin.token)
-          .send(invalidDocs[3])
+          .send(newDoc)
           .end((err, res) => {
             expect(res.statusCode).to.equal(501);
             expect(res.body.success).to.equal(false);
-            expect(res.body.error.errors[0].message).to.equal('typeId cannot be null');
+            expect(res.body.msg).to.equal('Oops! Unable to create document(s). Please try again.');
             done();
           });
       });
@@ -162,7 +163,7 @@ describe('DOCUMENT API', () => {
           });
       });
       it('2. Should be able to fetch documents per user', (done) => {
-        const id = 4;
+        const id = 1;
 
         request
           .get(`/users/${id}/documents`)
@@ -177,7 +178,7 @@ describe('DOCUMENT API', () => {
           });
       });
       it('3. Should be able to fetch a single document by id', (done) => {
-        const docId = 5;
+        const docId = 1;
 
         request
           .get(`/documents/${docId}`)
@@ -203,7 +204,7 @@ describe('DOCUMENT API', () => {
             done();
           });
       });
-      it('4. Should not be able to fetch non-existing document', (done) => {
+      it('5. Should not be able to fetch non-existing document', (done) => {
         const id = 100;
 
         request
@@ -213,17 +214,6 @@ describe('DOCUMENT API', () => {
             expect(res.statusCode).to.equal(404);
             expect(res.body.success).to.equal(false);
             expect(res.body.msg).to.equal('Sorry! document(s) not found.');
-            done();
-          });
-      });
-      it('1. Fetch all documents', (done) => {
-        const queryString = 'welcome';
-
-        request
-          .get(`/search?q=${queryString}`)
-          .set('authorization', admin.token)
-          .end((err, res) => {
-            console.log(res.body);
             done();
           });
       });
@@ -247,41 +237,10 @@ describe('DOCUMENT API', () => {
             done();
           });
       });
-      it('2. Should be able to update other users\' documents', (done) => {
-        const docId = 3;
-        const update = {
-          title: faker.company.catchPhrase()
-        };
-
-        request
-          .put(`/documents/${docId}`)
-          .set('authorization', admin.token)
-          .send(update)
-          .end((err, res) => {
-            expect(res.statusCode).to.equal(200);
-            expect(res.body.success).to.equal(true);
-            expect(res.body.msg).to.equal('document(s) successfully updated.');
-            expect(res.body.data).to.be.an('object');
-            done();
-          });
-      });
     });
     describe('DELETE', () => {
       it('1. Should be able to delete own document', (done) => {
         const id = 2;
-
-        request
-          .delete(`/documents/${id}`)
-          .set('authorization', admin.token)
-          .end((err, res) => {
-            expect(res.statusCode).to.equal(200);
-            expect(res.body.success).to.equal(true);
-            expect(res.body.msg).to.equal('document(s) successfully deleted.');
-            done();
-          });
-      });
-      it('2. Should be able to delete documents of other users', (done) => {
-        const id = 3;
 
         request
           .delete(`/documents/${id}`)
@@ -315,20 +274,14 @@ describe('DOCUMENT API', () => {
 
     describe('POST', () => {
       it('1. Should be able to create document', (done) => {
+        const newDoc = Object.assign({}, documents[2]);
+        newDoc.id = 7;
+        newDoc.ownerId = user.id;
+
         request
           .post('/documents')
           .set('authorization', user.token)
-          .send({
-            id: 13,
-            title: faker.company.catchPhrase(),
-            content: faker.lorem.paragraph(),
-            accessLevel: 'private',
-            createdAt: new Date(),
-            updatedAt: new Date(),
-            ownerId: user.id,
-            typeId: 2,
-            ownerRoleId: user.roleId
-          })
+          .send(newDoc)
           .end((err, res) => {
             expect(res.statusCode).to.equal(201);
             expect(res.body.success).to.equal(true);
@@ -354,7 +307,7 @@ describe('DOCUMENT API', () => {
           });
       });
       it('2. Should be able to get a single document', (done) => {
-        const docId = 9;
+        const docId = 7;
 
         request
           .get(`/documents/${docId}`)
@@ -367,7 +320,19 @@ describe('DOCUMENT API', () => {
             done();
           });
       });
-      it('3. Should be able to fetch "PUBLIC" documents of other users with different role levels', (done) => {
+      it('3. Should return error if get request fails', (done) => {
+        const docId = 'id';
+
+        request
+          .get(`/documents/${docId}`)
+          .set('authorization', user.token)
+          .end((err, res) => {
+            expect(res.statusCode).to.equal(500);
+            expect(res.body.success).to.equal(false);
+            done();
+          });
+      });
+      it('4. Should be able to fetch "PUBLIC" documents of other users with different role levels', (done) => {
         const userId = 1;
 
         request
@@ -379,48 +344,36 @@ describe('DOCUMENT API', () => {
             expect(res.body.msg).to.equal('document(s) successfully retrieved.');
             expect(res.body.data).to.be.instanceof(Array);
             expect(res.body.data).to.have.length.of.at.least(1);
-
-            const docs = res.body.data;
-            docs.forEach((doc) => {
-              expect(doc.ownerId).to.equal(userId);
-            });
             done();
           });
       });
-      it('4. Should be able to fetch "PUBLIC/ROLE-BASED" documents of other users with the same role level', (done) => {
-        const userId = 4;
+      it('5. Should return error if get request fails with wrong user data', (done) => {
+        const userId = 'x';
 
         request
           .get(`/users/${userId}/documents`)
           .set('authorization', user.token)
           .end((err, res) => {
-            expect(res.body.success).to.equal(true);
-            expect(res.body.msg).to.equal('document(s) successfully retrieved.');
-            expect(res.body.data).to.be.instanceof(Array);
-            expect(res.body.data).to.have.length.of.at.least(1);
-
-            const docs = res.body.data;
-            docs.forEach((doc) => {
-              expect(doc.ownerId).to.equal(userId);
-            });
+            expect(res.statusCode).to.equal(500);
+            expect(res.body.success).to.equal(false);
             done();
           });
       });
-      it('5. Should not be able to fetch all documents in database', (done) => {
+      it('6. Should be able to fetch own documents in database', (done) => {
         request
           .get('/documents')
           .set('authorization', user.token)
           .end((err, res) => {
-            expect(res.statusCode).to.equal(403);
-            expect(res.body.success).to.equal(false);
-            expect(res.body.msg).to.equal('Forbidden! This is a restricted content');
+            expect(res.statusCode).to.equal(200);
+            expect(res.body.success).to.equal(true);
+            expect(res.body.msg).to.equal('document(s) successfully retrieved.');
             done();
           });
       });
     });
     describe('PUT', () => {
       it('1. Should be able to update own documents', (done) => {
-        const docId = 10;
+        const docId = 7;
         const update = {
           title: faker.company.catchPhrase(),
           content: faker.lorem.paragraph()
@@ -459,7 +412,7 @@ describe('DOCUMENT API', () => {
     });
     describe('DELETE', () => {
       it('1. Should be able to delete own documents', (done) => {
-        const docId = 9;
+        const docId = 7;
 
         request
           .delete(`/documents/${docId}`)

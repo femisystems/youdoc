@@ -2,13 +2,6 @@ import Db from '../models/Index';
 import Status from '../middleware/ActionStatus';
 import AuthStatus from '../middleware/AuthStatus';
 
-const defaultRoles = [
-  'admin',
-  'consultant',
-  'facilitator',
-  'fellow'
-];
-
 /**
  * RoleCtrl
  * Responsible for creating new roles and fetching existing roles.
@@ -56,7 +49,8 @@ class RoleCtrl {
    * @return {Void} no return value
    */
   static getRole(req, res) {
-    Db.Roles.findById(req.params.id)
+    const query = { where: { id: req.params.id } };
+    Db.Roles.findOne(query)
       .then((role) => {
         if (!role) {
           return Status.notFound(res, 404, false, 'role');
@@ -75,7 +69,8 @@ class RoleCtrl {
    * @return {Void} no return value
    */
   static updateRole(req, res) {
-    Db.Roles.findById(req.params.id)
+    const query = { where: { id: req.params.id } };
+    Db.Roles.findOne(query)
       .then((role) => {
         if (!role) {
           return Status.notFound(res, 404, false, 'user');
@@ -103,7 +98,8 @@ class RoleCtrl {
    * @return {Void} no return value
    */
   static deleteRole(req, res) {
-    Db.Roles.findById(req.params.id)
+    const query = { where: { id: req.params.id } };
+    Db.Roles.findOne(query)
       .then((role) => {
         if (!role) return Status.notFound(res, 404, false, 'role');
         if (role.title === 'admin') {

@@ -1,11 +1,6 @@
 import Db from '../models/Index';
 import Status from '../middleware/ActionStatus';
 
-const details = {
-  owner: ['id', 'username'],
-  role: ['id', 'title']
-};
-
 /**
  * @class TypeCtrl
  * @classdesc Creates and manages document types
@@ -19,8 +14,7 @@ class TypeCtrl {
    * @return {Null} no return value
    */
   static createType(req, res) {
-    Db.Types
-      .create(req.body)
+    Db.Types.create(req.body)
       .then(type => Status.postOk(res, 201, true, 'type', type))
       .catch(err => Status.postFail(res, 500, false, 'type', err));
   }
@@ -33,30 +27,14 @@ class TypeCtrl {
    * @return {Null} no return value
    */
   static listTypes(req, res) {
-    const query = {
-      include: [
-        {
-          model: Db.Users,
-          attributes: details.owner,
-          include: [
-            {
-              model: Db.Roles,
-              attributes: details.role
-            }
-          ]
-        }
-      ]
-    };
-
-    Db.Types
-      .findAll(query)
+    Db.Types.findAll({})
       .then((types) => {
         if (!types || types.length < 1) {
           return Status.notFound(res, 404, false, 'type');
         }
         Status.getOk(res, 200, true, 'type', types);
       })
-      .catch(err => Status.postFail(res, 500, false, 'type', err));
+      .catch(err => Status.getFail(res, 500, false, 'type', err));
   }
 
   /**
@@ -68,25 +46,9 @@ class TypeCtrl {
    */
   static getType(req, res) {
     const query = {
-      where: {
-        id: req.params.id
-      },
-      include: [
-        {
-          model: Db.Users,
-          attributes: details.owner,
-          include: [
-            {
-              model: Db.Roles,
-              attributes: details.role
-            }
-          ]
-        }
-      ]
+      where: { id: req.params.id }
     };
-
-    Db.Types
-      .findOne(query)
+    Db.Types.findOne(query)
       .then((type) => {
         if (!type) {
           return Status.notFound(res, 404, false, 'type');
@@ -104,8 +66,9 @@ class TypeCtrl {
    * @return {Void} no return value
    */
   static updateType(req, res) {
-    Db.Types
-      .findById(req.params.id)
+    const query = req.params.id;
+
+    Db.Types.findOne(query)
       .then((type) => {
         if (type) {
           type.update(req.body)
@@ -131,13 +94,10 @@ class TypeCtrl {
    */
   static deleteType(req, res) {
     const query = {
-      where: {
-        id: req.params.id
-      }
+      where: { id: req.params.id }
     };
 
-    Db.Types
-      .destroy(query)
+    Db.Types.destroy(query)
       .then(() => Status.deleteOk(res, true, 'type'))
       .catch(err => Status.deleteFail(res, 500, false, 'type', err));
   }

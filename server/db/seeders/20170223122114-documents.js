@@ -9,8 +9,8 @@ module.exports = {
         createdAt: new Date(),
         updatedAt: new Date(),
         ownerId: 1,
-        typeId: 1,
-        ownerRoleId: 1
+        type: 'agenda',
+        ownerRole: 'admin'
       }, {
         id: 2,
         title: 'meeting',
@@ -19,8 +19,8 @@ module.exports = {
         createdAt: new Date(),
         updatedAt: new Date(),
         ownerId: 1,
-        typeId: 2,
-        ownerRoleId: 1
+        type: 'memo',
+        ownerRole: 'admin'
       },
 
       // consultant 1
@@ -32,8 +32,8 @@ module.exports = {
         createdAt: new Date(),
         updatedAt: new Date(),
         ownerId: 1,
-        typeId: 3,
-        ownerRoleId: 2
+        type: 'note',
+        ownerRole: 'consultant'
       },
 
       // facilitator 2
@@ -45,8 +45,8 @@ module.exports = {
         createdAt: new Date(),
         updatedAt: new Date(),
         ownerId: 3,
-        typeId: 4,
-        ownerRoleId: 3
+        type: 'proposal',
+        ownerRole: 'facilitator'
       }, {
         id: 5,
         title: 'simulations',
@@ -54,9 +54,9 @@ module.exports = {
         accessLevel: 'role',
         createdAt: new Date(),
         updatedAt: new Date(),
-        ownerId: 4,
-        typeId: 1,
-        ownerRoleId: 3
+        ownerId: 3,
+        type: 'agenda',
+        ownerRole: 'facilitator'
       },
 
       // fellow 3
@@ -68,8 +68,8 @@ module.exports = {
         createdAt: new Date(),
         updatedAt: new Date(),
         ownerId: 4,
-        typeId: 2,
-        ownerRoleId: 4
+        type: 'memo',
+        ownerRole: 'fellow'
       }, {
         id: 7,
         title: 'holiday island',
@@ -78,8 +78,8 @@ module.exports = {
         createdAt: new Date(),
         updatedAt: new Date(),
         ownerId: 4,
-        typeId: 3,
-        ownerRoleId: 4
+        type: 'note',
+        ownerRole: 'fellow'
       }, {
         id: 8,
         title: 'expressions',
@@ -88,8 +88,8 @@ module.exports = {
         createdAt: new Date(),
         updatedAt: new Date(),
         ownerId: 4,
-        typeId: 4,
-        ownerRoleId: 4
+        type: 'proposal',
+        ownerRole: 'fellow'
       }, {
         id: 9,
         title: 'project management',
@@ -98,8 +98,8 @@ module.exports = {
         createdAt: new Date(),
         updatedAt: new Date(),
         ownerId: 5,
-        typeId: 1,
-        ownerRoleId: 4
+        type: 'agenda',
+        ownerRole: 'fellow'
       }, {
         id: 10,
         title: 'managing expectations',
@@ -108,8 +108,8 @@ module.exports = {
         createdAt: new Date(),
         updatedAt: new Date(),
         ownerId: 5,
-        typeId: 2,
-        ownerRoleId: 4
+        type: 'memo',
+        ownerRole: 'fellow'
       }, {
         id: 11,
         title: 'weakest link',
@@ -118,8 +118,8 @@ module.exports = {
         createdAt: new Date(),
         updatedAt: new Date(),
         ownerId: 5,
-        typeId: 3,
-        ownerRoleId: 4
+        type: 'note',
+        ownerRole: 'fellow'
       }
     ], {});
   },

@@ -127,11 +127,16 @@ describe('ROLE API', () => {
             expect(res.body.success).to.equal(true);
             expect(res.body.msg).to.equal('role(s) successfully retrieved.');
             expect(res.body.data).to.have.length.above(0);
+
+            if (err) {
+              expect(res.status).to.equal(500);
+              expect(res.body.success).to.equal(false);
+            }
             done();
           });
       });
       it('2. Should be able to retrieve role by id', (done) => {
-        const roleId = 2;
+        const roleId = 1;
 
         request
           .get(`/roles/${roleId}`)
@@ -153,6 +158,18 @@ describe('ROLE API', () => {
             expect(res.status).to.equal(404);
             expect(res.body.success).to.equal(false);
             expect(res.body.msg).to.equal('Sorry! role(s) not found.');
+            done();
+          });
+      });
+      it('4. Should return 500 for a failed request', (done) => {
+        const x = 'id';
+
+        request
+          .get(`/roles/${x}`)
+          .set('authorization', admin.token)
+          .end((err, res) => {
+            expect(res.status).to.equal(500);
+            expect(res.body.success).to.equal(false);
             done();
           });
       });
@@ -222,6 +239,7 @@ describe('ROLE API', () => {
       });
     });
   });
+
   describe('USERS', () => {
     describe('POST', () => {
       it('1. User should not be able to create role(s)', (done) => {

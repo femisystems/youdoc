@@ -36,16 +36,16 @@ module.exports = {
           as: 'ownerId'
         }
       },
-      typeId: {
-        type: Sequelize.INTEGER,
+      type: {
+        type: Sequelize.STRING,
         references: {
           model: 'Types',
-          key: 'id',
-          as: 'typeId'
+          key: 'title',
+          as: 'type'
         }
       },
-      ownerRoleId: {
-        type: Sequelize.INTEGER,
+      ownerRole: {
+        type: Sequelize.STRING,
         allowNull: false
       }
     });

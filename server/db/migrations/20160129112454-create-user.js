@@ -37,12 +37,12 @@ module.exports = {
         allowNull: false,
         type: Sequelize.DATE
       },
-      roleId: {
-        type: Sequelize.INTEGER,
+      role: {
+        type: Sequelize.STRING,
         references: {
           model: 'Roles',
-          key: 'id',
-          as: 'roleId'
+          key: 'title',
+          as: 'role'
         }
       }
     });

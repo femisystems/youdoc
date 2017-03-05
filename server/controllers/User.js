@@ -21,13 +21,12 @@ class UserCtrl {
    * @return {Void} no return value
    */
   static createUser(req, res) {
-    Db.Users
-      .create(req.body)
+    Db.Users.create(req.body)
       .then((newUser) => {
         const payload = {
           userId: newUser.id,
           username: newUser.username,
-          roleId: newUser.roleId
+          role: newUser.role
         };
 
         const token = jwt.sign(payload, secret, { expiresIn: '24h' });
@@ -45,23 +44,7 @@ class UserCtrl {
    * @return {Void} no return value
    */
   static listUsers(req, res) {
-    const details = {
-      user: ['id', 'firstName', 'lastName', 'email', 'username'],
-      role: ['id', 'title']
-    };
-
-    const query = {
-      attributes: details.user,
-      include: [
-        {
-          model: Db.Roles,
-          attributes: details.role
-        }
-      ]
-    };
-
-    Db.Users
-      .findAll(query)
+    Db.Users.findAll(req.searchQuery)
       .then((users) => {
         if (users.length < 1) {
           return Status.notFound(res, 404, false, 'user');
@@ -79,26 +62,7 @@ class UserCtrl {
    * @return {Void} no return value
    */
   static getUser(req, res) {
-    const details = {
-      user: ['id', 'firstName', 'lastName', 'email', 'username'],
-      role: ['id', 'title']
-    };
-
-    const query = {
-      where: {
-        id: req.params.id
-      },
-      attributes: details.user,
-      include: [
-        {
-          model: Db.Roles,
-          attributes: details.role
-        }
-      ]
-    };
-
-    Db.Users
-      .findOne(query)
+    Db.Users.findOne(req.searchQuery)
       .then((user) => {
         if (!user) {
           return Status.notFound(res, 404, false, 'user');
@@ -116,20 +80,11 @@ class UserCtrl {
    * @return {Void} no return value
    */
   static updateUser(req, res) {
-    Db.Users.findById(req.params.id)
-      .then((user) => {
-        if (!user) return Status.notFound(res, 404, false, 'user');
-
-        user
-          .update(req.body)
-          .then((updatedUser) => {
-            if (updatedUser) {
-              Status.putOk(res, 200, true, 'user', updatedUser);
-            }
-          })
-          .catch(err => Status.putFail(res, 501, false, 'user', err));
+    req.user.update(req.body)
+      .then((updatedUser) => {
+        Status.putOk(res, 200, true, 'user', updatedUser);
       })
-     .catch(err => Status.getFail(res, 500, false, 'user', err));
+      .catch(err => Status.putFail(res, 501, false, 'user', err));
   }
 
   /**
@@ -143,7 +98,7 @@ class UserCtrl {
     Db.Users.findById(req.params.id)
       .then((user) => {
         if (!user) return Status.notFound(res, 404, false, 'user');
-        if (user.roleId === 1) {
+        if (user.role === 'admin') {
           return AuthStatus.forbid(res, 403, false);
         }
         user.destroy({ force: true })

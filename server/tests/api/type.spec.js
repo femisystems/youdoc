@@ -143,6 +143,19 @@ describe('TYPE API', () => {
             done();
           });
       });
+      it('3. Should return 500 if get request fails', (done) => {
+        const id = 'x';
+
+        request
+          .get(`/types/${id}`)
+          .set('authorization', admin.token)
+          .end((err, res) => {
+            expect(res.statusCode).to.equal(500);
+            expect(res.body.success).to.equal(false);
+            expect(res.body.msg).to.equal('Sorry! Unable to reach type(s). Please try again.');
+            done();
+          });
+      });
       it('3. Should return 404 if types are not found', (done) => {
         const id = 10;
 
@@ -201,6 +214,18 @@ describe('TYPE API', () => {
             expect(res.statusCode).to.equal(200);
             expect(res.body.success).to.equal(true);
             expect(res.body.msg).to.equal('type(s) successfully deleted.');
+          });
+      });
+      it('1. Should return 500 if delete request fails', () => {
+        const id = 'x';
+
+        request
+          .delete(`/types/${id}`)
+          .set('authorization', admin.token)
+          .end((err, res) => {
+            expect(res.statusCode).to.equal(500);
+            expect(res.body.success).to.equal(false);
+            expect(res.body.msg).to.equal('Oops! Unable to delete type(s). Please try again.');
           });
       });
     });

@@ -4,6 +4,7 @@ import jwt from 'jsonwebtoken';
 import Db from '../models/Index';
 import AuthStatus from './AuthStatus';
 import Status from './ActionStatus';
+import Utils from '../controllers/Utils';
 
 dotenv.config({ silent: true });
 const secret = process.env.SECRET || '$3CRET AG3NT';
@@ -45,8 +46,9 @@ class Authentication {
    * @return {null} no return value
    */
   static verifyAdmin(req, res, next) {
+    if (req.user) return next();
     Db.Roles
-      .findById(req.decoded.roleId)
+      .findOne({ where: { title: req.decoded.role } })
       .then((role) => {
         if (role.dataValues.title !== 'admin') {
           return AuthStatus.forbid(res, 403, false);
@@ -56,47 +58,27 @@ class Authentication {
   }
 
   /**
-   * checkUserRouteAccess
+   * checkUserWriteAccess
    * checks if the user is authorised to access user route
    * @param {Object} req - request object
    * @param {Object} res - response object
    * @param {Function} next - run next func
    * @return {Null|Object} response object | no return value
    */
-  static checkUserRouteAccess(req, res, next) {
-    if ((String(req.decoded.userId) === String(req.params.id)) ||
-      String(req.decoded.roleId) === '1') {
-      next();
+  static checkUserWriteAccess(req, res, next) {
+    if ((req.decoded.userId === parseInt(req.params.id, 10)) || Utils.isAdmin(req)) {
+      Db.Users.findById(req.params.id)
+        .then((user) => {
+          if (!user) {
+            return Status.notFound(res, 404, false, 'user');
+          }
+          req.user = user;
+          next();
+        })
+        .catch(err => Status.getFail(res, 500, false, 'user', err));
     } else {
       return AuthStatus.forbid(res, 403, false);
     }
-  }
-
-  /**
-   * checkDocReadAccess
-   * checks if the user is authorised to read doc route
-   * @param {Object} req - request object
-   * @param {Object} res - response object
-   * @param {Function} next - run next func
-   * @return {Null|Object} response object | no return value
-   */
-  static checkDocReadAccess(req, res, next) {
-    Db.Documents
-      .findById(req.params.id)
-      .then((document) => {
-        if (document !== null) {
-          if ((document.ownerId === req.decoded.userId) ||
-            (req.decoded.roleId === 1) ||
-            ((req.decoded.roleId === document.ownerRoleId) && (document.accessLevel === 'role')) ||
-            (document.accessLevel === 'public')
-            ) {
-            return next();
-          }
-          AuthStatus.forbid(res, 403, false);
-        }
-        Status.notFound(res, 404, false, 'document');
-      })
-      .catch(err => Status.getFail(res, 500, false, 'document', err));
   }
 
   /**
@@ -112,7 +94,8 @@ class Authentication {
       .findById(req.params.id)
       .then((document) => {
         if (document !== null) {
-          if ((document.ownerId === req.decoded.userId) || (req.decoded.roleId === 1)) {
+          if ((document.ownerId === req.decoded.userId) || Utils.isAdmin(req)) {
+            req.document = document;
             next();
           } else {
             AuthStatus.forbid(res, 403, false);
@@ -143,7 +126,7 @@ class Authentication {
           const payload = {
             userId: user.dataValues.id,
             username: user.dataValues.username,
-            roleId: user.dataValues.roleId
+            role: user.dataValues.role
           };
 
           const token = jwt.sign(payload, secret, { expiresIn: '24h' });

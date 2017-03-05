@@ -28,7 +28,7 @@ const validRoles = [
 const invalidRoles = [
   // unique constraint
   {
-    id: 6,
+    id: 2,
     title: 'admin',
     createdAt: new Date(),
     updatedAt: new Date()
@@ -36,7 +36,7 @@ const invalidRoles = [
 
   // null constraint
   {
-    id: 6,
+    id: 2,
     title: '',
     createdAt: new Date(),
     updatedAt: new Date()

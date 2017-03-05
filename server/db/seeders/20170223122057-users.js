@@ -1,15 +1,17 @@
+const bcrypt = require('bcrypt-node');
+
 module.exports = {
   up(queryInterface) {
     return queryInterface.bulkInsert('Users', [
       // admin user
       {
         id: 1,
-        firstName: 'Admin',
-        lastName: 'Admin',
+        firstName: 'Default',
+        lastName: 'User',
         email: 'admin@youdoc.com',
         username: 'admin',
-        password: 'password',
-        roleId: 1,
+        password: bcrypt.hashSync('password', bcrypt.genSaltSync()),
+        role: 'admin',
         createdAt: new Date(),
         updatedAt: new Date()
       },
@@ -21,8 +23,8 @@ module.exports = {
         lastName: 'Omin',
         email: 'celestine.omin@youdoc.com',
         username: 'cyberomin',
-        password: 'password',
-        roleId: 2,
+        password: bcrypt.hashSync('password', bcrypt.genSaltSync()),
+        role: 'consultant',
         createdAt: new Date(),
         updatedAt: new Date()
       },
@@ -34,8 +36,8 @@ module.exports = {
         lastName: 'Akpobome',
         email: 'kes@youdoc.com',
         username: 'kes',
-        password: 'password',
-        roleId: 3,
+        password: bcrypt.hashSync('password', bcrypt.genSaltSync()),
+        role: 'facilitator',
         createdAt: new Date(),
         updatedAt: new Date()
       },
@@ -47,8 +49,8 @@ module.exports = {
         lastName: 'Ayidu',
         email: 'shalom.ayidu@youdoc.com',
         username: 'shalom',
-        password: 'password',
-        roleId: 4,
+        password: bcrypt.hashSync('password', bcrypt.genSaltSync()),
+        role: 'fellow',
         createdAt: new Date(),
         updatedAt: new Date()
       }, {
@@ -57,8 +59,8 @@ module.exports = {
         lastName: 'Enaho',
         email: 'enaho.murphy@youdoc.com',
         username: 'murphy',
-        password: 'password',
-        roleId: 4,
+        password: bcrypt.hashSync('password', bcrypt.genSaltSync()),
+        role: 'fellow',
         createdAt: new Date(),
         updatedAt: new Date()
       }

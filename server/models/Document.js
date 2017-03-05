@@ -1,4 +1,4 @@
-module.exports = (sequelize, DataTypes) => {
+const documentModel = (sequelize, DataTypes) => {
   const Documents = sequelize.define('Documents', {
     title: {
       type: DataTypes.STRING,
@@ -24,12 +24,12 @@ module.exports = (sequelize, DataTypes) => {
       type: DataTypes.INTEGER,
       allowNull: false
     },
-    ownerRoleId: {
-      type: DataTypes.INTEGER,
+    ownerRole: {
+      type: DataTypes.STRING,
       allowNull: false
     },
-    typeId: {
-      type: DataTypes.INTEGER,
+    type: {
+      type: DataTypes.STRING,
       allowNull: false
     },
     accessLevel: {
@@ -52,10 +52,12 @@ module.exports = (sequelize, DataTypes) => {
           onUpdate: 'CASCADE'
         });
         Documents.belongsTo(models.Types, {
-          foreignKey: 'typeId'
+          foreignKey: 'type'
         });
       }
     }
   });
   return Documents;
 };
+
+export default documentModel;

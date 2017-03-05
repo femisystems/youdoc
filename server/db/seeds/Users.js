@@ -4,12 +4,12 @@ const validUsers = [
   // admin user
   {
     id: 1,
-    firstName: faker.name.firstName(),
-    lastName: faker.name.lastName(),
+    firstName: 'Default',
+    lastName: 'User',
     email: 'admin@youdoc.com',
     username: 'admin',
     password: 'password',
-    roleId: 1,
+    role: 'admin',
     createdAt: new Date(),
     updatedAt: new Date()
   },
@@ -17,12 +17,12 @@ const validUsers = [
   // consultant 1
   {
     id: 2,
-    firstName: faker.name.firstName(),
-    lastName: faker.name.lastName(),
-    email: 'uniqueuser@youdoc.com',
-    username: 'uniqueuser',
+    firstName: 'Celestine',
+    lastName: 'Omin',
+    email: 'celestine.omin@youdoc.com',
+    username: 'cyberomin',
     password: 'password',
-    roleId: 2,
+    role: 'consultant',
     createdAt: new Date(),
     updatedAt: new Date()
   },
@@ -30,12 +30,12 @@ const validUsers = [
   // facilitator 2
   {
     id: 3,
-    firstName: faker.name.firstName(),
-    lastName: faker.name.lastName(),
-    email: faker.internet.email(),
-    username: faker.internet.userName(),
+    firstName: 'Kesiena',
+    lastName: 'Akpobome',
+    email: 'kes@youdoc.com',
+    username: 'kes',
     password: 'password',
-    roleId: 3,
+    role: 'facilitator',
     createdAt: new Date(),
     updatedAt: new Date()
   },
@@ -43,22 +43,22 @@ const validUsers = [
   // fellow 3
   {
     id: 4,
-    firstName: faker.name.firstName(),
-    lastName: faker.name.lastName(),
-    email: faker.internet.email(),
-    username: faker.internet.userName(),
+    firstName: 'Shalom',
+    lastName: 'Ayidu',
+    email: 'shalom.ayidu@youdoc.com',
+    username: 'shalom',
     password: 'password',
-    roleId: 4,
+    role: 'fellow',
     createdAt: new Date(),
     updatedAt: new Date()
   }, {
     id: 5,
-    firstName: faker.name.firstName(),
-    lastName: faker.name.lastName(),
-    email: faker.internet.email(),
-    username: faker.internet.userName(),
+    firstName: 'Murphy',
+    lastName: 'Enaho',
+    email: 'enaho.murphy@youdoc.com',
+    username: 'murphy',
     password: 'password',
-    roleId: 4,
+    role: 'fellow',
     createdAt: new Date(),
     updatedAt: new Date()
   }
@@ -73,7 +73,7 @@ const invalidUsers = [
     email: faker.internet.email(),
     username: faker.internet.userName(),
     password: 'password',
-    roleId: 4,
+    role: 'fellow',
     createdAt: new Date(),
     updatedAt: new Date()
   },
@@ -86,7 +86,7 @@ const invalidUsers = [
     email: 'admin@youdoc.com',
     username: faker.internet.userName(),
     password: 'password',
-    roleId: 4,
+    role: 'fellow',
     createdAt: new Date(),
     updatedAt: new Date()
   },
@@ -99,7 +99,7 @@ const invalidUsers = [
     email: faker.internet.email(),
     username: 'admin',
     password: 'password',
-    roleId: 4,
+    role: 'fellow',
     createdAt: new Date(),
     updatedAt: new Date()
   }
