@@ -25,7 +25,7 @@ module.exports = {
         createdAt: new Date(),
         updatedAt: new Date()
       }
-    ], {});
+    ], { return: true });
   },
   down(queryInterface) {
     return queryInterface.bulkDelete('Roles', null, {});

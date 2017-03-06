@@ -1,6 +1,5 @@
 import supertest from 'supertest';
 import { expect } from 'chai';
-import faker from 'faker';
 import Db from '../../models/Index';
 import app from '../../app';
 import seeds from '../../db/seeds/Index';
@@ -12,33 +11,18 @@ const roles = seeds.validRoles;
 const users = seeds.validUsers;
 const types = seeds.validTypes;
 const documents = seeds.validDocs;
-const invalidDocs = seeds.invalidDocs;
 
 // test users
 const admin = {};
 const user = {};
 
 /**
- * DOCUMENT API
+ * DOCUMENT SEARCH API
  *
- * POST /documents
- * GET /documents         => Admin should be able to retrieve all documents
- * GET /documents/:id     => Admin should be able to retrieve single document
- * PUT /documents/:id     => Admin should be able to update document
- * DELETE /documents/:id  => Admin should be able to remove document
- *
- *
- * POST /documents        => Users should be able to create documents
- * GET /documents/:id     => Users should be able to view their own documents
- *                        => Users should be able to view other users' documents
- *                           that are public
- *                        => Users should be able to view other users' documents
- *                           who share the same role.
- * PUT /documents/:id     => Users should be able to update their own documents
- * DELETE /documents/:id => Users should be able to delete their own documents
+ * GET /documents/search?q=<text>&type=<docType>
  *
  */
-describe('DOCUMENT API', () => {
+describe('DOCUMENT SEARCH API', () => {
   // setup
   before((done) => {
     Db.Roles.bulkCreate(roles)
@@ -109,19 +93,14 @@ describe('DOCUMENT API', () => {
         .get('/documents/search')
         .set('authorization', user.token)
         .end((err, res) => {
-          const results = res.body.data;
-          results.forEach((result) => {
-            const raw = res.body.data;
-            let filtered;
-
-            filtered = raw.filter((result) => {
-              if (result.ownerId !== user.id) {
-                return result;
-              }
-            });
-            filtered.forEach((result) => {
-              expect(result.accessLevel).to.be.oneOf(['public', 'role']);
-            });
+          const raw = res.body.data;
+          const filtered = raw.filter((result) => {
+            if (result.ownerId !== user.id) {
+              return result;
+            }
+          });
+          filtered.forEach((result) => {
+            expect(result.accessLevel).to.be.oneOf(['public', 'role']);
           });
           done();
         });

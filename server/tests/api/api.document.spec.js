@@ -96,7 +96,6 @@ describe('DOCUMENT API', () => {
           .set('authorization', admin.token)
           .send(newDoc)
           .end((err, res) => {
-            console.log(res);
             expect(res.statusCode).to.equal(500);
             expect(res.body.success).to.equal(false);
             expect(res.body.error.message).to.equal('Validation error: Document title cannot be empty');

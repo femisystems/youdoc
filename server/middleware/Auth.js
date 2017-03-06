@@ -135,8 +135,8 @@ class Authentication {
   }
 
   /**
-   * checkUserRouteAccess
-   * checks if the user is an admin authorising
+   * logout
+   * logs a user out
    * @param {Object} req - request object
    * @param {Object} res - response object
    * @param {Function} next - run next func

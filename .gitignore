@@ -6,6 +6,9 @@ npm-debug.log*
 # Environment
 .env
 
+# client folder
+client
+
 #distribution
 dist
 

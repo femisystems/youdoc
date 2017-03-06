@@ -5,7 +5,7 @@ import Status from '../middleware/ActionStatus';
  * @class DocCtrl
  * @classdesc Create and manage documents
  */
-class DocCtrl extends Status {
+class DocCtrl {
   /**
    * createDoc
    * create a new document
@@ -31,6 +31,7 @@ class DocCtrl extends Status {
    * @return {Void} no return value
    */
   static listDocs(req, res) {
+    // return console.log(req.searchQuery);
     Db.Documents.findAll(req.searchQuery)
       .then((documents) => {
         if (documents.length < 1) {

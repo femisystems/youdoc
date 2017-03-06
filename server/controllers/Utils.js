@@ -156,7 +156,6 @@ class Utils {
       if (Utils.isAdmin(req)) {
         query.where = {
           id: req.params.id
-          // $and: []
         };
       } else {
         query.where = {
@@ -168,7 +167,7 @@ class Utils {
       }
     }
 
-    // if request is coming from /documents/:id use custom query
+    // if request is coming from /documents/ use custom query
     if (`${req.baseUrl}${req.route.path}` === '/documents/') {
       if (Utils.isAdmin(req)) {
         query.where = {
@@ -186,24 +185,15 @@ class Utils {
       query.where.$and.push({
         $or: [
           {
-            title: {
-              $ilike: {
-                $any: req.query.q.split(' ')
-              }
-            }
+            title: { $ilike: `%${req.query.q}%` }
           },
           {
-            content: {
-              $ilike: {
-                $any: req.query.q.split(' ')
-              }
-            }
+            content: { $ilike: `%${req.query.q}%` }
           }
         ]
       });
-      // console.log('here is the query:', req.query.q.split(' '));
     }
-    
+
     // if limit exists, append to base query or use default limit
     if (keys.limit && keys.limit > 0) {
       query.limit = keys.limit;

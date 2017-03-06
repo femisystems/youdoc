@@ -136,10 +136,8 @@ describe('ROLE API', () => {
           });
       });
       it('2. Should be able to retrieve role by id', (done) => {
-        const roleId = 1;
-
         request
-          .get(`/roles/${roleId}`)
+          .get('/roles/1')
           .set('authorization', admin.token)
           .end((err, res) => {
             expect(res.status).to.equal(200);
@@ -149,10 +147,8 @@ describe('ROLE API', () => {
           });
       });
       it('3. Should return 404 if role does not exist', (done) => {
-        const id = 10;
-
         request
-          .get(`/roles/${id}`)
+          .get('/roles/10')
           .set('authorization', admin.token)
           .end((err, res) => {
             expect(res.status).to.equal(404);
@@ -162,10 +158,8 @@ describe('ROLE API', () => {
           });
       });
       it('4. Should return 500 for a failed request', (done) => {
-        const x = 'id';
-
         request
-          .get(`/roles/${x}`)
+          .get('/roles/id')
           .set('authorization', admin.token)
           .end((err, res) => {
             expect(res.status).to.equal(500);

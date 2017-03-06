@@ -79,9 +79,9 @@ class RoleCtrl {
           return AuthStatus.forbid(res, 403, false);
         }
         role.update(req.body)
-          .then((updatedUser) => {
-            if (updatedUser) {
-              Status.putOk(res, 200, true, 'role', updatedUser);
+          .then((updatedRole) => {
+            if (updatedRole) {
+              Status.putOk(res, 200, true, 'role', updatedRole);
             }
           })
           .catch(err => Status.putFail(res, 500, false, 'role', err));

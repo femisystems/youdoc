@@ -298,7 +298,7 @@ describe('USER API', () => {
   });
 
   describe('USERS', () => {
-    it('3. GET /users => Users should not be able to fetch list of users', (done) => {
+    it('1. GET /users => Should return only requester\'s data', (done) => {
       request
         .get('/users')
         .set('authorization', user.token)
@@ -309,11 +309,9 @@ describe('USER API', () => {
           done();
         });
     });
-    it('4. GET /users/:id => Users should be able to view their own details', (done) => {
-      const selfId = user.id;
-
+    it('2. GET /users/:id => Users should be able to view their own details', (done) => {
       request
-        .get(`/users/${selfId}`)
+        .get(`/users/${user.id}`)
         .set('authorization', user.token)
         .end((err, res) => {
           expect(res.statusCode).to.equal(200);
@@ -322,7 +320,7 @@ describe('USER API', () => {
           done();
         });
     });
-    it('5. GET /users/:id => Users should be able to view details of other users', (done) => {
+    it('3. GET /users/:id => Users should be able to view details of other users', (done) => {
       const userId = 1;
 
       request
@@ -335,7 +333,7 @@ describe('USER API', () => {
           done();
         });
     });
-    it('6. PUT /users/:id => Users should be able to update their own details', (done) => {
+    it('4. PUT /users/:id => Users should be able to update their own details', (done) => {
       const selfId = user.id;
       const update = {
         email: 'avidReader@youdoc.com',
@@ -353,7 +351,7 @@ describe('USER API', () => {
           done();
         });
     });
-    it('7. PUT /users/:id => Users should not be able to update details of other users', (done) => {
+    it('5. PUT /users/:id => Users should not be able to update details of other users', (done) => {
       const userId = 1;
       const update = {
         email: 'avidReader@youdoc.com',
@@ -371,7 +369,7 @@ describe('USER API', () => {
           done();
         });
     });
-    it('8. DELETE /users/:id => Users should not be able to delete any user account', (done) => {
+    it('6. DELETE /users/:id => Users should not be able to delete any user account', (done) => {
       const userId = 1;
       request
         .delete(`/users/${userId}`)
