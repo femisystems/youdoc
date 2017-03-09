@@ -5,6 +5,8 @@ engines:
     checks:
       import/no-unresolved:
         enabled: false
+      no-underscore-dangle:
+        enabled: false
   duplication:
     enabled: false
     config:
