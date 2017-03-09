@@ -19,7 +19,7 @@ The application leverages Node; Express for routing and sequelize for ORM.
 ## Postman Collection
 [![Run in Postman](https://run.pstmn.io/button.svg)](https://app.getpostman.com/run-collection/89e2db021ae017f6bc7f)
 
-## Content
+## Endpoints
 - [Roles](#roles)
   - [Create role](#create-role) 
   - [List roles](#list-role)
@@ -47,19 +47,16 @@ The application leverages Node; Express for routing and sequelize for ORM.
   - [delete document](#delete-document) 
 - [Search](#search)
 
-## Endpoints
-### Roles
-
+## Roles
 | Verb     | Endpoint    | Action         |
 | :------- | :---------- | :------------- |
-| POST     | [/roles](#Roles)      |  Create role   |
+| POST     | /roles      |  Create role   |
 | GET      | /roles      |  Get roles     |
 | GET      | /roles/:id  |  Get a role    |
 | DELETE   | /roles/:id  |  Delete a role |
 
-## Roles
 #### Create role
-> - Endpoint: `POST /roles`
+> - Endpoint: **POST** `/roles`
 > - Authorization: Requires authorization and admin access
 ```
 Request
@@ -84,9 +81,8 @@ Status: 201 created
 ```
 
 #### List roles
-> - Endpoint: `GET /roles`
+> - Endpoint: **GET** `/roles`
 > - Authorization: Requires authorization and admin access
-
 ```
 Response
 Status: 200 ok
@@ -143,7 +139,7 @@ Status: 200 ok
 
 ```
 
-### Users
+## Users
 | Verb     | Endpoint              | Action                  |
 | :------- | :-------------------- | :---------------------- |
 | POST     | /users                |  Create user            |
@@ -154,9 +150,8 @@ Status: 200 ok
 | PUT      | /users/:id            |  Update a user          |
 | DELETE   | /users/:id            |  Delete a user          |
 
-## Users
 #### Create user
-> - Endpoint: `POST /users`
+> - Endpoint: **POST** `/users`
 > - Authorization: NA
 ```
 Request
@@ -167,7 +162,8 @@ Request
   "username": "johnsmith",
   "password": "password"
 }
-
+```
+```
 Response
 Status: 201 created
 
@@ -259,7 +255,8 @@ Request
   "firstName": "Enaho",
   "lastName": "Murphy"  
 }
-
+```
+```
 Response
 Status: 200 ok
 
@@ -341,7 +338,7 @@ Status: 200 ok
 ```
 
 #### Login
-> - Endpoint: POST `/users/login`
+> - Endpoint: **POST** `/users/login`
 > - Authorization: N/A
 > - Could be accessed with `email` or `username`.
 ```
@@ -365,7 +362,7 @@ Status: 200 ok
 ```
 
 #### Logout
-> - Endpoint: POST `/users/logout`
+> - Endpoint: **POST** `/users/logout`
 > - Authorization: Requires authorization
 
 ```
@@ -378,8 +375,7 @@ Status: 200 ok
 }
 ```
 
-
-### Types (Document types)
+## Types
 | Verb     | Endpoint    | Action         |
 | :------- | :---------- | :------------- |
 | POST     | /types      |  Create a type |
@@ -387,16 +383,16 @@ Status: 200 ok
 | GET      | /types/:id  |  Get a type    |
 | DELETE   | /types/:id  |  Delete a type |
 
-## Types
 #### Create type
-> - Endpoint: `POST /types`
+> - Endpoint: **POST** `/types`
 > - Authorization: Requires authorization and admin access
 ```
 Request
 {
   "title": "Letter"
 }
-
+```
+```
 Response
 Status: 201 created
 
@@ -455,7 +451,7 @@ Status: 200 ok
 ```
 
 #### Delete type
-> - Endpoint: `DELETE /types/:id`
+> - Endpoint: **DELETE** `/types/:id`
 > - Authorization: Requires authorization and admin access
 
 ```
@@ -464,7 +460,8 @@ Request
   "title": "deck admin"
   "ownerId": 1  
 }
-
+```
+```
 Response
 {
   "success": true,
@@ -478,7 +475,7 @@ Response
 }
 ```
 
-### Documents
+## Documents
 | Verb     | Endpoint        | Action             |
 | :------- | :-------------- | :----------------- |
 | POST     | /documents      |  Create a document |
@@ -487,9 +484,8 @@ Response
 | PUT      | /documents/:id  |  Update a document |
 | DELETE   | /documents/:id  |  Delete a document |
 
-## Documents
 #### Create a document
-> - Endpoint: `POST /documents`
+> - Endpoint: **POST** `/documents`
 > - Authorization: Requires authorization
 
 ```
@@ -500,7 +496,8 @@ Request
   "accessLevel": "public",
   "type": "note"
 }
-
+```
+```
 Response
 Status: 201 created
 
@@ -522,7 +519,7 @@ Status: 201 created
 ```
 
 #### List documents
-> - Endpoint: `GET /documents`
+> - Endpoint: **GET** `/documents`
 > - Authorization: Requires authorization
 
 ```
@@ -572,7 +569,7 @@ Status: 200 ok
 ```
 
 #### Get document
-> - Endpoint: `GET /documents/:id`
+> - Endpoint: **GET** `/documents/:id`
 > - Authorization: Requires authorization
 ```
 Response
@@ -601,7 +598,7 @@ Status: 200 ok
 ```
 
 #### Update document
-> - Endpoint: `PUT /documents/:id`
+> - Endpoint: **PUT** `/documents/:id`
 > - Authorization: Requires authorization and owner/admin access
 ```
 Request
@@ -611,7 +608,8 @@ Request
   "accessLevel": "private",
   "type": "note"
 }
-
+```
+```
 Response
 Status: 201 created
 
@@ -633,7 +631,7 @@ Status: 201 created
 ```
 
 #### Delete document
-> - Endpoint: DELETE `/documents/:id`
+> - Endpoint: **DELETE** `/documents/:id`
 > - Authorization: Requires authorization and owner/admin access
 ```
 Response
@@ -644,10 +642,10 @@ Status: 200 ok
 }
 ```
 
-### Search
+## Search
 Streamline your search with special paramters
 
-> - Endpoint: `GET /documents/search`
+> - Endpoint: **GET** `/documents/search`
 > - Authorization: Requires authorization
 - Optional parameters
   - `?q` - queryString `ex. /documents/search?q=aLiCe`
