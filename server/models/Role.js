@@ -14,7 +14,7 @@ const roleModel = (sequelize, DataTypes) => {
       validate: {
         notEmpty: {
           args: true,
-          msg: 'Title cannot be empty'
+          msg: 'Title cannot be empty.'
         }
       }
     }

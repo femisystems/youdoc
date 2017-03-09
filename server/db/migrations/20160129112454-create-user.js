@@ -44,6 +44,10 @@ module.exports = {
           key: 'title',
           as: 'role'
         }
+      },
+      activeToken: {
+        type: Sequelize.TEXT,
+        allowNull: true
       }
     });
   },

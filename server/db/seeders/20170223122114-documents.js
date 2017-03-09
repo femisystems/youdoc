@@ -2,124 +2,120 @@ module.exports = {
   up(queryInterface) {
     return queryInterface.bulkInsert('Documents', [
       {
-        id: 1,
         title: 'welcome',
         content: 'Lorem Ipsum is simply dummy text of the printing and typesetting industry',
         accessLevel: 'public',
-        createdAt: new Date(),
-        updatedAt: new Date(),
         ownerId: 1,
         type: 'agenda',
-        ownerRole: 'admin'
-      }, {
-        id: 2,
+        ownerRole: 'admin',
+        createdAt: new Date(),
+        updatedAt: new Date()
+      },
+      {
         title: 'meeting',
         content: 'Lorem Ipsum is simply dummy text of the printing and typesetting industry',
         accessLevel: 'private',
-        createdAt: new Date(),
-        updatedAt: new Date(),
         ownerId: 1,
         type: 'memo',
-        ownerRole: 'admin'
+        ownerRole: 'admin',
+        createdAt: new Date(),
+        updatedAt: new Date()
       },
 
       // consultant 1
       {
-        id: 3,
         title: 'my article',
         content: 'Lorem Ipsum is simply dummy text of the printing and typesetting industry',
         accessLevel: 'public',
-        createdAt: new Date(),
-        updatedAt: new Date(),
-        ownerId: 1,
+        ownerId: 2,
         type: 'note',
-        ownerRole: 'consultant'
+        ownerRole: 'consultant',
+        createdAt: new Date(),
+        updatedAt: new Date()
       },
 
       // facilitator 2
       {
-        id: 4,
         title: 'basic schedule',
         content: 'Lorem Ipsum is simply dummy text of the printing and typesetting industry',
         accessLevel: 'private',
-        createdAt: new Date(),
-        updatedAt: new Date(),
         ownerId: 3,
         type: 'proposal',
-        ownerRole: 'facilitator'
-      }, {
-        id: 5,
+        ownerRole: 'facilitator',
+        createdAt: new Date(),
+        updatedAt: new Date()
+      },
+      {
         title: 'simulations',
         content: 'Lorem Ipsum is simply dummy text of the printing and typesetting industry',
         accessLevel: 'role',
-        createdAt: new Date(),
-        updatedAt: new Date(),
         ownerId: 3,
         type: 'agenda',
-        ownerRole: 'facilitator'
+        ownerRole: 'facilitator',
+        createdAt: new Date(),
+        updatedAt: new Date()
       },
 
       // fellow 3
       {
-        id: 6,
         title: 'baseball perks',
         content: 'Lorem Ipsum is simply dummy text of the printing and typesetting industry',
         accessLevel: 'public',
-        createdAt: new Date(),
-        updatedAt: new Date(),
         ownerId: 4,
         type: 'memo',
-        ownerRole: 'fellow'
-      }, {
-        id: 7,
+        ownerRole: 'fellow',
+        createdAt: new Date(),
+        updatedAt: new Date()
+      },
+      {
         title: 'holiday island',
         content: 'Lorem Ipsum is simply dummy text of the printing and typesetting industry',
         accessLevel: 'private',
-        createdAt: new Date(),
-        updatedAt: new Date(),
         ownerId: 4,
         type: 'note',
-        ownerRole: 'fellow'
-      }, {
-        id: 8,
+        ownerRole: 'fellow',
+        createdAt: new Date(),
+        updatedAt: new Date()
+      },
+      {
         title: 'expressions',
         content: 'Lorem Ipsum is simply dummy text of the printing and typesetting industry',
         accessLevel: 'role',
-        createdAt: new Date(),
-        updatedAt: new Date(),
         ownerId: 4,
         type: 'proposal',
-        ownerRole: 'fellow'
-      }, {
-        id: 9,
+        ownerRole: 'fellow',
+        createdAt: new Date(),
+        updatedAt: new Date()
+      },
+      {
         title: 'project management',
         content: 'Lorem Ipsum is simply dummy text of the printing and typesetting industry',
         accessLevel: 'public',
-        createdAt: new Date(),
-        updatedAt: new Date(),
         ownerId: 5,
         type: 'agenda',
-        ownerRole: 'fellow'
-      }, {
-        id: 10,
+        ownerRole: 'fellow',
+        createdAt: new Date(),
+        updatedAt: new Date()
+      },
+      {
         title: 'managing expectations',
         content: 'Lorem Ipsum is simply dummy text of the printing and typesetting industry',
         accessLevel: 'private',
-        createdAt: new Date(),
-        updatedAt: new Date(),
         ownerId: 5,
         type: 'memo',
-        ownerRole: 'fellow'
-      }, {
-        id: 11,
+        ownerRole: 'fellow',
+        createdAt: new Date(),
+        updatedAt: new Date()
+      },
+      {
         title: 'weakest link',
         content: 'Lorem Ipsum is simply dummy text of the printing and typesetting industry',
         accessLevel: 'role',
-        createdAt: new Date(),
-        updatedAt: new Date(),
         ownerId: 5,
         type: 'note',
-        ownerRole: 'fellow'
+        ownerRole: 'fellow',
+        createdAt: new Date(),
+        updatedAt: new Date()
       }
     ], {});
   },

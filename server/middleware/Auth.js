@@ -26,14 +26,28 @@ class Authentication {
   static verifyUser(req, res, next) {
     const token = req.headers.authorization || req.headers['x-access-token'];
 
-    if (!token) return AuthStatus.unauthorized(res, 401, false);
+    if (!token) return AuthStatus.unauthorized(res, 'No authorization header set');
     jwt.verify(token, secret, (err, decoded) => {
       if (err) {
-        return AuthStatus.authFail(res, 500, false, err);
+        return AuthStatus.unauthorized(res, 'Invalid token');
       }
 
-      req.decoded = decoded;
-      next();
+      const query = {
+        where: {
+          id: decoded.userId,
+        },
+        attributes: {
+          include: ['activeToken']
+        }
+      };
+
+      Db.Users.findOne(query)
+        .then((user) => {
+          if (!user) return Status.notFound(res, 'user');
+          if (token !== user.activeToken) return AuthStatus.unauthorized(res, 'Expired token');
+          req.decoded = decoded;
+          next();
+        });
     });
   }
 
@@ -46,9 +60,8 @@ class Authentication {
    * @return {null} no return value
    */
   static verifyAdmin(req, res, next) {
-    if (req.user) return next();
     if (!Utils.isAdmin(req)) {
-      return AuthStatus.forbid(res, 403, false);
+      return AuthStatus.forbid(res);
     }
     next();
   }
@@ -62,18 +75,23 @@ class Authentication {
    * @return {Null|Object} response object | no return value
    */
   static checkUserWriteAccess(req, res, next) {
+    if (Utils.isAdminRoleField(req)) return AuthStatus.forbid(res);
     if ((req.decoded.userId === parseInt(req.params.id, 10)) || Utils.isAdmin(req)) {
       Db.Users.findById(req.params.id)
         .then((user) => {
-          if (!user) {
-            return Status.notFound(res, 404, false, 'user');
+          if (!user) return Status.notFound(res, 'user');
+
+          // disallow role update
+          if (req.body.role) {
+            return AuthStatus.forbid(res);
           }
+
           req.user = user;
           next();
         })
-        .catch(err => Status.getFail(res, 500, false, 'user', err));
+        .catch(() => Status.getFail(res, 400, 'user', 'Invalid Input'));
     } else {
-      return AuthStatus.forbid(res, 403, false);
+      return AuthStatus.forbid(res);
     }
   }
 
@@ -91,16 +109,19 @@ class Authentication {
       .then((document) => {
         if (document !== null) {
           if ((document.ownerId === req.decoded.userId) || Utils.isAdmin(req)) {
+            if ((req.method.toLowerCase() === 'put') && Object.keys(req.body).length < 1) {
+              return Status.putFail(res, 400, 'document', 'Cannot update document with null data');
+            }
             req.document = document;
             next();
           } else {
-            AuthStatus.forbid(res, 403, false);
+            AuthStatus.forbid(res);
           }
         } else {
-          Status.notFound(res, 404, false, 'document');
+          Status.notFound(res, 'document');
         }
       })
-      .catch(err => Status.getFail(res, 500, false, 'document', err));
+      .catch(() => Status.getFail(res, 400, 'document', 'Invalid input.'));
   }
 
   /**
@@ -119,19 +140,15 @@ class Authentication {
     Db.Users.findOne(query)
       .then((user) => {
         if (user && bcrypt.compareSync(req.body.password, user.password)) {
-          const payload = {
-            userId: user.dataValues.id,
-            username: user.dataValues.username,
-            role: user.dataValues.role
-          };
-
-          const token = jwt.sign(payload, secret, { expiresIn: '24h' });
-          const credential = { token, expiresIn: '24 hours' };
-          return AuthStatus.loginOk(res, 200, true, credential);
+          const credential = Utils.generateToken(user, secret);
+          user.update({ activeToken: credential.token })
+            .then(() => AuthStatus.loginOk(res, `${user.username}`, credential))
+            .catch(() => AuthStatus.loginFail(res, 500, 'Internal Server Error.'));
+        } else {
+          AuthStatus.ghostLogin(res);
         }
-        AuthStatus.ghostLogin(res, 400, false);
       })
-      .catch(err => AuthStatus.loginFail(res, 500, false, err));
+      .catch(() => AuthStatus.loginFail(res, 400, 'Invalid Details'));
   }
 
   /**
@@ -143,12 +160,19 @@ class Authentication {
    * @return {Null|Object} response object | no return value
    */
   static logout(req, res) {
-    const token = req.headers.authorization || req.headers['x-access-token'];
-    const decoded = req.decoded;
-    if (token) delete req.headers.authorization;
-    if (req.headers['x-access-token']) delete req.headers['x-access-token'];
-    if (decoded) delete req.decoded;
-    AuthStatus.logoutOk(res, true);
+    Db.Users.findById(req.decoded.userId)
+      .then((user) => {
+        if (user) {
+          user.update({ activeToken: null })
+            .then(() => {
+              AuthStatus.logoutOk(res);
+            })
+            .catch(() => Status.getFail(res, 500, 'user', 'Unable to log you out. Please try again.'));
+        } else {
+          Status.notFound(res, 'user');
+        }
+      })
+      .catch(() => Status.getFail(res, 500, 'user', 'Unable to find user.'));
   }
 }
 

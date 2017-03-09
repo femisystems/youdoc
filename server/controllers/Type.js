@@ -15,8 +15,8 @@ class TypeCtrl {
    */
   static createType(req, res) {
     Db.Types.create(req.body)
-      .then(type => Status.postOk(res, 201, true, 'type', type))
-      .catch(err => Status.postFail(res, 500, false, 'type', err));
+      .then(type => Status.postOk(res, 'type', type))
+      .catch(err => Status.postFail(res, 400, 'type', err.errors[0].message));
   }
 
   /**
@@ -29,12 +29,12 @@ class TypeCtrl {
   static listTypes(req, res) {
     Db.Types.findAll({})
       .then((types) => {
-        if (!types || types.length < 1) {
-          return Status.notFound(res, 404, false, 'type');
+        if (types.length < 1) {
+          return Status.notFound(res, 'type');
         }
-        Status.getOk(res, 200, true, 'type', types);
+        Status.getOk(res, 'type', types);
       })
-      .catch(err => Status.getFail(res, 500, false, 'type', err));
+      .catch(() => Status.getFail(res, 500, 'type', 'Internal Server Error.'));
   }
 
   /**
@@ -46,40 +46,16 @@ class TypeCtrl {
    */
   static getType(req, res) {
     const query = {
-      where: { id: req.params.id }
+      where: { id: parseInt(req.params.id, 10) }
     };
     Db.Types.findOne(query)
       .then((type) => {
         if (!type) {
-          return Status.notFound(res, 404, false, 'type');
+          return Status.notFound(res, 'type');
         }
-        Status.getOk(res, 200, true, 'type', type);
+        Status.getOk(res, 'type', type);
       })
-      .catch(err => Status.getFail(res, 500, false, 'type', err));
-  }
-
-  /**
-   * updateType
-   * update type by id
-   * @param {Object} req - request object
-   * @param {Object} res - response object
-   * @return {Void} no return value
-   */
-  static updateType(req, res) {
-    const query = { where: { id: req.params.id } };
-
-    Db.Types.findOne(query)
-      .then((type) => {
-        if (!type) return Status.notFound(res, 404, false, 'type');
-        type.update(req.body)
-          .then((updatedType) => {
-            if (updatedType) {
-              Status.putOk(res, 200, true, 'type', updatedType);
-            }
-          })
-          .catch(err => Status.putFail(res, 500, false, 'type', err));
-      })
-      .catch(err => Status.getFail(res, 500, false, 'type', err));
+      .catch(() => Status.getFail(res, 400, 'type', 'Invalid input.'));
   }
 
   /**
@@ -90,13 +66,12 @@ class TypeCtrl {
    * @return {Void} no return value
    */
   static deleteType(req, res) {
-    const query = {
-      where: { id: req.params.id }
-    };
-
-    Db.Types.destroy(query)
-      .then(() => Status.deleteOk(res, true, 'type'))
-      .catch(err => Status.deleteFail(res, 500, false, 'type', err));
+    Db.Types.findOne({ where: { id: req.params.id } })
+      .then((type) => {
+        if (!type) return Status.notFound(res, 'type');
+        type.destroy().then(() => Status.deleteOk(res, 'type'));
+      })
+      .catch(() => Status.getFail(res, 400, 'type', 'Invalid input.'));
   }
 }
 

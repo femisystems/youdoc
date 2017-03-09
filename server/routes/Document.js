@@ -8,7 +8,7 @@ const Router = express.Router();
 // Documents
 Router.route('/')
   .get(Auth.verifyUser, Utils.buildQuery, DocCtrl.listDocs)
-  .post(Auth.verifyUser, DocCtrl.createDoc);
+  .post(Auth.verifyUser, Utils.docExists, DocCtrl.createDoc);
 
 // Search
 Router.get('/search', Auth.verifyUser, Utils.buildQuery, DocCtrl.search);

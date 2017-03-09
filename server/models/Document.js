@@ -6,7 +6,7 @@ const documentModel = (sequelize, DataTypes) => {
       validate: {
         notEmpty: {
           args: true,
-          msg: 'Document title cannot be empty'
+          msg: 'title cannot be empty'
         }
       }
     },
@@ -16,7 +16,7 @@ const documentModel = (sequelize, DataTypes) => {
       validate: {
         notEmpty: {
           args: true,
-          msg: 'Content cannot be empty'
+          msg: 'content cannot be empty'
         }
       }
     },
@@ -30,16 +30,26 @@ const documentModel = (sequelize, DataTypes) => {
     },
     type: {
       type: DataTypes.STRING,
-      allowNull: false
+      allowNull: false,
+      validate: {
+        notEmpty: {
+          args: true,
+          msg: 'type cannot be empty'
+        }
+      }
     },
     accessLevel: {
       type: DataTypes.STRING,
       allowNull: false,
       defaultValue: 'public',
       validate: {
+        notEmpty: {
+          args: true,
+          msg: 'accessLevel cannot be empty'
+        },
         isIn: {
           args: [['public', 'private', 'role']],
-          msg: 'access level can only be public, private or role'
+          msg: 'Invalid access type: Access type can be public, private or role.'
         }
       }
     }

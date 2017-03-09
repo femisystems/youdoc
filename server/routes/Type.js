@@ -10,7 +10,6 @@ Router.route('/')
 
 Router.route('/:id')
   .get(Auth.verifyUser, TypeCtrl.getType)
-  .put(Auth.verifyUser, Auth.verifyAdmin, TypeCtrl.updateType)
   .delete(Auth.verifyUser, Auth.verifyAdmin, TypeCtrl.deleteType);
 
 export default Router;

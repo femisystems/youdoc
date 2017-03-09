@@ -13,15 +13,6 @@ module.exports = {
         unique: true,
         primaryKey: true
       },
-      ownerId: {
-        type: Sequelize.INTEGER,
-        onDelete: 'CASCADE',
-        references: {
-          model: 'Users',
-          key: 'id',
-          as: 'ownerId'
-        }
-      },
       createdAt: {
         allowNull: false,
         type: Sequelize.DATE

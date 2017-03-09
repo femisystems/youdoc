@@ -8,90 +8,82 @@ class AuthStatus {
   /**
    * unauthorizedRequest(401)
    * @param {Object} res - response object
-   * @param {Number} code - status code
-   * @param {Boolean} status - true/false
+   * @param {String} err - error msg
    * @return {Object} res - response object
    */
-  static unauthorized(res, code, status) {
-    return res.status(code).send({
-      success: status,
-      msg: 'Unauthorized! Signup or login to access this content.',
+  static unauthorized(res, err) {
+    return res.status(401).send({
+      success: false,
+      msg: 'Unauthorized user! Signup or login to access resource.',
+      error: err
     });
   }
 
   /**
-   * authFail(500)
+   * authFail
    * @param {Object} res - response object
    * @param {Number} code - status code
-   * @param {Boolean} status - true/false
    * @param {Object} err - error object
    * @return {Object} res - response object
    */
-  static authFail(res, code, status, err) {
+  static authFail(res, code, err) {
     return res.status(code).send({
-      success: status,
+      success: false,
       msg: 'Authentication Failed!',
       error: err
     });
   }
 
   /**
-   * forbid(403)
+   * forbid
    * @param {Object} res - response object
-   * @param {Number} code - status code
-   * @param {Boolean} status - true/false
-   * @param {Object} err - error object
    * @return {Object} res - response object
    */
-  static forbid(res, code, status) {
-    return res.status(code).send({
-      success: status,
-      msg: 'Forbidden! This is a restricted content',
+  static forbid(res) {
+    return res.status(403).send({
+      success: false,
+      msg: 'Forbidden! Restricted content.',
     });
   }
 
   /**
-   * loginOk(200)
+   * loginOk
    * @param {Object} res - response object
-   * @param {Number} code - status code
-   * @param {Boolean} status - true/false
+   * @param {String} user - username
    * @param {Object} token - credential
    * @return {Object} res - response object
    */
-  static loginOk(res, code, status, token) {
-    return res.status(code).send({
-      success: status,
-      msg: 'You are now logged in.',
+  static loginOk(res, user, token) {
+    return res.status(200).send({
+      success: true,
+      msg: `Welcome ${user}! You are now logged in.`,
       userToken: token
     });
   }
 
   /**
-   * loginFail(500)
+   * loginFail
    * @param {Object} res - response object
    * @param {Number} code - status code
-   * @param {Boolean} status - true/false
    * @param {Object} err - error object
    * @return {Object} res - response object
    */
-  static loginFail(res, code, status, err) {
+  static loginFail(res, code, err) {
     return res.status(code).send({
-      success: status,
+      success: false,
       msg: 'Unable to login at the moment. Try again.',
       error: err
     });
   }
 
   /**
-   * ghostLogin(400)
+   * ghostLogin
    * @param {Object} res - response object
-   * @param {Number} code - status code
-   * @param {Boolean} status - true/false
    * @return {Object} res - response object
    */
-  static ghostLogin(res, code, status) {
-    return res.status(code).send({
-      success: status,
+  static ghostLogin(res) {
+    return res.status(400).send({
+      success: false,
       msg: 'Invalid userId or password'
     });
   }
@@ -99,12 +91,11 @@ class AuthStatus {
   /**
    * logoutOk
    * @param {Object} res - response object
-   * @param {Boolean} status - true/false
    * @return {Object} res - response object
    */
-  static logoutOk(res, status) {
-    return res.send({
-      success: status,
+  static logoutOk(res) {
+    return res.status(200).send({
+      success: true,
       msg: 'You are now logged out.',
     });
   }

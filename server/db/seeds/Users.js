@@ -3,9 +3,8 @@ import faker from 'faker';
 const validUsers = [
   // admin user
   {
-    id: 1,
-    firstName: 'Default',
-    lastName: 'User',
+    firstName: 'admin',
+    lastName: 'admin',
     email: 'admin@youdoc.com',
     username: 'admin',
     password: 'password',
@@ -16,7 +15,6 @@ const validUsers = [
 
   // consultant 1
   {
-    id: 2,
     firstName: 'Celestine',
     lastName: 'Omin',
     email: 'celestine.omin@youdoc.com',
@@ -29,7 +27,6 @@ const validUsers = [
 
   // facilitator 2
   {
-    id: 3,
     firstName: 'Kesiena',
     lastName: 'Akpobome',
     email: 'kes@youdoc.com',
@@ -42,7 +39,6 @@ const validUsers = [
 
   // fellow 3
   {
-    id: 4,
     firstName: 'Shalom',
     lastName: 'Ayidu',
     email: 'shalom.ayidu@youdoc.com',
@@ -52,7 +48,6 @@ const validUsers = [
     createdAt: new Date(),
     updatedAt: new Date()
   }, {
-    id: 5,
     firstName: 'Murphy',
     lastName: 'Enaho',
     email: 'enaho.murphy@youdoc.com',
@@ -67,7 +62,6 @@ const validUsers = [
 const invalidUsers = [
   // null constraint
   {
-    id: 6,
     firstName: '',
     lastName: faker.name.lastName(),
     email: faker.internet.email(),
@@ -80,7 +74,6 @@ const invalidUsers = [
 
   // existing email
   {
-    id: 6,
     firstName: faker.name.firstName(),
     lastName: faker.name.lastName(),
     email: 'admin@youdoc.com',
@@ -93,7 +86,6 @@ const invalidUsers = [
 
   // existing username
   {
-    id: 6,
     firstName: faker.name.firstName(),
     lastName: faker.name.lastName(),
     email: faker.internet.email(),

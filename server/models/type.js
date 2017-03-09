@@ -14,13 +14,9 @@ const typeModel = (sequelize, DataTypes) => {
       validate: {
         notEmpty: {
           args: true,
-          msg: 'Type cannot be empty!'
+          msg: 'Title cannot be empty.'
         }
       }
-    },
-    ownerId: {
-      type: DataTypes.INTEGER,
-      allowNull: false
     }
   }, {
     classMethods: {
@@ -28,10 +24,6 @@ const typeModel = (sequelize, DataTypes) => {
         Types.hasMany(models.Documents, {
           foreignKey: 'type',
           as: 'documents'
-        });
-        Types.belongsTo(models.Users, {
-          foreignKey: 'ownerId',
-          onDelete: 'CASCADE'
         });
       }
     }

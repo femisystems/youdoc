@@ -5,7 +5,6 @@ module.exports = {
     return queryInterface.bulkInsert('Users', [
       // admin user
       {
-        id: 1,
         firstName: 'Default',
         lastName: 'User',
         email: 'admin@youdoc.com',
@@ -15,10 +14,8 @@ module.exports = {
         createdAt: new Date(),
         updatedAt: new Date()
       },
-
       // consultant 1
       {
-        id: 2,
         firstName: 'Celestine',
         lastName: 'Omin',
         email: 'celestine.omin@youdoc.com',
@@ -28,10 +25,8 @@ module.exports = {
         createdAt: new Date(),
         updatedAt: new Date()
       },
-
       // facilitator 2
       {
-        id: 3,
         firstName: 'Kesiena',
         lastName: 'Akpobome',
         email: 'kes@youdoc.com',
@@ -41,10 +36,8 @@ module.exports = {
         createdAt: new Date(),
         updatedAt: new Date()
       },
-
       // fellow 3
       {
-        id: 4,
         firstName: 'Shalom',
         lastName: 'Ayidu',
         email: 'shalom.ayidu@youdoc.com',
@@ -53,8 +46,8 @@ module.exports = {
         role: 'fellow',
         createdAt: new Date(),
         updatedAt: new Date()
-      }, {
-        id: 5,
+      },
+      {
         firstName: 'Murphy',
         lastName: 'Enaho',
         email: 'enaho.murphy@youdoc.com',

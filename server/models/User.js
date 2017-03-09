@@ -6,9 +6,9 @@ const userModel = (sequelize, DataTypes) => {
       type: DataTypes.STRING,
       allowNull: false,
       validate: {
-        len: {
-          args: [2, 15],
-          msg: 'Firstname must be 2 to 15 characters long.'
+        notEmpty: {
+          args: true,
+          msg: 'firstName cannot be empty'
         }
       }
     },
@@ -16,9 +16,9 @@ const userModel = (sequelize, DataTypes) => {
       type: DataTypes.STRING,
       allowNull: false,
       validate: {
-        len: {
-          args: [2, 15],
-          msg: 'Lastname must be 2 to 15 characters long.'
+        notEmpty: {
+          args: true,
+          msg: 'lastName cannot be empty'
         }
       }
     },
@@ -27,30 +27,53 @@ const userModel = (sequelize, DataTypes) => {
       allowNull: false,
       unique: true,
       validate: {
+        notEmpty: {
+          args: true,
+          msg: 'email cannot be empty'
+        },
         isEmail: {
-          msg: 'Check that your email looks like this: someone@somewhere.com.'
-        }
+          msg: 'Invalid email. Try formatting it like this: you@mail.com'
+        },
       }
     },
     username: {
       type: DataTypes.STRING,
       allowNull: false,
-      unique: true
+      unique: true,
+      validate: {
+        notEmpty: {
+          args: true,
+          msg: 'username cannot be empty'
+        }
+      }
     },
     password: {
       type: DataTypes.STRING,
       allowNull: false,
       validate: {
-        len: {
-          args: [/^(.){8,32}$/igm],
-          msg: 'Password must be at least 8 characters long.'
+        notEmpty: {
+          args: true,
+          msg: 'password cannot be empty'
         }
       }
     },
     role: {
       type: DataTypes.STRING,
       allowNull: false,
-      default: 'fellow'
+      validate: {
+        notEmpty: {
+          args: true,
+          msg: 'role cannot be empty'
+        },
+        isIn: {
+          args: [['fellow', 'consultant', 'facilitator']],
+          msg: 'can only be fellow, facilitator or consultant'
+        }
+      }
+    },
+    activeToken: {
+      type: DataTypes.TEXT,
+      allowNull: true
     }
   }, {
     classMethods: {
@@ -58,10 +81,6 @@ const userModel = (sequelize, DataTypes) => {
         Users.hasMany(models.Documents, {
           foreignKey: 'ownerId',
           as: 'documents'
-        });
-        Users.hasMany(models.Types, {
-          foreignKey: 'ownerId',
-          as: 'types'
         });
         Users.belongsTo(models.Roles, {
           foreignKey: 'role'
@@ -73,7 +92,9 @@ const userModel = (sequelize, DataTypes) => {
         user.password = bcrypt.hashSync(user.password, bcrypt.genSaltSync());
       },
       beforeUpdate(user) {
-        user.password = bcrypt.hashSync(user.password, bcrypt.genSaltSync());
+        if (user._changed.password) {
+          user.password = bcrypt.hashSync(user.password, bcrypt.genSaltSync());
+        }
       }
     }
   });

@@ -7,7 +7,7 @@ import DocRoutes from './Document';
 export default (app) => {
   // Home route
   app.get('/', (req, res) => {
-    res.send('Welcome!!');
+    res.send('Welcome to youdoc api!');
   });
 
   // Use userRoutes

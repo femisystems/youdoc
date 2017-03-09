@@ -9,14 +9,13 @@ class ActionStatus {
    * postFail(501)
    * @param {Object} res - response object
    * @param {Number} code - status code
-   * @param {Boolean} status - true/false
    * @param {String} scope - ['document', 'user', 'role', 'type']
-   * @param {Object} err - error object
+   * @param {Object|String} err - error object
    * @return {Object} res - response object
    */
-  static postFail(res, code, status, scope, err) {
+  static postFail(res, code, scope, err) {
     return res.status(code).send({
-      success: status,
+      success: false,
       msg: `Oops! Unable to create ${scope}(s). Please try again.`,
       error: err
     });
@@ -25,32 +24,29 @@ class ActionStatus {
   /**
    * postOk(201)
    * @param {Object} res - response object
-   * @param {Number} code - status code
-   * @param {Boolean} status - true/false
    * @param {String} scope - ['document', 'user', 'role', 'type']
    * @param {String} scopeData - data returned
    * @return {Object} res - response object
    */
-  static postOk(res, code, status, scope, scopeData) {
-    return res.status(code).send({
-      success: status,
+  static postOk(res, scope, scopeData) {
+    return res.status(201).send({
+      success: true,
       msg: `${scope}(s) successfully created.`,
       data: scopeData
     });
   }
 
   /**
-   * getFail(500)
+   * getFail
    * @param {Object} res - response object
    * @param {Number} code - status code
-   * @param {Boolean} status - true/false
    * @param {String} scope - ['document', 'user', 'role', 'type']
-   * @param {Object} err - error object
+   * @param {Object|String} err - error object
    * @return {Object} res - response object
    */
-  static getFail(res, code, status, scope, err) {
+  static getFail(res, code, scope, err) {
     return res.status(code).send({
-      success: status,
+      success: false,
       msg: `Sorry! Unable to reach ${scope}(s). Please try again.`,
       error: err
     });
@@ -59,14 +55,12 @@ class ActionStatus {
   /**
    * notFound(404)
    * @param {Object} res - response object
-   * @param {Number} code - status code
-   * @param {Boolean} status - true/false
    * @param {String} scope - ['document', 'user', 'role', 'type']
    * @return {Object} res - response object
    */
-  static notFound(res, code, status, scope) {
-    return res.status(code).send({
-      success: status,
+  static notFound(res, scope) {
+    return res.status(404).send({
+      success: false,
       msg: `Sorry! ${scope}(s) not found.`,
     });
   }
@@ -74,15 +68,13 @@ class ActionStatus {
   /**
    * getOk(200)
    * @param {Object} res - response object
-   * @param {Number} code - status code
-   * @param {Boolean} status - true/false
    * @param {String} scope - ['document', 'user', 'role', 'type']
    * @param {String} scopeData - data returned
    * @return {Object} res - response object
    */
-  static getOk(res, code, status, scope, scopeData) {
-    return res.status(code).send({
-      success: status,
+  static getOk(res, scope, scopeData) {
+    return res.status(200).send({
+      success: true,
       msg: `${scope}(s) successfully retrieved.`,
       data: scopeData
     });
@@ -92,14 +84,13 @@ class ActionStatus {
    * putFail(501)
    * @param {Object} res - response object
    * @param {Number} code - status code
-   * @param {Boolean} status - true/false
    * @param {String} scope - ['document', 'user', 'role', 'type']
-   * @param {Object} err - error object
+   * @param {Object|String} err - error object
    * @return {Object} res - response object
    */
-  static putFail(res, code, status, scope, err) {
+  static putFail(res, code, scope, err) {
     return res.status(code).send({
-      success: status,
+      success: false,
       msg: `Oops! Unable to update ${scope}(s). Please try again.`,
       error: err
     });
@@ -108,62 +99,44 @@ class ActionStatus {
   /**
    * putOk(200)
    * @param {Object} res - response object
-   * @param {Number} code - status code
-   * @param {Boolean} status - true/false
    * @param {String} scope - ['document', 'user', 'role', 'type']
    * @param {String} scopeData - data returned
    * @return {Object} res - response object
    */
-  static putOk(res, code, status, scope, scopeData) {
-    return res.status(code).send({
-      success: status,
+  static putOk(res, scope, scopeData) {
+    return res.status(200).send({
+      success: true,
       msg: `${scope}(s) successfully updated.`,
       data: scopeData
     });
   }
 
   /**
-   * deleteFail(500)
+   * deleteFail
    * @param {Object} res - response object
    * @param {Number} code - status code
-   * @param {Boolean} status - true/false
    * @param {String} scope - ['document', 'user', 'role', 'type']
-   * @param {Object} err - error object
+   * @param {Object|String} err - error object
    * @return {Object} res - response object
    */
-  static deleteFail(res, code, status, scope, err) {
+  static deleteFail(res, code, scope, err) {
     return res.status(code).send({
-      success: status,
+      success: false,
       msg: `Oops! Unable to delete ${scope}(s). Please try again.`,
       error: err
     });
   }
 
   /**
-   * deleteOk
+   * deleteOk(200)
    * @param {Object} res - response object
-   * @param {Boolean} status - true/false
    * @param {String} scope - ['document', 'user', 'role', 'type']
    * @return {Object} res - response object
    */
-  static deleteOk(res, status, scope) {
-    return res.send({
-      success: status,
+  static deleteOk(res, scope) {
+    return res.status(200).send({
+      success: true,
       msg: `${scope}(s) successfully deleted.`,
-    });
-  }
-
-  /**
-   * queryFail(400)
-   * @param {Object} res - response object
-   * @param {Number} code - status code
-   * @param {Boolean} status - true/false
-   * @return {Object} res - response object
-   */
-  static queryFail(res, code, status) {
-    return res.send({
-      success: status,
-      msg: 'Query not properly formatted',
     });
   }
 }

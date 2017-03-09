@@ -10,7 +10,7 @@
     "start": "npm run build && npm run serve-app",
     "build": "rimraf dist/ && babel --copy-files ./server --out-dir dist/",
     "test--": "npm run migrate-db-test && npm run seed-db-test && npm run cover",
-    "test": "NODE_ENV=test node_modules/babel-cli/bin/babel-node.js node_modules/babel-istanbul/lib/cli.js cover node_modules/mocha/bin/_mocha -- server/tests/**/*.spec.js",
+    "test": "NODE_ENV=test node_modules/babel-cli/bin/babel-node.js node_modules/babel-istanbul/lib/cli.js cover node_modules/mocha/bin/_mocha -- server/tests/api/*.js",
     "setup-db-test": "npm run drop-db-test && npm run create-db-test",
     "create-db-test": "psql -c 'create database youdoc_test;' -U postgres",
     "drop-db-test": "psql -c 'drop database if exists youdoc_test;' -U postgres",

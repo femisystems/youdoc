@@ -1,8 +1,8 @@
 import dotenv from 'dotenv';
-import jwt from 'jsonwebtoken';
 import Db from '../models/Index';
 import Status from '../middleware/ActionStatus';
 import AuthStatus from '../middleware/AuthStatus';
+import Utils from '../controllers/Utils';
 
 dotenv.config({ silent: true });
 const secret = process.env.SECRET || '$3CRET AG3NT';
@@ -22,18 +22,15 @@ class UserCtrl {
    */
   static createUser(req, res) {
     Db.Users.create(req.body)
-      .then((newUser) => {
-        const payload = {
-          userId: newUser.id,
-          username: newUser.username,
-          role: newUser.role
-        };
-
-        const token = jwt.sign(payload, secret, { expiresIn: '24h' });
-        const credential = { token, expiresIn: '24 hours' };
-        Status.postOk(res, 201, true, 'user', { credential, newUser });
+      .then((user) => {
+        const credential = Utils.generateToken(user, secret);
+        user.update({ activeToken: credential.token })
+          .then((data) => {
+            delete data.dataValues.activeToken;
+            Status.postOk(res, 'user', { credential, data });
+          });
       })
-      .catch(err => Status.postFail(res, 500, false, 'user', err));
+      .catch(err => Status.postFail(res, 400, 'user', err.errors[0].message));
   }
 
   /**
@@ -47,11 +44,10 @@ class UserCtrl {
     Db.Users.findAll(req.searchQuery)
       .then((users) => {
         if (users.length < 1) {
-          return Status.notFound(res, 404, false, 'user');
+          return Status.notFound(res, 'user');
         }
-        Status.getOk(res, 200, true, 'user', users);
-      })
-      .catch(err => Status.getFail(res, 500, false, 'user', err));
+        Status.getOk(res, 'user', users);
+      });
   }
 
   /**
@@ -65,11 +61,11 @@ class UserCtrl {
     Db.Users.findOne(req.searchQuery)
       .then((user) => {
         if (!user) {
-          return Status.notFound(res, 404, false, 'user');
+          return Status.notFound(res, 'user');
         }
-        Status.getOk(res, 200, true, 'user', user);
+        Status.getOk(res, 'user', user);
       })
-      .catch(err => Status.getFail(res, 500, false, 'user', err));
+      .catch(() => Status.getFail(res, 400, 'user', 'Invalid input.'));
   }
 
   /**
@@ -82,9 +78,11 @@ class UserCtrl {
   static updateUser(req, res) {
     req.user.update(req.body)
       .then((updatedUser) => {
-        Status.putOk(res, 200, true, 'user', updatedUser);
+        delete updatedUser.dataValues.activeToken;
+        delete updatedUser.dataValues.password;
+        Status.putOk(res, 'user', updatedUser);
       })
-      .catch(err => Status.putFail(res, 500, false, 'user', err));
+      .catch(() => Status.putFail(res, 400, 'user', 'Invalid input.'));
   }
 
   /**
@@ -97,14 +95,14 @@ class UserCtrl {
   static deleteUser(req, res) {
     Db.Users.findById(req.params.id)
       .then((user) => {
-        if (!user) return Status.notFound(res, 404, false, 'user');
+        if (!user) return Status.notFound(res, 'user');
         if (user.role === 'admin') {
-          return AuthStatus.forbid(res, 403, false);
+          return AuthStatus.forbid(res);
         }
         user.destroy({ force: true })
-          .then(() => Status.deleteOk(res, true, 'user'));
+          .then(() => Status.deleteOk(res, 'user'));
       })
-      .catch(err => Status.getFail(res, 500, false, 'user', err));
+      .catch(() => Status.getFail(res, 400, 'user', 'Invalid input.'));
   }
 }
 

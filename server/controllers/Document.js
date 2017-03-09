@@ -14,13 +14,11 @@ class DocCtrl {
    * @return {Void} no return value
    */
   static createDoc(req, res) {
-    Db.Documents.create(req.body)
+    Db.Documents.create(req.docData)
       .then((document) => {
-        Status.postOk(res, 201, true, 'document', document);
+        Status.postOk(res, 'document', document);
       })
-      .catch((err) => {
-        Status.postFail(res, 500, false, 'document', err);
-      });
+      .catch(err => Status.postFail(res, 400, 'document', err.errors[0].message));
   }
 
   /**
@@ -35,11 +33,10 @@ class DocCtrl {
     Db.Documents.findAll(req.searchQuery)
       .then((documents) => {
         if (documents.length < 1) {
-          return Status.notFound(res, 404, false, 'document');
+          return Status.notFound(res, 'document');
         }
-        Status.getOk(res, 200, true, 'document', documents);
-      })
-      .catch(err => Status.getFail(res, 500, false, 'document', err));
+        Status.getOk(res, 'document', documents);
+      });
   }
 
   /**
@@ -53,11 +50,11 @@ class DocCtrl {
     Db.Documents.findOne(req.searchQuery)
       .then((document) => {
         if (!document) {
-          return Status.notFound(res, 404, false, 'document');
+          return Status.notFound(res, 'document');
         }
-        Status.getOk(res, 200, true, 'document', document);
+        Status.getOk(res, 'document', document);
       })
-      .catch(err => Status.getFail(res, 500, false, 'document', err));
+      .catch(() => Status.getFail(res, 400, 'document', 'Invalid input'));
   }
 
   /**
@@ -71,11 +68,10 @@ class DocCtrl {
     Db.Documents.findAll(req.searchQuery)
       .then((documents) => {
         if (!documents || documents.length < 1) {
-          return Status.notFound(res, 404, false, 'document');
+          return Status.notFound(res, 'document');
         }
-        Status.getOk(res, 200, true, 'document', documents);
-      })
-      .catch(err => Status.getFail(res, 500, false, 'document', err));
+        Status.getOk(res, 'document', { owner: req.ownerData, documents });
+      });
   }
 
   /**
@@ -88,9 +84,9 @@ class DocCtrl {
   static updateDoc(req, res) {
     req.document.update(req.body)
       .then((updatedDoc) => {
-        Status.putOk(res, 200, true, 'document', updatedDoc);
+        Status.putOk(res, 'document', updatedDoc);
       })
-    .catch(err => Status.putFail(res, 500, false, 'document', err));
+      .catch(err => Status.putFail(res, 400, 'document', err.errors[0].message));
   }
 
   /**
@@ -102,8 +98,7 @@ class DocCtrl {
    */
   static deleteDoc(req, res) {
     req.document.destroy()
-      .then(() => Status.deleteOk(res, true, 'document'))
-      .catch(err => Status.deleteFail(res, 500, false, 'document', err));
+      .then(() => Status.deleteOk(res, 'document'));
   }
 
   /**
@@ -117,12 +112,11 @@ class DocCtrl {
     Db.Documents.findAll(req.searchQuery)
       .then((documents) => {
         if (documents && documents.length > 0) {
-          Status.getOk(res, 200, true, 'document', documents);
+          Status.getOk(res, 'document', documents);
         } else {
-          Status.notFound(res, 404, false, 'document');
+          Status.notFound(res, 'document');
         }
-      })
-      .catch(err => Status.getFail(res, 500, false, 'document', err));
+      });
   }
 }
 
