@@ -9,7 +9,6 @@ const validDocs = [
     updatedAt: new Date(),
     ownerId: 1,
     type: 'agenda',
-    ownerRole: 'admin'
   },
   {
     title: faker.company.catchPhrase(),
@@ -19,7 +18,6 @@ const validDocs = [
     updatedAt: new Date(),
     ownerId: 1,
     type: 'memo',
-    ownerRole: 'admin'
   },
 
   // consultant 1
@@ -31,7 +29,6 @@ const validDocs = [
     updatedAt: new Date(),
     ownerId: 2,
     type: 'note',
-    ownerRole: 'consultant'
   },
 
   // facilitator 2
@@ -43,7 +40,6 @@ const validDocs = [
     updatedAt: new Date(),
     ownerId: 3,
     type: 'proposal',
-    ownerRole: 'facilitator'
   },
   {
     title: faker.company.catchPhrase(),
@@ -53,7 +49,6 @@ const validDocs = [
     updatedAt: new Date(),
     ownerId: 3,
     type: 'agenda',
-    ownerRole: 'facilitator'
   },
 
   // fellow 3
@@ -65,7 +60,6 @@ const validDocs = [
     updatedAt: new Date(),
     ownerId: 4,
     type: 'memo',
-    ownerRole: 'fellow'
   },
   {
     title: faker.company.catchPhrase(),
@@ -75,7 +69,6 @@ const validDocs = [
     updatedAt: new Date(),
     ownerId: 4,
     type: 'note',
-    ownerRole: 'fellow'
   },
   {
     title: faker.company.catchPhrase(),
@@ -85,7 +78,6 @@ const validDocs = [
     updatedAt: new Date(),
     ownerId: 4,
     type: 'proposal',
-    ownerRole: 'fellow'
   },
   {
     title: faker.company.catchPhrase(),
@@ -95,7 +87,6 @@ const validDocs = [
     updatedAt: new Date(),
     ownerId: 5,
     type: 'agenda',
-    ownerRole: 'fellow'
   },
   {
     title: faker.company.catchPhrase(),
@@ -105,7 +96,6 @@ const validDocs = [
     updatedAt: new Date(),
     ownerId: 5,
     type: 'memo',
-    ownerRole: 'fellow'
   },
   {
     title: faker.company.catchPhrase(),
@@ -115,7 +105,6 @@ const validDocs = [
     updatedAt: new Date(),
     ownerId: 5,
     type: 'note',
-    ownerRole: 'fellow'
   }
 ];
 
@@ -128,7 +117,6 @@ const invalidDocs = [
     updatedAt: new Date(),
     ownerId: 1,
     type: 'agenda',
-    ownerRole: 'admin'
   },
   {
     title: faker.company.catchPhrase(),
@@ -138,7 +126,6 @@ const invalidDocs = [
     updatedAt: new Date(),
     ownerId: 1,
     type: 'memo',
-    ownerRole: 'admin'
   },
   {
     title: faker.company.catchPhrase(),
@@ -148,7 +135,6 @@ const invalidDocs = [
     updatedAt: new Date(),
     ownerId: 1,
     type: 'memo',
-    ownerRole: 'admin'
   },
   {
     title: faker.company.catchPhrase(),
@@ -158,7 +144,6 @@ const invalidDocs = [
     updatedAt: new Date(),
     ownerId: 1,
     type: '',
-    ownerRole: 'admin'
   }
 ];
 

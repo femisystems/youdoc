@@ -43,7 +43,9 @@ module.exports = {
           model: 'Roles',
           key: 'title',
           as: 'role'
-        }
+        },
+        onUpdate: 'CASCADE',
+        onDelete: 'CASCADE'
       },
       activeToken: {
         type: Sequelize.TEXT,

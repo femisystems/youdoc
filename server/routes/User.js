@@ -17,7 +17,7 @@ Router.route('/:id')
   .delete(Auth.verifyUser, Auth.verifyAdmin, UserCtrl.deleteUser);
 
 // All documents created by a single user
-Router.get('/:id/documents', Auth.verifyUser, Utils.fetchOwnerData, Utils.buildQuery, DocCtrl.getUserDocs);
+Router.get('/:id/documents', Auth.verifyUser, Utils.fetchOwnerData, DocCtrl.getUserDocs);
 
 // Login
 Router.post('/login', Auth.login);

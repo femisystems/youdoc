@@ -67,6 +67,33 @@ class Authentication {
   }
 
   /**
+   * permitRoleEdit
+   * checks if the user is an admin authorising
+   * @param {Object} req - request object
+   * @param {Object} res - response object
+   * @param {Function} next - run next func
+   * @return {null} no return value
+   */
+  static permitRoleEdit(req, res, next) {
+    Db.Roles.findOne({ where: { id: parseInt(req.params.id, 10) } })
+      .then((role) => {
+        if (!role) return Status.notFound(res, 'role');
+
+        if (req.body.title.length < 1) {
+          return Status.putFail(res, 400, 'role', 'title cannot be empty');
+        }
+
+        const rawQuery = `UPDATE "public"."Roles"
+          SET "title" = '${req.body.title}' WHERE id=${req.params.id}
+          RETURNING "id", "title", "createdAt", "updatedAt";`;
+
+        req.rawQuery = rawQuery;
+        next();
+      })
+      .catch(() => Status.getFail(res, 400, 'role', 'Invalid input.'));
+  }
+
+  /**
    * checkUserWriteAccess
    * checks if the user is authorised to access user route
    * @param {Object} req - request object
@@ -81,8 +108,8 @@ class Authentication {
         .then((user) => {
           if (!user) return Status.notFound(res, 'user');
 
-          // disallow role update
-          if (req.body.role) {
+          // disallow role update if you are not an admin
+          if (req.body.role && !Utils.isAdmin(req)) {
             return AuthStatus.forbid(res);
           }
 

@@ -124,7 +124,7 @@ describe('USER API', () => {
           done();
         });
     });
-    it('PUT - Should not be able to update user role', (done) => {
+    it('PUT - Should be able to update user role', (done) => {
       const update = { role: 'facilitator' };
 
       request
@@ -132,10 +132,9 @@ describe('USER API', () => {
         .set('authorization', admin.token)
         .send(update)
         .end((err, res) => {
-          console.log(res.body);
-          expect(res.statusCode).to.equal(403);
-          expect(res.body.success).to.equal(false);
-          expect(res.body.msg).to.equal('Forbidden! Restricted content.');
+          expect(res.statusCode).to.equal(200);
+          expect(res.body.success).to.equal(true);
+          expect(res.body.msg).to.equal('user(s) successfully updated.');
           done();
         });
     });
@@ -425,7 +424,6 @@ describe('USER API', () => {
           username: ''
         })
         .end((err, res) => {
-          console.log(res.body);
           expect(res.status).to.equal(400);
           expect(res.body.success).to.equal(false);
           expect(res.body.msg).to.equal('Oops! Unable to update user(s). Please try again.');

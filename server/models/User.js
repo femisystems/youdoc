@@ -66,10 +66,11 @@ const userModel = (sequelize, DataTypes) => {
           msg: 'role cannot be empty'
         },
         isIn: {
-          args: [['fellow', 'consultant', 'facilitator']],
+          args: [['regular', 'fellow', 'facilitator', 'consultant']],
           msg: 'can only be fellow, facilitator or consultant'
         }
-      }
+      },
+      defaultValue: 'regular'
     },
     activeToken: {
       type: DataTypes.TEXT,

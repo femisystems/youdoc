@@ -24,10 +24,6 @@ const documentModel = (sequelize, DataTypes) => {
       type: DataTypes.INTEGER,
       allowNull: false
     },
-    ownerRole: {
-      type: DataTypes.STRING,
-      allowNull: false
-    },
     type: {
       type: DataTypes.STRING,
       allowNull: false,

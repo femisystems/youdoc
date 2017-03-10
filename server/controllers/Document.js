@@ -21,23 +21,6 @@ class DocCtrl {
       .catch(err => Status.postFail(res, 400, 'document', err.errors[0].message));
   }
 
-  /**
-   * listDocs
-   * fetch all from documents
-   * @param {Object} req - request object
-   * @param {Object} res - response object
-   * @return {Void} no return value
-   */
-  static listDocs(req, res) {
-    // return console.log(req.searchQuery);
-    Db.Documents.findAll(req.searchQuery)
-      .then((documents) => {
-        if (documents.length < 1) {
-          return Status.notFound(res, 'document');
-        }
-        Status.getOk(res, 'document', documents);
-      });
-  }
 
   /**
    * getDoc
@@ -47,14 +30,16 @@ class DocCtrl {
    * @return {Void} no return value
    */
   static getDoc(req, res) {
-    Db.Documents.findOne(req.searchQuery)
-      .then((document) => {
-        if (!document) {
-          return Status.notFound(res, 'document');
-        }
-        Status.getOk(res, 'document', document);
-      })
-      .catch(() => Status.getFail(res, 400, 'document', 'Invalid input'));
+    Db.sequelize.query(req.rawQuery, {
+      type: Db.sequelize.QueryTypes.SELECT
+    })
+    .then((document) => {
+      if (!document[0]) {
+        return Status.notFound(res, 'document');
+      }
+      Status.getOk(res, 'document', document[0]);
+    })
+    .catch(() => Status.getFail(res, 400, 'document', 'Invalid input'));
   }
 
   /**
@@ -65,13 +50,15 @@ class DocCtrl {
    * @return {Void} no return value
    */
   static getUserDocs(req, res) {
-    Db.Documents.findAll(req.searchQuery)
-      .then((documents) => {
-        if (!documents || documents.length < 1) {
-          return Status.notFound(res, 'document');
-        }
-        Status.getOk(res, 'document', { owner: req.ownerData, documents });
-      });
+    Db.sequelize.query(req.rawQuery, {
+      types: Db.sequelize.QueryTypes.SELECT
+    })
+    .then((documents) => {
+      if (!documents[0] || documents[0].length < 1) {
+        return Status.notFound(res, 'document');
+      }
+      Status.getOk(res, 'document', { owner: req.ownerData, documents: documents[0] });
+    });
   }
 
   /**
@@ -109,14 +96,15 @@ class DocCtrl {
    * @return {Void} no return value
    */
   static search(req, res) {
-    Db.Documents.findAll(req.searchQuery)
-      .then((documents) => {
-        if (documents && documents.length > 0) {
-          Status.getOk(res, 'document', documents);
-        } else {
-          Status.notFound(res, 'document');
-        }
-      });
+    Db.sequelize.query(req.rawQuery, {
+      type: Db.sequelize.QueryTypes.SELECT
+    })
+    .then((documents) => {
+      if (documents.length < 1) {
+        return Status.notFound(res, 'document');
+      }
+      Status.getOk(res, 'document', documents);
+    });
   }
 }
 

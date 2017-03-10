@@ -90,200 +90,6 @@ class Utils {
   }
 
   /**
-   * addPublicAccess
-   * returns a partial query that adds public access to the base query
-   * @param {Object} req - request object
-   * @return {Object} public access
-   */
-  static addPublicAccess(req) {
-    return {
-      $or: [
-        { accessLevel: 'public' },
-        {
-          $and: [
-            { ownerRole: req.decoded.role },
-            { accessLevel: 'role' }
-          ]
-        }
-      ]
-    };
-  }
-
-  /**
-   * buildQuery
-   * build search query based on user input
-   * @param {Object} req - request object
-   * @param {Object} res - response object
-   * @param {Object} next - next function
-   * @return {Null} no return value
-   */
-  static buildQuery(req, res, next) {
-    // base query to include user's attributes
-    const query = {
-      where: {
-        $and: []
-      },
-      include: [
-        {
-          model: Db.Users,
-          attributes: ['firstName', 'lastName', 'username', 'role']
-        }
-      ]
-    };
-
-    // query keys
-    const keys = {
-      queryString: req.query.q || null,
-      docType: req.query.type || null,
-      role: req.query.role || null,
-      page: req.query.page || 1,
-      limit: req.query.limit || 10,
-      sortBy: req.query.sortBy || 'createdAt',
-      order: req.query.order || 'ASC'
-    };
-
-    // if request is coming from document/search route use custom query
-    if (`${req.baseUrl}${req.route.path}` === '/documents/search') {
-      if (Utils.isAdmin(req)) {
-        query.where = {
-          $and: []
-        };
-      } else {
-        query.where = {
-          $and: [
-            { $or: [
-              { ownerId: req.decoded.userId },
-              { accessLevel: 'public' },
-              { $and: [
-                { ownerRole: req.decoded.role },
-                { accessLevel: 'role' }
-              ] }
-            ] }
-          ]
-        };
-      }
-    }
-
-    // if request is coming from /users/:id/documents use custom query
-    if (`${req.baseUrl}${req.route.path}` === '/users/:id/documents') {
-      if (Utils.isAdmin(req) || (parseInt(req.params.id, 10) === req.decoded.userId)) {
-        query.where = {
-          $and: [
-            { ownerId: parseInt(req.params.id, 10) }
-          ]
-        };
-      } else {
-        query.where = {
-          $and: [
-            { ownerId: parseInt(req.params.id, 10) },
-            Utils.addPublicAccess(req)
-          ]
-        };
-      }
-      delete query.include;
-    }
-
-    // if request is coming from /documents/:id use custom query
-    if (`${req.baseUrl}${req.route.path}` === '/documents/:id') {
-      if (Utils.isAdmin(req)) {
-        query.where = {
-          id: req.params.id
-        };
-      } else {
-        query.where = {
-          $and: [
-            { id: parseInt(req.params.id, 10) },
-            Utils.addPublicAccess(req)
-          ]
-        };
-      }
-    }
-
-    // if request is coming from /documents/ use custom query
-    if (`${req.baseUrl}${req.route.path}` === '/documents/') {
-      if (Utils.isAdmin(req)) {
-        query.where = {
-          $and: []
-        };
-      } else {
-        query.where = {
-          ownerId: req.decoded.userId
-        };
-      }
-    }
-
-    // if query string exists, append to base query
-    if (req.query.q) {
-      query.where.$and.push({
-        $or: [
-          {
-            title: { $ilike: `%${req.query.q.replace(/[^a-z0-9]+/gi, '')}%` }
-          },
-          {
-            content: { $ilike: `%${req.query.q.replace(/[^a-z0-9]+/gi, '')}%` }
-          }
-        ]
-      });
-    }
-
-    // if limit exists, append to base query or use default limit
-    if (keys.limit && keys.limit >= 1) {
-      query.limit = keys.limit;
-    } else {
-      return Status.getFail(res, 400, 'document', 'limit cannot be less than 1');
-    }
-
-    // if page exists, append to base query or use default page
-    if (keys.page && keys.page >= 1) {
-      query.offset = (keys.page - 1) * keys.limit;
-    } else {
-      return Status.getFail(res, 400, 'document', 'page cannot be less than 1');
-    }
-
-    // if type exists, append to base query
-    if (keys.docType) {
-      query.where.$and.push({ type: keys.docType });
-    }
-
-    // if type exists, append to base query
-    if (keys.role) {
-      query.where.$and.push({ ownerRole: keys.role });
-    }
-
-    // append sorting and ordering
-    query.order = [[keys.sortBy, keys.order]];
-    req.searchQuery = query;
-    next();
-  }
-
-  /**
-   * fetchOwnerData
-   * checks if document with title and content already exists
-   * @param {Object} req - request object
-   * @param {Object} res - response object
-   * @param {Function} next - next func
-   * @return {Null} no return value
-   */
-  static fetchOwnerData(req, res, next) {
-    const userQuery = {
-      where: {
-        id: parseInt(req.params.id, 10)
-      },
-      attributes: {
-        exclude: ['createdAt', 'updatedAt', 'password', 'email', 'activeToken']
-      }
-    };
-
-    return Db.Users.findOne(userQuery)
-      .then((user) => {
-        if (!user) return Status.notFound(res, 'user');
-        req.ownerData = user;
-        next();
-      })
-      .catch(() => Status.getFail(res, 400, 'user', 'Invalid input.'));
-  }
-
-  /**
    * docExists
    * checks if document with title and content already exists
    * @param {Object} req - request object
@@ -320,6 +126,164 @@ class Utils {
         next();
       })
       .catch(() => Status.getFail(res, 400, 'document', 'Invalid input'));
+  }
+  /**
+   * buildSingleDocQuery
+   * build search query based on user input
+   * @param {Object} req - request object
+   * @param {Object} res - response object
+   * @param {Object} next - next function
+   * @return {Null} no return value
+   */
+  static buildSingleDocQuery(req, res, next) {
+    let rawQuery;
+
+    if (Utils.isAdmin(req)) {
+      rawQuery = `
+        SELECT "Documents".*, "Users"."firstName", "Users"."lastName", "Users"."username", "Users"."role"
+        FROM "Documents"
+        INNER JOIN "Users"
+        ON "Documents"."ownerId" = "Users"."id"
+        WHERE "Documents"."id" = ${req.params.id}
+        ORDER BY id ASC`;
+    } else {
+      rawQuery = `
+        SELECT "Documents".*, "Users"."firstName", "Users"."lastName", "Users"."username", "Users"."role"
+        FROM "Documents"
+        INNER JOIN "Users"
+        ON "Documents"."ownerId" = "Users"."id"
+        WHERE "Documents"."id" = ${req.params.id} AND
+        ( "Documents"."ownerId" = ${req.decoded.userId} OR
+          "Documents"."accessLevel" = 'public' OR
+          (
+            "Documents"."accessLevel" = 'role' AND "Users"."role" = '${req.decoded.role}'
+          )
+        )
+        ORDER BY id ASC`;
+    }
+
+    req.rawQuery = rawQuery;
+    next();
+  }
+
+  /**
+   * fetchOwnerData
+   * checks if document with title and content already exists
+   * @param {Object} req - request object
+   * @param {Object} res - response object
+   * @param {Function} next - next func
+   * @return {Null} no return value
+   */
+  static fetchOwnerData(req, res, next) {
+    const userQuery = {
+      where: {
+        id: parseInt(req.params.id, 10)
+      },
+      attributes: {
+        exclude: ['createdAt', 'updatedAt', 'password', 'email', 'activeToken']
+      }
+    };
+
+    Db.Users.findOne(userQuery)
+      .then((user) => {
+        if (!user) return Status.notFound(res, 'user');
+        let rawQuery;
+
+        if (Utils.isAdmin(req)) {
+          rawQuery = `
+            SELECT "Documents"."id", "Documents"."title", "Documents"."content",
+            "Documents"."accessLevel", "Documents"."createdAt", "Documents"."updatedAt",
+            "Documents"."type"
+            FROM "Documents" WHERE "Documents"."ownerId" = ${req.params.id}
+            ORDER BY id ASC;`;
+        } else {
+          rawQuery = `
+            SELECT "Documents"."id", "Documents"."title", "Documents"."content",
+            "Documents"."accessLevel", "Documents"."createdAt", "Documents"."updatedAt",
+            "Documents"."type"
+            FROM "Documents"
+            INNER JOIN "Users"
+            ON "Documents"."ownerId" = "Users"."id"
+            WHERE "Documents"."ownerId" = ${req.params.id} AND
+            (
+              "Documents"."accessLevel" = 'public' OR
+              (
+                "Documents"."accessLevel" = 'role' AND "Users"."role" = '${req.decoded.role}'
+              )
+            )
+            ORDER BY id ASC;`;
+        }
+
+        req.rawQuery = rawQuery;
+        req.ownerData = user;
+        next();
+      })
+      .catch(() => Status.getFail(res, 400, 'user', 'Invalid input.'));
+  }
+
+  /**
+   * search
+   * checks if document with title and content already exists
+   * @param {Object} req - request object
+   * @param {Object} res - response object
+   * @param {Object} next - next function
+   * @return {Object} Array of documents
+   */
+  static search(req, res, next) {
+    /**
+     * where: accessLevel = public ||
+     * ownerId = req.decoded.userId ||
+     * (accessLevel = role && onwer role = req.decoded.role)
+     */
+    let rawQuery;
+    const keys = {
+      queryString: req.query.q || '',
+      docType: req.query.type || '',
+      page: req.query.page || 1,
+      limit: req.query.limit || 10,
+      orderBy: req.query.orderBy || 'id',
+      order: req.query.order || 'ASC'
+    };
+    let offset = 0;
+
+    // if limit exists, append to base query or use default limit
+    if (keys.limit && keys.limit < 1) {
+      return Status.getFail(res, 400, 'document', 'limit cannot be less than 1');
+    }
+
+    // if page exists, append to base query or use default page
+    if (keys.page && keys.page >= 1) {
+      offset = (keys.page - 1) * keys.limit;
+    } else {
+      return Status.getFail(res, 400, 'document', 'page cannot be less than 1');
+    }
+
+    if (Utils.isAdmin(req)) {
+      rawQuery = `
+        SELECT "Documents".*, "Users"."firstName", "Users"."lastName", "Users"."username", "Users"."role"
+        FROM "Documents"
+        INNER JOIN "Users"
+        ON "Documents"."ownerId" = "Users"."id"
+        AND ("Documents"."title" ILIKE '%${keys.queryString}%' OR "Documents"."content" ILIKE '%${keys.queryString}%')
+        AND ("Documents"."type" ILIKE '%${keys.docType}%')
+        ORDER BY id ASC
+        LIMIT ${keys.limit} OFFSET ${offset};`;
+    } else {
+      rawQuery = `
+        SELECT "Documents".*, "Users"."firstName", "Users"."lastName", "Users"."username", "Users"."role"
+        FROM "Documents"
+        INNER JOIN "Users"
+        ON "Documents"."ownerId" = "Users"."id"
+        WHERE ("Documents"."accessLevel" = 'public'
+        OR "Documents"."ownerId" = ${req.decoded.userId}
+        OR ("Documents"."accessLevel" = 'role'  AND "Users"."role" = '${req.decoded.role}'))
+        AND ("Documents"."title" ILIKE '%${keys.queryString}%' OR "Documents"."content" ILIKE '%${keys.queryString}%')
+        AND ("Documents"."type" ILIKE '%${keys.docType}%')
+        ORDER BY id ASC
+        LIMIT ${keys.limit} OFFSET ${offset};`;
+    }
+    req.rawQuery = rawQuery;
+    next();
   }
 }
 

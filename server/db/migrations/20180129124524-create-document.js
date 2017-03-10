@@ -42,11 +42,9 @@ module.exports = {
           model: 'Types',
           key: 'title',
           as: 'type'
-        }
-      },
-      ownerRole: {
-        type: Sequelize.STRING,
-        allowNull: false
+        },
+        onUpdate: 'CASCADE',
+        onDelete: 'CASCADE'
       }
     });
   },

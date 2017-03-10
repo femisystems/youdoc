@@ -59,6 +59,22 @@ class RoleCtrl {
       .catch(() => Status.getFail(res, 400, 'role', 'Invalid input.'));
   }
 
+  /**
+   * updateRole
+   * This method updates one role
+   * @param {Object} req - request object
+   * @param {Object} res - response object
+   * @return {Void} no return value
+   */
+  static updateRole(req, res) {
+    Db.sequelize.query(req.rawQuery, {
+      type: Db.sequelize.QueryTypes.UPDATE
+    })
+    .then((updatedRole) => {
+      Status.putOk(res, 'role', updatedRole);
+    });
+  }
+
  /**
    * deleteRole
    * This method destroys a role object but disallows

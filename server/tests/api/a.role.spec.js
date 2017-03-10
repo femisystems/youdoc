@@ -109,6 +109,20 @@ describe('ROLE API', () => {
           done();
         });
     });
+    it('PUT - Should be able to update role with valid title', (done) => {
+      request
+        .put('/roles/2')
+        .set('authorization', admin.token)
+        .send({ title: 'super admin' })
+        .end((err, res) => {
+          // console.log(res.body);
+          expect(res.status).to.equal(200);
+          expect(res.body.success).to.equal(true);
+          expect(res.body.msg).to.equal('role(s) successfully updated.');
+          expect(res.body.data[0].title).to.equal('super admin');
+          done();
+        });
+    });
     it('DELETE - Should be able to delete role', (done) => {
       request
         .delete('/roles/3')
@@ -144,6 +158,44 @@ describe('ROLE API', () => {
           expect(res.body.success).to.equal(false);
           expect(res.body.msg).to.equal('Oops! Unable to create role(s). Please try again.');
           expect(res.body.error).to.equal('title must be unique');
+          done();
+        });
+    });
+    it('PUT - Should not update a non-existing role', (done) => {
+      request
+        .put('/roles/100')
+        .set('authorization', admin.token)
+        .send({ title: 'super admin' })
+        .end((err, res) => {
+          expect(res.status).to.equal(404);
+          expect(res.body.success).to.equal(false);
+          expect(res.body.msg).to.equal('Sorry! role(s) not found.');
+          done();
+        });
+    });
+    it('PUT - Should not update a role with empty title', (done) => {
+      request
+        .put('/roles/2')
+        .set('authorization', admin.token)
+        .send({ title: '' })
+        .end((err, res) => {
+          expect(res.status).to.equal(400);
+          expect(res.body.success).to.equal(false);
+          expect(res.body.msg).to.equal('Oops! Unable to update role(s). Please try again.');
+          expect(res.body.error).to.equal('title cannot be empty');
+          done();
+        });
+    });
+    it('PUT - Should not update an invalid roleId', (done) => {
+      request
+        .put('/roles/x')
+        .set('authorization', admin.token)
+        .send({ title: '' })
+        .end((err, res) => {
+          expect(res.status).to.equal(400);
+          expect(res.body.success).to.equal(false);
+          expect(res.body.msg).to.equal('Sorry! Unable to reach role(s). Please try again.');
+          expect(res.body.error).to.equal('Invalid input.');
           done();
         });
     });

@@ -108,7 +108,7 @@ Status: 200 ok
 ```
 
 #### Get role 
-> - Endpoint: `GET /role/:id`
+> - Endpoint: GET `/role/:id`
 > - Authorization: Requires authorization and admin access
 ```
 Response
@@ -127,16 +127,16 @@ Status: 200 ok
 ```
 
 #### Delete role
-> - Endpoint: DELETE `/roles/:id`
+> - Endpoint: **DELETE** `/roles/:id`
 > - Authorization: Requires authorization and admin access
 ```
 Response
 Status: 200 ok
+
 {
   "success": true,
   "msg": "role(s) successfully deleted.",
 }
-
 ```
 
 ## Users
@@ -191,7 +191,7 @@ Status: 201 created
 ```
 
 #### List users
-> - Endpoint: `GET /users`
+> - Endpoint: **GET** `/users`
 > - Authorization: Requires authorization
 ```
 Response
@@ -226,10 +226,11 @@ Status: 200 ok
 ```
 
 #### Get user
-> - Endpoint: `GET /users/:id`
+> - Endpoint: **GET** `/users/:id`
 > - Authorization: Requires authorization
 ```
 Response
+Status: 200 ok
 {
   "success": true,
   "msg": "user(s) successfully retrieved.",
@@ -247,7 +248,7 @@ Response
 ```
 
 #### Update user
-> - Endpoint: `PUT /users/:id`
+> - Endpoint: **PUT** `/users/:id`
 > - Authorization: Requires authorization and owner/admn access
 ```
 Request
@@ -278,7 +279,7 @@ Status: 200 ok
 ```
 
 #### Delete user
-> - Endpoint: DELETE `/users/:id`
+> - Endpoint: **DELETE** `/users/:id`
 > - Authorization: Requires authorization and admin access
 ```
 Response
@@ -292,7 +293,7 @@ Status: 201 ok
 ```
 
 #### List user documents
-> - Endpoint: `DELETE /users/:id/documents`
+> - Endpoint: **GET** `/users/:id/documents`
 > - Authorization: Requires authorization
 
 ```
@@ -409,11 +410,12 @@ Status: 201 created
 ```
 
 #### List types
-> - Endpoint: `GET /types`
+> - Endpoint: **GET** `/types`
 > - Authorization: Requires authorization
 ```
 Response
 Status: 200 ok
+
 {
   "success": true,
   "msg": "type(s) successfully retrieved.",
@@ -433,12 +435,13 @@ Status: 200 ok
 ```
 
 #### Get type
-> - Endpoint: `GET /types/:id`
+> - Endpoint: **GET** /types/:id`
 > - Authorization: Requires authorization
 
 ```
 Response
 Status: 200 ok
+
 {
   "success": true,
   "msg": "type(s) successfully retrieved.",
@@ -463,6 +466,7 @@ Request
 ```
 ```
 Response
+Stauts: 200 ok
 {
   "success": true,
   "msg": "role(s) successfully created.",
@@ -574,6 +578,7 @@ Status: 200 ok
 ```
 Response
 Status: 200 ok
+
 {
   "success": true,
   "msg": "document(s) successfully retrieved.",
@@ -636,6 +641,7 @@ Status: 201 created
 ```
 Response
 Status: 200 ok
+
 {
   "success": true,
   "msg": "role(s) successfully deleted."

@@ -7,7 +7,7 @@ module.exports = {
         accessLevel: 'public',
         ownerId: 1,
         type: 'agenda',
-        ownerRole: 'admin',
+        // ownerRole: 'admin',
         createdAt: new Date(),
         updatedAt: new Date()
       },
@@ -17,7 +17,7 @@ module.exports = {
         accessLevel: 'private',
         ownerId: 1,
         type: 'memo',
-        ownerRole: 'admin',
+        // ownerRole: 'admin',
         createdAt: new Date(),
         updatedAt: new Date()
       },
@@ -29,7 +29,7 @@ module.exports = {
         accessLevel: 'public',
         ownerId: 2,
         type: 'note',
-        ownerRole: 'consultant',
+        // ownerRole: 'consultant',
         createdAt: new Date(),
         updatedAt: new Date()
       },
@@ -41,7 +41,7 @@ module.exports = {
         accessLevel: 'private',
         ownerId: 3,
         type: 'proposal',
-        ownerRole: 'facilitator',
+        // ownerRole: 'facilitator',
         createdAt: new Date(),
         updatedAt: new Date()
       },
@@ -51,7 +51,7 @@ module.exports = {
         accessLevel: 'role',
         ownerId: 3,
         type: 'agenda',
-        ownerRole: 'facilitator',
+        // ownerRole: 'facilitator',
         createdAt: new Date(),
         updatedAt: new Date()
       },
@@ -63,7 +63,7 @@ module.exports = {
         accessLevel: 'public',
         ownerId: 4,
         type: 'memo',
-        ownerRole: 'fellow',
+        // ownerRole: 'fellow',
         createdAt: new Date(),
         updatedAt: new Date()
       },
@@ -73,7 +73,7 @@ module.exports = {
         accessLevel: 'private',
         ownerId: 4,
         type: 'note',
-        ownerRole: 'fellow',
+        // ownerRole: 'fellow',
         createdAt: new Date(),
         updatedAt: new Date()
       },
@@ -83,7 +83,7 @@ module.exports = {
         accessLevel: 'role',
         ownerId: 4,
         type: 'proposal',
-        ownerRole: 'fellow',
+        // ownerRole: 'fellow',
         createdAt: new Date(),
         updatedAt: new Date()
       },
@@ -93,7 +93,7 @@ module.exports = {
         accessLevel: 'public',
         ownerId: 5,
         type: 'agenda',
-        ownerRole: 'fellow',
+        // ownerRole: 'fellow',
         createdAt: new Date(),
         updatedAt: new Date()
       },
@@ -103,7 +103,7 @@ module.exports = {
         accessLevel: 'private',
         ownerId: 5,
         type: 'memo',
-        ownerRole: 'fellow',
+        // ownerRole: 'fellow',
         createdAt: new Date(),
         updatedAt: new Date()
       },
@@ -113,7 +113,7 @@ module.exports = {
         accessLevel: 'role',
         ownerId: 5,
         type: 'note',
-        ownerRole: 'fellow',
+        // ownerRole: 'fellow',
         createdAt: new Date(),
         updatedAt: new Date()
       }
