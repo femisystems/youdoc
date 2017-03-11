@@ -8,13 +8,13 @@ Youdoc is a modern, light-weight document manager built on **PERN** (Postgres, E
 The application leverages Node; Express for routing and sequelize for ORM.
 
 ## Installation
-> - Install `node` and `postgres`
-> - Clone the repository git clone git@github.com:andela-fabolaji/youdoc.git
-> - Switch to project directory `cd ~/path/to/youdoc`
-> - Install dependencies `npm i`
-> - Test `npm test`
-> - Start app `npm start`
-> - Consume via postman
+- Install `node` and `postgres`
+- Clone the repository git clone git@github.com:andela-fabolaji/youdoc.git
+- Switch to project directory `cd ~/path/to/youdoc`
+- Install dependencies `npm i`
+- Test `npm test`
+- Start app `npm start`
+- Consume via postman
 
 ## Postman Collection
 [![Run in Postman](https://run.pstmn.io/button.svg)](https://app.getpostman.com/run-collection/89e2db021ae017f6bc7f)
@@ -56,14 +56,16 @@ The application leverages Node; Express for routing and sequelize for ORM.
 | DELETE   | /roles/:id  |  Delete a role |
 
 #### Create role
-> - Endpoint: **POST** `/roles`
-> - Authorization: Requires authorization and admin access
+- Endpoint: **POST** `/roles`
+- Authorization: Requires authorization and admin access
+
 ```
 Request
 {
   "title": "deck admin"
 }
 ```
+
 ```
 Response 
 Status: 201 created
@@ -81,8 +83,9 @@ Status: 201 created
 ```
 
 #### List roles
-> - Endpoint: **GET** `/roles`
-> - Authorization: Requires authorization and admin access
+- Endpoint: **GET** `/roles`
+- Authorization: Requires authorization and admin access
+
 ```
 Response
 Status: 200 ok
@@ -108,8 +111,9 @@ Status: 200 ok
 ```
 
 #### Get role 
-> - Endpoint: GET `/role/:id`
-> - Authorization: Requires authorization and admin access
+- Endpoint: GET `/role/:id`
+- Authorization: Requires authorization and admin access
+
 ```
 Response
 Status: 200 ok
@@ -127,8 +131,9 @@ Status: 200 ok
 ```
 
 #### Delete role
-> - Endpoint: **DELETE** `/roles/:id`
-> - Authorization: Requires authorization and admin access
+- Endpoint: **DELETE** `/roles/:id`
+- Authorization: Requires authorization and admin access
+
 ```
 Response
 Status: 200 ok
@@ -151,8 +156,9 @@ Status: 200 ok
 | DELETE   | /users/:id            |  Delete a user          |
 
 #### Create user
-> - Endpoint: **POST** `/users`
-> - Authorization: NA
+- Endpoint: **POST** `/users`
+- Authorization: NA
+
 ```
 Request
 {
@@ -163,6 +169,7 @@ Request
   "password": "password"
 }
 ```
+
 ```
 Response
 Status: 201 created
@@ -191,8 +198,9 @@ Status: 201 created
 ```
 
 #### List users
-> - Endpoint: **GET** `/users`
-> - Authorization: Requires authorization
+- Endpoint: **GET** `/users`
+- Authorization: Requires authorization
+
 ```
 Response
 Status: 200 ok
@@ -226,8 +234,9 @@ Status: 200 ok
 ```
 
 #### Get user
-> - Endpoint: **GET** `/users/:id`
-> - Authorization: Requires authorization
+- Endpoint: **GET** `/users/:id`
+- Authorization: Requires authorization
+
 ```
 Response
 Status: 200 ok
@@ -248,8 +257,8 @@ Status: 200 ok
 ```
 
 #### Update user
-> - Endpoint: **PUT** `/users/:id`
-> - Authorization: Requires authorization and owner/admn access
+- Endpoint: **PUT** `/users/:id`
+- Authorization: Requires authorization and owner/admn access
 ```
 Request
 {
@@ -257,6 +266,7 @@ Request
   "lastName": "Murphy"  
 }
 ```
+
 ```
 Response
 Status: 200 ok
@@ -279,8 +289,9 @@ Status: 200 ok
 ```
 
 #### Delete user
-> - Endpoint: **DELETE** `/users/:id`
-> - Authorization: Requires authorization and admin access
+- Endpoint: **DELETE** `/users/:id`
+- Authorization: Requires authorization and admin access
+
 ```
 Response
 Status: 201 ok
@@ -293,8 +304,8 @@ Status: 201 ok
 ```
 
 #### List user documents
-> - Endpoint: **GET** `/users/:id/documents`
-> - Authorization: Requires authorization
+- Endpoint: **GET** `/users/:id/documents`
+- Authorization: Requires authorization
 
 ```
 Response
@@ -339,15 +350,18 @@ Status: 200 ok
 ```
 
 #### Login
-> - Endpoint: **POST** `/users/login`
-> - Authorization: N/A
-> - Could be accessed with `email` or `username`.
+- Endpoint: **POST** `/users/login`
+- Authorization: N/A
+- Could be accessed with `email` or `username`.
+
 ```
 Request
 {
-  "userIdentity": "shalom.ayidu@youdoc.com"
+  "userIdentity": "shalom.ayidu@youdoc.com",
+  "password": "pa$$word"
 }
 ```
+
 ```
 Response
 Status: 200 ok
@@ -363,8 +377,8 @@ Status: 200 ok
 ```
 
 #### Logout
-> - Endpoint: **POST** `/users/logout`
-> - Authorization: Requires authorization
+- Endpoint: **POST** `/users/logout`
+- Authorization: Requires authorization
 
 ```
 Response
@@ -385,14 +399,16 @@ Status: 200 ok
 | DELETE   | /types/:id  |  Delete a type |
 
 #### Create type
-> - Endpoint: **POST** `/types`
-> - Authorization: Requires authorization and admin access
+- Endpoint: **POST** `/types`
+- Authorization: Requires authorization and admin access
+
 ```
 Request
 {
   "title": "Letter"
 }
 ```
+
 ```
 Response
 Status: 201 created
@@ -410,8 +426,9 @@ Status: 201 created
 ```
 
 #### List types
-> - Endpoint: **GET** `/types`
-> - Authorization: Requires authorization
+- Endpoint: **GET** `/types`
+- Authorization: Requires authorization
+
 ```
 Response
 Status: 200 ok
@@ -435,8 +452,8 @@ Status: 200 ok
 ```
 
 #### Get type
-> - Endpoint: **GET** /types/:id`
-> - Authorization: Requires authorization
+- Endpoint: **GET** /types/:id`
+- Authorization: Requires authorization
 
 ```
 Response
@@ -454,8 +471,8 @@ Status: 200 ok
 ```
 
 #### Delete type
-> - Endpoint: **DELETE** `/types/:id`
-> - Authorization: Requires authorization and admin access
+- Endpoint: **DELETE** `/types/:id`
+- Authorization: Requires authorization and admin access
 
 ```
 Request
@@ -464,6 +481,7 @@ Request
   "ownerId": 1  
 }
 ```
+
 ```
 Response
 Stauts: 200 ok
@@ -489,8 +507,8 @@ Stauts: 200 ok
 | DELETE   | /documents/:id  |  Delete a document |
 
 #### Create a document
-> - Endpoint: **POST** `/documents`
-> - Authorization: Requires authorization
+- Endpoint: **POST** `/documents`
+- Authorization: Requires authorization
 
 ```
 Request
@@ -501,6 +519,7 @@ Request
   "type": "note"
 }
 ```
+
 ```
 Response
 Status: 201 created
@@ -523,8 +542,8 @@ Status: 201 created
 ```
 
 #### List documents
-> - Endpoint: **GET** `/documents`
-> - Authorization: Requires authorization
+- Endpoint: **GET** `/documents`
+- Authorization: Requires authorization
 
 ```
 Response
@@ -573,8 +592,9 @@ Status: 200 ok
 ```
 
 #### Get document
-> - Endpoint: **GET** `/documents/:id`
-> - Authorization: Requires authorization
+- Endpoint: **GET** `/documents/:id`
+- Authorization: Requires authorization
+
 ```
 Response
 Status: 200 ok
@@ -603,8 +623,9 @@ Status: 200 ok
 ```
 
 #### Update document
-> - Endpoint: **PUT** `/documents/:id`
-> - Authorization: Requires authorization and owner/admin access
+- Endpoint: **PUT** `/documents/:id`
+- Authorization: Requires authorization and owner/admin access
+
 ```
 Request
 {
@@ -614,6 +635,7 @@ Request
   "type": "note"
 }
 ```
+
 ```
 Response
 Status: 201 created
@@ -636,8 +658,9 @@ Status: 201 created
 ```
 
 #### Delete document
-> - Endpoint: **DELETE** `/documents/:id`
-> - Authorization: Requires authorization and owner/admin access
+- Endpoint: **DELETE** `/documents/:id`
+- Authorization: Requires authorization and owner/admin access
+
 ```
 Response
 Status: 200 ok
@@ -651,8 +674,8 @@ Status: 200 ok
 ## Search
 Streamline your search with special paramters
 
-> - Endpoint: **GET** `/documents/search`
-> - Authorization: Requires authorization
+- Endpoint: **GET** `/documents/search`
+- Authorization: Requires authorization
 - Optional parameters
   - `?q` - queryString `ex. /documents/search?q=aLiCe`
   - `type` - document type `ex. &type=memo` 
@@ -660,10 +683,12 @@ Streamline your search with special paramters
   - `limit` - results per set `ex. &limit=5` defualt value `10`
   - `sortby` - sort option `ex. &sortby=createdAt` default value `createdAt`
   - `order` - result order `ex. &order=ASC | &order=DESC` default value `ASC`
+
 ```
 Request
 `hostUrl/documents/search?q=alice&type=memo&page=1&limit=10&order=DESC`
 ```
+
 ```
 Response
 Status: 200 ok
