@@ -142,10 +142,13 @@ describe('DOCUMENT API', () => {
         });
     });
     it('GET - Should be able to search documents by type', (done) => {
-      const docType = 'memo';
+      const myDoc = {
+        id: 2,
+        title: 'memo'
+      };
 
       request
-        .get(`/documents/search?type=${docType}`)
+        .get(`/documents/search?type=${myDoc.title}`)
         .set('authorization', admin.token)
         .end((err, res) => {
           expect(res.status).to.equal(200);
@@ -155,7 +158,7 @@ describe('DOCUMENT API', () => {
 
           const docs = res.body.data;
           docs.forEach((doc) => {
-            expect(doc.type).to.equal(docType);
+            expect(doc.typeId).to.equal(myDoc.id);
           });
           done();
         });
@@ -246,7 +249,7 @@ describe('DOCUMENT API', () => {
         .set('authorization', admin.token)
         .send(documents[0])
         .end((err, res) => {
-          expect(res.status).to.equal(400);
+          expect(res.status).to.equal(409);
           expect(res.body.success).to.equal(false);
           expect(res.body.msg).to.equal('Oops! Unable to create document(s). Please try again.');
           expect(res.body.error).to.equal('Document with title and content already exists.');
@@ -304,7 +307,7 @@ describe('DOCUMENT API', () => {
       const docData = {
         title: faker.company.catchPhrase(),
         content: faker.lorem.paragraph(),
-        type: 'memo',
+        typeId: 2,
         accessLevel: 'public',
       };
 
@@ -321,13 +324,13 @@ describe('DOCUMENT API', () => {
     });
 
     describe('POST - Should not allow user to create document with null data', () => {
-      const notNullFields = ['title', 'content', 'type', 'accessLevel'];
+      const notNullFields = ['title', 'content', 'typeId', 'accessLevel'];
 
       notNullFields.forEach((field) => {
         const docData = {
           title: faker.company.catchPhrase(),
           content: faker.lorem.paragraph(25),
-          type: 'memo',
+          typeId: 1,
           accessLevel: 'public',
         };
         docData[`${field}`] = null;
@@ -357,15 +360,14 @@ describe('DOCUMENT API', () => {
           expect(res.status).to.equal(200);
           expect(res.body.success).to.equal(true);
           expect(res.body.msg).to.equal('document(s) successfully retrieved.');
-          done();
-
-          const docs = res.data;
+          const docs = res.body.data;
 
           docs.forEach((doc) => {
             if (doc.ownerId !== user.id) {
               expect(accessLevels.indexOf(doc.accessLevel)).to.be.above(-1);
             }
           });
+          done();
         });
     });
     it('GET - Should be able to view a single document', (done) => {
@@ -386,7 +388,7 @@ describe('DOCUMENT API', () => {
       };
 
       request
-        .put('/documents/3')
+        .put('/documents/12')
         .set('authorization', user.token)
         .send(update)
         .end((err, res) => {
@@ -398,7 +400,7 @@ describe('DOCUMENT API', () => {
     });
     it('DELETE - Should be able to delete own document', (done) => {
       request
-        .delete('/documents/3')
+        .delete('/documents/12')
         .set('authorization', user.token)
         .end((err, res) => {
           expect(res.status).to.equal(200);
@@ -446,27 +448,6 @@ describe('DOCUMENT API', () => {
           expect(res.body.msg).to.equal('Forbidden! Restricted content.');
           done();
         });
-    });
-  });
-
-  describe('EDGE CASE', () => {
-    describe('Empty Db', () => {
-      before((done) => {
-        Db.Documents.destroy({ where: {} }).then(() => {
-          done();
-        });
-      });
-
-      it('GET - Should return error if no documents are found', () => {
-        request
-          .get('/users')
-          .set('authorization', admin.token)
-          .end((err, res) => {
-            expect(res.status).to.equal(404);
-            expect(res.body.success).to.equal(false);
-            expect(res.body.msg).to.equal('Sorry! document(s) not found.');
-          });
-      });
     });
   });
 });

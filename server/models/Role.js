@@ -4,13 +4,13 @@ const roleModel = (sequelize, DataTypes) => {
       type: DataTypes.INTEGER,
       allowNull: false,
       unique: true,
-      autoIncrement: true
+      autoIncrement: true,
+      primaryKey: true
     },
     title: {
       type: DataTypes.STRING,
       allowNull: false,
       unique: true,
-      primaryKey: true,
       validate: {
         notEmpty: {
           args: true,
@@ -22,7 +22,7 @@ const roleModel = (sequelize, DataTypes) => {
     classMethods: {
       associate(models) {
         Roles.hasMany(models.Users, {
-          foreignKey: 'role',
+          foreignKey: 'roleId',
           as: 'users'
         });
       }

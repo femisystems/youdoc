@@ -16,7 +16,7 @@ Router.get('/search', Auth.verifyUser, Utils.search, DocCtrl.search);
 // Single document
 Router.route('/:id')
   .get(Auth.verifyUser, Utils.buildSingleDocQuery, DocCtrl.getDoc)
-  .put(Auth.verifyUser, Auth.checkDocWriteAccess, DocCtrl.updateDoc)
+  .put(Auth.verifyUser, Auth.checkDocWriteAccess, Utils.docExists, DocCtrl.updateDoc)
   .delete(Auth.verifyUser, Auth.checkDocWriteAccess, DocCtrl.deleteDoc);
 
 export default Router;

@@ -14,9 +14,12 @@ class TypeCtrl {
    * @return {Null} no return value
    */
   static createType(req, res) {
+    let statusCode = 409;
+    if (req.body.title === '') statusCode = 400;
+
     Db.Types.create(req.body)
       .then(type => Status.postOk(res, 'type', type))
-      .catch(err => Status.postFail(res, 400, 'type', err.errors[0].message));
+      .catch(err => Status.postFail(res, statusCode, 'type', err.errors[0].message));
   }
 
   /**
@@ -27,14 +30,11 @@ class TypeCtrl {
    * @return {Null} no return value
    */
   static listTypes(req, res) {
-    Db.Types.findAll({})
+    Db.Types.findAll({ where: {} })
       .then((types) => {
-        if (types.length < 1) {
-          return Status.notFound(res, 'type');
-        }
+        if (types.length < 1) return Status.notFound(res, 'type');
         Status.getOk(res, 'type', types);
-      })
-      .catch(() => Status.getFail(res, 500, 'type', 'Internal Server Error.'));
+      });
   }
 
   /**
@@ -45,14 +45,9 @@ class TypeCtrl {
    * @return {Void} no return value
    */
   static getType(req, res) {
-    const query = {
-      where: { id: parseInt(req.params.id, 10) }
-    };
-    Db.Types.findOne(query)
+    Db.Types.findOne({ where: { id: parseInt(req.params.id, 10) } })
       .then((type) => {
-        if (!type) {
-          return Status.notFound(res, 'type');
-        }
+        if (!type) return Status.notFound(res, 'type');
         Status.getOk(res, 'type', type);
       })
       .catch(() => Status.getFail(res, 400, 'type', 'Invalid input.'));

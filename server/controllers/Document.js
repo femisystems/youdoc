@@ -14,7 +14,7 @@ class DocCtrl {
    * @return {Void} no return value
    */
   static createDoc(req, res) {
-    Db.Documents.create(req.docData)
+    Db.Documents.create(req.body)
       .then((document) => {
         Status.postOk(res, 'document', document);
       })

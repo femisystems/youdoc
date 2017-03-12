@@ -37,12 +37,12 @@ module.exports = {
         allowNull: false,
         type: Sequelize.DATE
       },
-      role: {
-        type: Sequelize.STRING,
+      roleId: {
+        type: Sequelize.INTEGER,
         references: {
           model: 'Roles',
-          key: 'title',
-          as: 'role'
+          key: 'id',
+          as: 'roleId'
         },
         onUpdate: 'CASCADE',
         onDelete: 'CASCADE'

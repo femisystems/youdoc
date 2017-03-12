@@ -6,6 +6,22 @@ class ActionStatus {
   // Documents, user, role, types
 
   /**
+   * returnInvalidRoute
+   * checks if the user is an admin authorising
+   * @param {Object} req - request object
+   * @param {Object} res - response object
+   * @param {Function} next - run next func
+   * @return {null} no return value
+   */
+  static invalidRoute(req, res) {
+    return res.status(404).send({
+      success: false,
+      msg: 'Unable to complete action',
+      error: 'This route either does not exist or the parameter is not specified'
+    });
+  }
+
+  /**
    * postFail(501)
    * @param {Object} res - response object
    * @param {Number} code - status code

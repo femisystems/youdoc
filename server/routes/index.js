@@ -2,6 +2,8 @@ import RoleRoutes from './Role';
 import UserRoutes from './User';
 import TypeRoutes from './Type';
 import DocRoutes from './Document';
+import Auth from '../middleware/Auth';
+import Status from '../middleware/ActionStatus';
 
 
 export default (app) => {
@@ -21,4 +23,7 @@ export default (app) => {
 
   // Role routes
   app.use('/roles', RoleRoutes);
+
+  app.put('*', Auth.verifyUser, Status.invalidRoute);
+  app.delete('*', Auth.verifyUser, Status.invalidRoute);
 };

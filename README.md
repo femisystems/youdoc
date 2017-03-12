@@ -74,10 +74,10 @@ Status: 201 created
   "success": true,
   "msg": "role(s) successfully created.",
   "data": {
-    "id": 2,
-    "title": "deck admin",
-    "updatedAt": "2017-03-06T12:18:51.142Z",
-    "createdAt": "2017-03-06T12:18:51.142Z"
+    "id": 9,
+    "title": "staff",
+    "updatedAt": "2017-03-12T18:10:33.161Z",
+    "createdAt": "2017-03-12T18:10:33.161Z"
   }
 }
 ```
@@ -130,6 +130,32 @@ Status: 200 ok
 }
 ```
 
+#### Edit role 
+- Endpoint: GET `/role/:id`
+- Authorization: Requires authorization and admin access
+
+```
+Request
+{
+  "title": "deck admin"
+}
+```
+```
+Response
+Status: 200 ok
+
+{
+  "success": true,
+  "msg": "role(s) successfully updated.",
+  "data": {
+    "id": 3,
+    "title": "deck admin",
+    "createdAt": "2017-03-05T06:47:20.058Z",
+    "updatedAt": "2017-03-05T06:47:20.058Z"
+  }
+}
+```
+
 #### Delete role
 - Endpoint: **DELETE** `/roles/:id`
 - Authorization: Requires authorization and admin access
@@ -164,7 +190,7 @@ Request
 {
   "firstName": "john"
   "lastName": "smith",
-  "email": "smith@youdoc.com"
+  "email": "johnsmith@youdoc.com"
   "username": "johnsmith",
   "password": "password"
 }
@@ -179,19 +205,19 @@ Status: 201 created
   "msg": "user(s) successfully created.",
   "data": {
     "credential": {
-      "token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOjksInVzZXJuYW1lIjoiam9obnNtaXRoIiwicm9sZSI6InJlZ3VsYXIiLCJpYXQiOjE0ODg5MzI3NzksImV4cCI6MTQ4OTAxOTE3OX0.au_SBZDUpvfE3e3aiiAggdlh0pnuPUB6etbyYnII7AY",
+      "token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOjE1LCJ1c2VybmFtZSI6ImpvaG5zbWl0aCIsInJvbGVJZCI6NSwiaWF0IjoxNDg5MzQyMzc2LCJleHAiOjE0ODk0Mjg3NzZ9.DBV_54D__hyAk8j-EnCKpfqHIsnMMnOdih3QTlULr_U",
       "expiresIn": "24 hours"
     },
-    "newUser": {
-      "role": "regular",
-      "id": 9,
+    "data": {
+      "roleId": 5,
+      "id": 15,
       "firstName": "John",
       "lastName": "smith",
-      "email": "smith@youdoc.com",
+      "email": "johsmith@youdoc.com",
       "username": "johnsmith",
-      "password": "$2a$10$2rbahJ0Wp5rECysNBk94rO3EMh1wrfv3eetOXBc63Zwz9ubskoFqW",
-      "updatedAt": "2017-03-08T00:26:18.653Z",
-      "createdAt": "2017-03-08T00:26:18.653Z"
+      "password": "$2a$10$N/igdFbNd.tKsMQxGsUCTuF2gB0XDearggVyKmoeZ/KpMfPjYTI1m",
+      "updatedAt": "2017-03-12T18:12:56.724Z",
+      "createdAt": "2017-03-12T18:12:56.466Z"
     }
   }
 }
@@ -215,7 +241,7 @@ Status: 200 ok
       "lastName": "User",
       "email": "admin@youdoc.com",
       "username": "admin",
-      "role": "admin",
+      "roleId": 1,
       "createdAt": "2017-03-07T14:17:46.167Z",
       "updatedAt": "2017-03-07T14:17:46.167Z"
     },
@@ -225,7 +251,7 @@ Status: 200 ok
       "lastName": "Omin",
       "email": "celestine.omin@youdoc.com",
       "username": "cyberomin",
-      "role": "consultant",
+      "roleId": 2
       "createdAt": "2017-03-07T14:17:46.378Z",
       "updatedAt": "2017-03-07T14:17:46.378Z"
     }
@@ -249,7 +275,7 @@ Status: 200 ok
     "lastName": "Enaho",
     "email": "enaho.murphy@youdoc.com",
     "username": "murphy",
-    "role": "fellow",
+    "roleId": 5
     "createdAt": "2017-03-07T14:17:47.012Z",
     "updatedAt": "2017-03-07T14:34:28.178Z"
   }
@@ -280,8 +306,7 @@ Status: 200 ok
     "lastName": "Murphy",
     "email": "enaho.murphy@youdoc.com",
     "username": "murphy",
-    "password": "$2a$10$z8fbTC/bvJfump2tdQ81DeWqEm3JqDUNVs0AYwEq9itfqFEqC6bTi",
-    "role": "fellow",
+    "roleId": 4,
     "createdAt": "2017-03-07T14:17:47.012Z",
     "updatedAt": "2017-03-07T14:34:28.178Z"
   }
@@ -316,33 +341,39 @@ Status: 200 ok
   "msg": "document(s) successfully retrieved.",
   "data": {
     "owner": {
+      "id": 5,
       "firstName": "Murphy",
       "lastName": "Enaho",
       "username": "murphy",
-      "role": "fellow"
+      "roleId": 4
     },
     "documents": [
       {
         "id": 9,
         "title": "project management",
-        "content": "Lorem Ipsum is simply dummy text of the printing and typesetting industry",
-        "ownerId": 5,
-        "ownerRole": "fellow",
-        "type": "agenda",
+        "content": "Lorem Ipsum is simply dummy text of the printing and typeIdsetting industry",
         "accessLevel": "public",
-        "createdAt": "2017-03-07T14:17:47.064Z",
-        "updatedAt": "2017-03-07T14:17:47.064Z"
+        "createdAt": "2017-03-12T12:52:38.631Z",
+        "updatedAt": "2017-03-12T12:52:38.631Z",
+        "typeId": 1
+      },
+      {
+        "id": 10,
+        "title": "managing expectations",
+        "content": "Lorem Ipsum is simply dummy text of the printing and typeIdsetting industry",
+        "accessLevel": "private",
+        "createdAt": "2017-03-12T12:52:38.631Z",
+        "updatedAt": "2017-03-12T12:52:38.631Z",
+        "typeId": 2
       },
       {
         "id": 11,
         "title": "weakest link",
-        "content": "Lorem Ipsum is simply dummy text of the printing and typesetting industry",
-        "ownerId": 5,
-        "ownerRole": "fellow",
-        "type": "note",
+        "content": "Lorem Ipsum is simply dummy text of the printing and typeIdsetting industry",
         "accessLevel": "role",
-        "createdAt": "2017-03-07T14:17:47.064Z",
-        "updatedAt": "2017-03-07T14:17:47.064Z"
+        "createdAt": "2017-03-12T12:52:38.631Z",
+        "updatedAt": "2017-03-12T12:52:38.631Z",
+        "typeId": 3
       }
     ]
   }
@@ -405,7 +436,7 @@ Status: 200 ok
 ```
 Request
 {
-  "title": "Letter"
+  "title": "memo"
 }
 ```
 
@@ -417,10 +448,10 @@ Status: 201 created
   "success": true,
   "msg": "type(s) successfully created.",
   "data": {
-    "title": "letter",
+    "id": 5,
+    "title": "memo",
     "updatedAt": "2017-03-08T01:40:55.223Z",
     "createdAt": "2017-03-08T01:40:55.223Z",
-    "id": 5
   }
 }
 ```
@@ -438,14 +469,16 @@ Status: 200 ok
   "msg": "type(s) successfully retrieved.",
   "data": [
     {
+      "id": 1,
       "title": "agenda",
-      "createdAt": "2017-03-07T14:17:47.041Z",
-      "updatedAt": "2017-03-07T14:17:47.041Z"
+      "createdAt": "2017-03-12T12:52:38.622Z",
+      "updatedAt": "2017-03-12T12:52:38.622Z"
     },
     {
+      "id": 2,
       "title": "memo",
-      "createdAt": "2017-03-07T14:17:47.041Z",
-      "updatedAt": "2017-03-07T14:17:47.041Z"
+      "createdAt": "2017-03-12T12:52:38.622Z",
+      "updatedAt": "2017-03-12T12:52:38.622Z"
     }
   ]
 }
@@ -463,6 +496,7 @@ Status: 200 ok
   "success": true,
   "msg": "type(s) successfully retrieved.",
   "data": {
+    "id": 4
     "title": "report",
     "createdAt": "2017-03-07T14:17:47.041Z",
     "updatedAt": "2017-03-07T14:17:47.041Z"
@@ -475,25 +509,11 @@ Status: 200 ok
 - Authorization: Requires authorization and admin access
 
 ```
-Request
-{
-  "title": "deck admin"
-  "ownerId": 1  
-}
-```
-
-```
 Response
 Stauts: 200 ok
 {
   "success": true,
-  "msg": "role(s) successfully created.",
-  "data": {
-    "id": 2,
-    "title": "deck admin",
-    "updatedAt": "2017-03-06T12:18:51.142Z",
-    "createdAt": "2017-03-06T12:18:51.142Z"
-  }
+  "msg": "type(s) successfully deleted.",
 }
 ```
 
@@ -516,7 +536,7 @@ Request
   "title": "Alice in wonderland"
   "content": "From Walt Disney Pictures and visionary director Tim Burton comes an epic fantasy adventure, a magical and imaginative twist on some of the most beloved stories of all time",
   "accessLevel": "public",
-  "type": "note"
+  "typeId": 1
 }
 ```
 
@@ -528,15 +548,15 @@ Status: 201 created
   "success": true,
   "msg": "document(s) successfully created.",
   "data": {
-    "id": 18,
+    "id": 10,
     "title": "Alice in wonderland",
     "content": "From Walt Disney Pictures and visionary director Tim Burton comes an epic fantasy adventure, a magical and imaginative twist on some of the most beloved stories of all time",
-    "type": "note",
+    "typeId": 1,
     "accessLevel": "public",
     "ownerId": 5,
-    "ownerRole": "fellow",
-    "updatedAt": "2017-03-08T02:19:53.607Z",
-    "createdAt": "2017-03-08T02:19:53.607Z"
+    "createdAt": "2017-03-08T02:19:53.607Z",
+    "updatedAt": "2017-03-08T02:19:53.607Z"
+    
   }
 }
 ```
@@ -559,15 +579,14 @@ Status: 200 ok
       "content": "Lorem Ipsum is simply dummy text of the printing and typesetting industry",
       "ownerId": 5,
       "ownerRole": "fellow",
-      "type": "agenda",
+      "typeId": 1,
       "accessLevel": "public",
       "createdAt": "2017-03-07T14:17:47.064Z",
       "updatedAt": "2017-03-07T14:17:47.064Z",
       "User": {
         "firstName": "Murphy",
         "lastName": "Enaho",
-        "username": "murphy",
-        "role": "fellow"
+        "username": "murphy"
       }
     },
     {
@@ -576,15 +595,14 @@ Status: 200 ok
       "content": "Lorem Ipsum is simply dummy text of the printing and typesetting industry",
       "ownerId": 5,
       "ownerRole": "fellow",
-      "type": "note",
+      "typeId": 2
       "accessLevel": "role",
       "createdAt": "2017-03-07T14:17:47.064Z",
       "updatedAt": "2017-03-07T14:17:47.064Z",
       "User": {
         "firstName": "Murphy",
         "lastName": "Enaho",
-        "username": "murphy",
-        "role": "fellow"
+        "username": "murphy"
       }
     }
   ]
@@ -607,8 +625,7 @@ Status: 200 ok
       "title": "project management",
       "content": "Lorem Ipsum is simply dummy text of the printing and typesetting industry",
       "ownerId": 5,
-      "ownerRole": "fellow",
-      "type": "agenda",
+      "type": 1,
       "accessLevel": "public",
       "createdAt": "2017-03-07T14:17:47.064Z",
       "updatedAt": "2017-03-07T14:17:47.064Z",
@@ -616,7 +633,6 @@ Status: 200 ok
         "firstName": "Murphy",
         "lastName": "Enaho",
         "username": "murphy",
-        "role": "fellow"
       }
   }
 }
@@ -632,7 +648,7 @@ Request
   "title": "Sleepy Hollow"
   "content": "From Walt Disney Pictures and visionary director Tim Burton comes an epic fantasy adventure, a magical and imaginative twist on some of the most beloved stories of all time",
   "accessLevel": "private",
-  "type": "note"
+  "type": 2
 }
 ```
 
@@ -647,10 +663,9 @@ Status: 201 created
     "id": 18,
     "title": "Sleepy Hollow",
     "content": "From Walt Disney Pictures and visionary director Tim Burton comes an epic fantasy adventure, a magical and imaginative twist on some of the most beloved stories of all time",
-    "type": "note",
+    "typeId": 2
     "accessLevel": "public",
     "ownerId": 5,
-    "ownerRole": "fellow",
     "updatedAt": "2017-03-08T02:19:53.607Z",
     "createdAt": "2017-03-08T02:19:53.607Z"
   }
@@ -667,7 +682,7 @@ Status: 200 ok
 
 {
   "success": true,
-  "msg": "role(s) successfully deleted."
+  "msg": "document(s) successfully deleted."
 }
 ```
 
@@ -698,8 +713,7 @@ Status: 200 ok
   "title": "Alice in wonderland",
   "content": "From Walt Disney Pictures and visionary director Tim Burton comes an epic fantasy adventure, a magical and imaginative twist on some of the most beloved stories of all time",
   "ownerId": 5,
-  "ownerRole": "fellow",
-  "type": "note",
+  "typeId": 2
   "accessLevel": "public",
   "createdAt": "2017-03-08T02:19:53.607Z",
   "updatedAt": "2017-03-08T02:19:53.607Z",
@@ -707,7 +721,6 @@ Status: 200 ok
     "firstName": "Murphy",
     "lastName": "Enaho",
     "username": "murphy",
-    "role": "fellow"
   }
 }
 ```

@@ -74,20 +74,12 @@ class Authentication {
    * @param {Function} next - run next func
    * @return {null} no return value
    */
-  static permitRoleEdit(req, res, next) {
+  static checkRoleWriteAccess(req, res, next) {
+    if (parseInt(req.params.id, 10) === 1) return AuthStatus.forbid(res);
     Db.Roles.findOne({ where: { id: parseInt(req.params.id, 10) } })
       .then((role) => {
         if (!role) return Status.notFound(res, 'role');
-
-        if (req.body.title.length < 1) {
-          return Status.putFail(res, 400, 'role', 'title cannot be empty');
-        }
-
-        const rawQuery = `UPDATE "public"."Roles"
-          SET "title" = '${req.body.title}' WHERE id=${req.params.id}
-          RETURNING "id", "title", "createdAt", "updatedAt";`;
-
-        req.rawQuery = rawQuery;
+        req.role = role;
         next();
       })
       .catch(() => Status.getFail(res, 400, 'role', 'Invalid input.'));
@@ -108,8 +100,8 @@ class Authentication {
         .then((user) => {
           if (!user) return Status.notFound(res, 'user');
 
-          // disallow role update if you are not an admin
-          if (req.body.role && !Utils.isAdmin(req)) {
+          // disallow role update if client is not admin
+          if (req.body.roleId && !Utils.isAdmin(req)) {
             return AuthStatus.forbid(res);
           }
 
@@ -134,18 +126,15 @@ class Authentication {
     Db.Documents
       .findById(req.params.id)
       .then((document) => {
-        if (document !== null) {
-          if ((document.ownerId === req.decoded.userId) || Utils.isAdmin(req)) {
-            if ((req.method.toLowerCase() === 'put') && Object.keys(req.body).length < 1) {
-              return Status.putFail(res, 400, 'document', 'Cannot update document with null data');
-            }
-            req.document = document;
-            next();
-          } else {
-            AuthStatus.forbid(res);
+        if (!document) return Status.notFound(res, 'document');
+        if ((document.ownerId === req.decoded.userId) || Utils.isAdmin(req)) {
+          if ((req.method.toLowerCase() === 'put') && Object.keys(req.body).length < 1) {
+            return Status.putFail(res, 400, 'document', 'Cannot update document with null data');
           }
+          req.document = document;
+          next();
         } else {
-          Status.notFound(res, 'document');
+          AuthStatus.forbid(res);
         }
       })
       .catch(() => Status.getFail(res, 400, 'document', 'Invalid input.'));

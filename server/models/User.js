@@ -57,20 +57,10 @@ const userModel = (sequelize, DataTypes) => {
         }
       }
     },
-    role: {
-      type: DataTypes.STRING,
+    roleId: {
+      type: DataTypes.INTEGER,
       allowNull: false,
-      validate: {
-        notEmpty: {
-          args: true,
-          msg: 'role cannot be empty'
-        },
-        isIn: {
-          args: [['regular', 'fellow', 'facilitator', 'consultant']],
-          msg: 'can only be fellow, facilitator or consultant'
-        }
-      },
-      defaultValue: 'regular'
+      defaultValue: 5
     },
     activeToken: {
       type: DataTypes.TEXT,
@@ -84,7 +74,7 @@ const userModel = (sequelize, DataTypes) => {
           as: 'documents'
         });
         Users.belongsTo(models.Roles, {
-          foreignKey: 'role'
+          foreignKey: 'roleId'
         });
       },
     },

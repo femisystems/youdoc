@@ -10,7 +10,7 @@ module.exports = {
         email: 'admin@youdoc.com',
         username: 'admin',
         password: bcrypt.hashSync('password', bcrypt.genSaltSync()),
-        role: 'admin',
+        roleId: 1,
         createdAt: new Date(),
         updatedAt: new Date()
       },
@@ -21,7 +21,7 @@ module.exports = {
         email: 'celestine.omin@youdoc.com',
         username: 'cyberomin',
         password: bcrypt.hashSync('password', bcrypt.genSaltSync()),
-        role: 'consultant',
+        roleId: 2,
         createdAt: new Date(),
         updatedAt: new Date()
       },
@@ -32,7 +32,7 @@ module.exports = {
         email: 'kes@youdoc.com',
         username: 'kes',
         password: bcrypt.hashSync('password', bcrypt.genSaltSync()),
-        role: 'facilitator',
+        roleId: 3,
         createdAt: new Date(),
         updatedAt: new Date()
       },
@@ -43,7 +43,7 @@ module.exports = {
         email: 'shalom.ayidu@youdoc.com',
         username: 'shalom',
         password: bcrypt.hashSync('password', bcrypt.genSaltSync()),
-        role: 'fellow',
+        roleId: 4,
         createdAt: new Date(),
         updatedAt: new Date()
       },
@@ -53,7 +53,7 @@ module.exports = {
         email: 'enaho.murphy@youdoc.com',
         username: 'murphy',
         password: bcrypt.hashSync('password', bcrypt.genSaltSync()),
-        role: 'fellow',
+        roleId: 4,
         createdAt: new Date(),
         updatedAt: new Date()
       }

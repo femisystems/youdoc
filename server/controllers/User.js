@@ -30,7 +30,12 @@ class UserCtrl {
             Status.postOk(res, 'user', { credential, data });
           });
       })
-      .catch(err => Status.postFail(res, 400, 'user', err.errors[0].message));
+      .catch((err) => {
+        if (/unique violation/.test(err.errors[0].type)) {
+          return Status.postFail(res, 409, 'user', err.errors[0].message);
+        }
+        return Status.postFail(res, 400, 'user', err.errors[0].message);
+      });
   }
 
   /**
@@ -43,9 +48,7 @@ class UserCtrl {
   static listUsers(req, res) {
     Db.Users.findAll(req.searchQuery)
       .then((users) => {
-        if (users.length < 1) {
-          return Status.notFound(res, 'user');
-        }
+        if (users.length < 1) return Status.notFound(res, 'user');
         Status.getOk(res, 'user', users);
       });
   }
@@ -60,9 +63,7 @@ class UserCtrl {
   static getUser(req, res) {
     Db.Users.findOne(req.searchQuery)
       .then((user) => {
-        if (!user) {
-          return Status.notFound(res, 'user');
-        }
+        if (!user) return Status.notFound(res, 'user');
         Status.getOk(res, 'user', user);
       })
       .catch(() => Status.getFail(res, 400, 'user', 'Invalid input.'));
@@ -82,7 +83,12 @@ class UserCtrl {
         delete updatedUser.dataValues.password;
         Status.putOk(res, 'user', updatedUser);
       })
-      .catch(() => Status.putFail(res, 400, 'user', 'Invalid input.'));
+      .catch((err) => {
+        if (/unique violation/.test(err.errors[0].type)) {
+          return Status.putFail(res, 409, 'user', err.errors[0].message);
+        }
+        return Status.putFail(res, 400, 'user', err.errors[0].message);
+      });
   }
 
   /**
@@ -96,7 +102,7 @@ class UserCtrl {
     Db.Users.findById(req.params.id)
       .then((user) => {
         if (!user) return Status.notFound(res, 'user');
-        if (user.role === 'admin') {
+        if (user.roleId === 1) {
           return AuthStatus.forbid(res);
         }
         user.destroy({ force: true })

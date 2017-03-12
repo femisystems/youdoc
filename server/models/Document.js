@@ -24,13 +24,13 @@ const documentModel = (sequelize, DataTypes) => {
       type: DataTypes.INTEGER,
       allowNull: false
     },
-    type: {
-      type: DataTypes.STRING,
+    typeId: {
+      type: DataTypes.INTEGER,
       allowNull: false,
       validate: {
         notEmpty: {
           args: true,
-          msg: 'type cannot be empty'
+          msg: 'typeId cannot be empty'
         }
       }
     },
@@ -58,7 +58,7 @@ const documentModel = (sequelize, DataTypes) => {
           onUpdate: 'CASCADE'
         });
         Documents.belongsTo(models.Types, {
-          foreignKey: 'type'
+          foreignKey: 'typeId'
         });
       }
     }

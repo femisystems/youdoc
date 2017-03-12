@@ -8,7 +8,7 @@ const validUsers = [
     email: 'admin@youdoc.com',
     username: 'admin',
     password: 'password',
-    role: 'admin',
+    roleId: 1,
     createdAt: new Date(),
     updatedAt: new Date()
   },
@@ -20,7 +20,7 @@ const validUsers = [
     email: 'celestine.omin@youdoc.com',
     username: 'cyberomin',
     password: 'password',
-    role: 'consultant',
+    roleId: 2,
     createdAt: new Date(),
     updatedAt: new Date()
   },
@@ -32,7 +32,7 @@ const validUsers = [
     email: 'kes@youdoc.com',
     username: 'kes',
     password: 'password',
-    role: 'facilitator',
+    roleId: 3,
     createdAt: new Date(),
     updatedAt: new Date()
   },
@@ -44,16 +44,17 @@ const validUsers = [
     email: 'shalom.ayidu@youdoc.com',
     username: 'shalom',
     password: 'password',
-    role: 'fellow',
+    roleId: 4,
     createdAt: new Date(),
     updatedAt: new Date()
-  }, {
+  },
+  {
     firstName: 'Murphy',
     lastName: 'Enaho',
     email: 'enaho.murphy@youdoc.com',
     username: 'murphy',
     password: 'password',
-    role: 'fellow',
+    roleId: 4,
     createdAt: new Date(),
     updatedAt: new Date()
   }

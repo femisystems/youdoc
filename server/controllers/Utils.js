@@ -20,7 +20,7 @@ class Utils {
     const payload = {
       userId: user.dataValues.id,
       username: user.dataValues.username,
-      role: user.dataValues.role
+      roleId: user.dataValues.roleId
     };
 
     const token = jwt.sign(payload, secret, { expiresIn: '24h' });
@@ -34,7 +34,7 @@ class Utils {
    * @return {Bool} true/false
    */
   static isAdmin(req) {
-    return req.decoded.role === 'admin';
+    return parseInt(req.decoded.roleId, 10) === 1;
   }
 
   /**
@@ -44,7 +44,7 @@ class Utils {
    * @return {Bool} true/false
    */
   static isAdminRoleField(req) {
-    return req.body.role && (parseInt(req.params.id, 10) === 1);
+    return req.body.roleId && (parseInt(req.params.id, 10) === 1);
   }
 
   /**
@@ -81,7 +81,7 @@ class Utils {
       };
 
       if (!Utils.isAdmin(req) && !(req.decoded.userId === parseInt(req.params.id, 10))) {
-        query.attributes.exclude = ['id', 'role', 'email', 'password', 'createdAt', 'updatedAt', 'activeToken'];
+        query.attributes.exclude = ['id', 'roleId', 'email', 'password', 'createdAt', 'updatedAt', 'activeToken'];
       }
     }
 
@@ -98,35 +98,27 @@ class Utils {
    * @return {Null} no return value
    */
   static docExists(req, res, next) {
-    const docData = {
-      title: req.body.title,
-      content: req.body.content,
-      type: req.body.type,
-      accessLevel: req.body.accessLevel,
-      ownerId: req.decoded.userId,
-      ownerRole: req.decoded.role
-    };
-
     const query = {
       where: {
         $and: [
           { ownerId: req.decoded.userId },
-          { title: docData.title },
-          { content: docData.content }
+          { title: req.body.title },
+          { content: req.body.content }
         ]
       }
     };
 
     Db.Documents.findOne(query)
-      .then((doc) => {
-        if (doc) {
-          return Status.postFail(res, 400, 'document', 'Document with title and content already exists.');
+      .then((document) => {
+        if (document) {
+          return Status.postFail(res, 409, 'document', 'Document with title and content already exists.');
         }
-        req.docData = docData;
+
+        req.body.ownerId = req.decoded.userId;
         next();
-      })
-      .catch(() => Status.getFail(res, 400, 'document', 'Invalid input'));
+      });
   }
+
   /**
    * buildSingleDocQuery
    * build search query based on user input
@@ -140,7 +132,7 @@ class Utils {
 
     if (Utils.isAdmin(req)) {
       rawQuery = `
-        SELECT "Documents".*, "Users"."firstName", "Users"."lastName", "Users"."username", "Users"."role"
+        SELECT "Documents".*, "Users"."firstName", "Users"."lastName", "Users"."username", "Users"."roleId"
         FROM "Documents"
         INNER JOIN "Users"
         ON "Documents"."ownerId" = "Users"."id"
@@ -148,7 +140,7 @@ class Utils {
         ORDER BY id ASC`;
     } else {
       rawQuery = `
-        SELECT "Documents".*, "Users"."firstName", "Users"."lastName", "Users"."username", "Users"."role"
+        SELECT "Documents".*, "Users"."firstName", "Users"."lastName", "Users"."username", "Users"."roleId"
         FROM "Documents"
         INNER JOIN "Users"
         ON "Documents"."ownerId" = "Users"."id"
@@ -156,7 +148,7 @@ class Utils {
         ( "Documents"."ownerId" = ${req.decoded.userId} OR
           "Documents"."accessLevel" = 'public' OR
           (
-            "Documents"."accessLevel" = 'role' AND "Users"."role" = '${req.decoded.role}'
+            "Documents"."accessLevel" = 'role' AND "Users"."roleId" = '${req.decoded.roleId}'
           )
         )
         ORDER BY id ASC`;
@@ -193,14 +185,14 @@ class Utils {
           rawQuery = `
             SELECT "Documents"."id", "Documents"."title", "Documents"."content",
             "Documents"."accessLevel", "Documents"."createdAt", "Documents"."updatedAt",
-            "Documents"."type"
+            "Documents"."typeId"
             FROM "Documents" WHERE "Documents"."ownerId" = ${req.params.id}
             ORDER BY id ASC;`;
         } else {
           rawQuery = `
             SELECT "Documents"."id", "Documents"."title", "Documents"."content",
             "Documents"."accessLevel", "Documents"."createdAt", "Documents"."updatedAt",
-            "Documents"."type"
+            "Documents"."typeId"
             FROM "Documents"
             INNER JOIN "Users"
             ON "Documents"."ownerId" = "Users"."id"
@@ -208,7 +200,7 @@ class Utils {
             (
               "Documents"."accessLevel" = 'public' OR
               (
-                "Documents"."accessLevel" = 'role' AND "Users"."role" = '${req.decoded.role}'
+                "Documents"."accessLevel" = 'role' AND "Users"."roleId" = '${req.decoded.roleId}'
               )
             )
             ORDER BY id ASC;`;
@@ -260,25 +252,29 @@ class Utils {
 
     if (Utils.isAdmin(req)) {
       rawQuery = `
-        SELECT "Documents".*, "Users"."firstName", "Users"."lastName", "Users"."username", "Users"."role"
+        SELECT "Documents".*, "Users"."firstName", "Users"."lastName", "Users"."username", "Users"."roleId"
         FROM "Documents"
         INNER JOIN "Users"
         ON "Documents"."ownerId" = "Users"."id"
+        INNER JOIN "Types"
+        ON "Documents"."typeId" = "Types"."id"
         AND ("Documents"."title" ILIKE '%${keys.queryString}%' OR "Documents"."content" ILIKE '%${keys.queryString}%')
-        AND ("Documents"."type" ILIKE '%${keys.docType}%')
+        AND ("Types"."title" ILIKE '%${keys.docType}%')
         ORDER BY id ASC
         LIMIT ${keys.limit} OFFSET ${offset};`;
     } else {
       rawQuery = `
-        SELECT "Documents".*, "Users"."firstName", "Users"."lastName", "Users"."username", "Users"."role"
+        SELECT "Documents".*, "Users"."firstName", "Users"."lastName", "Users"."username", "Users"."roleId"
         FROM "Documents"
         INNER JOIN "Users"
         ON "Documents"."ownerId" = "Users"."id"
+        INNER JOIN "Types"
+        ON "Documents"."typeId" = "Types"."id"
         WHERE ("Documents"."accessLevel" = 'public'
         OR "Documents"."ownerId" = ${req.decoded.userId}
-        OR ("Documents"."accessLevel" = 'role'  AND "Users"."role" = '${req.decoded.role}'))
+        OR ("Documents"."accessLevel" = 'role'  AND "Users"."roleId" = '${req.decoded.roleId}'))
         AND ("Documents"."title" ILIKE '%${keys.queryString}%' OR "Documents"."content" ILIKE '%${keys.queryString}%')
-        AND ("Documents"."type" ILIKE '%${keys.docType}%')
+        AND ("Types"."title" ILIKE '%${keys.docType}%')
         ORDER BY id ASC
         LIMIT ${keys.limit} OFFSET ${offset};`;
     }

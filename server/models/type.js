@@ -4,13 +4,13 @@ const typeModel = (sequelize, DataTypes) => {
       type: DataTypes.INTEGER,
       allowNull: false,
       unique: true,
-      autoIncrement: true
+      autoIncrement: true,
+      primaryKey: true
     },
     title: {
       type: DataTypes.STRING,
       allowNull: false,
       unique: true,
-      primaryKey: true,
       validate: {
         notEmpty: {
           args: true,
@@ -22,7 +22,7 @@ const typeModel = (sequelize, DataTypes) => {
     classMethods: {
       associate(models) {
         Types.hasMany(models.Documents, {
-          foreignKey: 'type',
+          foreignKey: 'typeId',
           as: 'documents'
         });
       }

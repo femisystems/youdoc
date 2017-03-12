@@ -36,12 +36,12 @@ module.exports = {
           as: 'ownerId'
         }
       },
-      type: {
-        type: Sequelize.STRING,
+      typeId: {
+        type: Sequelize.INTEGER,
         references: {
           model: 'Types',
-          key: 'title',
-          as: 'type'
+          key: 'id',
+          as: 'typeId'
         },
         onUpdate: 'CASCADE',
         onDelete: 'CASCADE'

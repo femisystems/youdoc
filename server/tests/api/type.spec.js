@@ -142,7 +142,7 @@ describe('TYPE API', () => {
         .set('authorization', admin.token)
         .send(invalidTypes[0])
         .end((err, res) => {
-          expect(res.status).to.equal(400);
+          expect(res.status).to.equal(409);
           expect(res.body.success).to.equal(false);
           expect(res.body.msg).to.equal('Oops! Unable to create type(s). Please try again.');
           expect(res.body.error).to.equal('title must be unique');
@@ -244,27 +244,6 @@ describe('TYPE API', () => {
           expect(res.body.msg).to.equal('Forbidden! Restricted content.');
           done();
         });
-    });
-  });
-
-  describe('EDGE CASE', () => {
-    describe('Empty Db', () => {
-      before((done) => {
-        Db.Users.destroy({ where: {} }).then(() => {
-          done();
-        });
-      });
-
-      it('GET - Should return error if no roles are found', () => {
-        request
-          .get('/users')
-          .set('authorization', admin.token)
-          .end((err, res) => {
-            expect(res.status).to.equal(404);
-            expect(res.body.success).to.equal(false);
-            expect(res.body.msg).to.equal('Sorry! user(s) not found.');
-          });
-      });
     });
   });
 });

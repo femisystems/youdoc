@@ -1,6 +1,5 @@
 import Db from '../models/Index';
 import Status from '../middleware/ActionStatus';
-import AuthStatus from '../middleware/AuthStatus';
 
 /**
  * RoleCtrl
@@ -16,10 +15,13 @@ class RoleCtrl {
    * @return {Void} no return value
    */
   static createRole(req, res) {
+    let statusCode = 409;
+    if (req.body.title === '') statusCode = 400;
+
     Db.Roles
       .create(req.body)
       .then(newRole => Status.postOk(res, 'role', newRole))
-      .catch(err => Status.postFail(res, 400, 'role', err.errors[0].message));
+      .catch(err => Status.postFail(res, statusCode, 'role', err.errors[0].message));
   }
 
   /**
@@ -30,14 +32,11 @@ class RoleCtrl {
    * @return {Void} no return value
    */
   static listRoles(req, res) {
-    Db.Roles.findAll({})
+    Db.Roles.findAll({ where: {} })
       .then((roles) => {
-        if (roles.length < 1) {
-          return Status.notFound(res, 'role');
-        }
+        if (!roles.length) return Status.notFound(res, 'role');
         Status.getOk(res, 'role', roles);
-      })
-      .catch(() => Status.getFail(res, 500, 'role', 'Internal Server Error.'));
+      });
   }
 
   /**
@@ -48,12 +47,9 @@ class RoleCtrl {
    * @return {Void} no return value
    */
   static getRole(req, res) {
-    const query = { where: { id: req.params.id } };
-    Db.Roles.findOne(query)
+    Db.Roles.findOne({ where: { id: req.params.id } })
       .then((role) => {
-        if (!role) {
-          return Status.notFound(res, 'role');
-        }
+        if (!role) return Status.notFound(res, 'role');
         Status.getOk(res, 'role', role);
       })
       .catch(() => Status.getFail(res, 400, 'role', 'Invalid input.'));
@@ -67,12 +63,14 @@ class RoleCtrl {
    * @return {Void} no return value
    */
   static updateRole(req, res) {
-    Db.sequelize.query(req.rawQuery, {
-      type: Db.sequelize.QueryTypes.UPDATE
-    })
-    .then((updatedRole) => {
-      Status.putOk(res, 'role', updatedRole);
-    });
+    let statusCode = 409;
+    if (req.body.title === '') statusCode = 400;
+
+    req.role.update(req.body)
+      .then((updatedRole) => {
+        Status.putOk(res, 'role', updatedRole);
+      })
+      .catch(err => Status.putFail(res, statusCode, 'role', err.errors[0].message));
   }
 
  /**
@@ -84,18 +82,8 @@ class RoleCtrl {
    * @return {Void} no return value
    */
   static deleteRole(req, res) {
-    const query = { where: { id: req.params.id } };
-    Db.Roles.findOne(query)
-      .then((role) => {
-        if (!role) return Status.notFound(res, 'role');
-        if (role.title === 'admin') {
-          return AuthStatus.forbid(res);
-        }
-        role.destroy({ force: true })
-          .then(() => Status.deleteOk(res, 'role'))
-          .catch(() => Status.deleteFail(res, 500, 'role', 'Internal Server Error.'));
-      })
-      .catch(() => Status.getFail(res, 400, 'role', 'Invalid input.'));
+    req.role.destroy({ force: true })
+      .then(() => Status.deleteOk(res, 'role'));
   }
 }
 

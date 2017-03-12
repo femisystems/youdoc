@@ -162,7 +162,7 @@ describe('USER API', () => {
         });
     });
     it('PUT - Should not be able to update admin role', (done) => {
-      const update = { role: 'consultant' };
+      const update = { roleId: 2 };
 
       request
         .put('/users/1')
@@ -340,17 +340,17 @@ describe('USER API', () => {
           password: faker.internet.password(10, true)
         };
 
-        userDetails[`${field}`] = users[0].field;
+        userDetails[`${field}`] = users[0][`${field}`];
 
         it(`- Should flag violation of unique ${field}`, (done) => {
           request
             .post('/users')
             .send(userDetails)
             .end((err, res) => {
-              expect(res.status).to.equal(400);
+              expect(res.status).to.equal(409);
               expect(res.body.success).to.equal(false);
               expect(res.body.msg).to.equal('Oops! Unable to create user(s). Please try again.');
-              expect(res.body.error).to.equal(`${field} cannot be null`);
+              expect(res.body.error).to.equal(`${field} must be unique`);
               done();
             });
         });
@@ -427,7 +427,7 @@ describe('USER API', () => {
           expect(res.status).to.equal(400);
           expect(res.body.success).to.equal(false);
           expect(res.body.msg).to.equal('Oops! Unable to update user(s). Please try again.');
-          expect(res.body.error).to.equal('Invalid input.');
+          expect(res.body.error).to.equal('username cannot be empty');
           done();
         });
     });
@@ -464,27 +464,6 @@ describe('USER API', () => {
           expect(res.body.error).to.equal('Expired token');
           done();
         });
-    });
-  });
-
-  describe('EDGE CASE', () => {
-    describe('Empty Db', () => {
-      before((done) => {
-        Db.Users.destroy({ where: {} }).then(() => {
-          done();
-        });
-      });
-
-      it('GET - Should return error if no roles are found', () => {
-        request
-          .get('/users')
-          .set('authorization', admin.token)
-          .end((err, res) => {
-            expect(res.status).to.equal(404);
-            expect(res.body.success).to.equal(false);
-            expect(res.body.msg).to.equal('Sorry! user(s) not found.');
-          });
-      });
     });
   });
 });

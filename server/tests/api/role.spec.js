@@ -34,9 +34,10 @@ const user = {};
 describe('ROLE API', () => {
   // Teardown and setup
   before((done) => {
-    Db.sequelize.sync({ force: true }).then(() => {
-      done();
-    });
+    Db.sequelize.sync({ force: true })
+      .then(() => {
+        done();
+      });
   });
 
   before((done) => {
@@ -115,11 +116,10 @@ describe('ROLE API', () => {
         .set('authorization', admin.token)
         .send({ title: 'super admin' })
         .end((err, res) => {
-          // console.log(res.body);
           expect(res.status).to.equal(200);
           expect(res.body.success).to.equal(true);
           expect(res.body.msg).to.equal('role(s) successfully updated.');
-          expect(res.body.data[0].title).to.equal('super admin');
+          expect(res.body.data.title).to.equal('super admin');
           done();
         });
     });
@@ -154,7 +154,7 @@ describe('ROLE API', () => {
         .set('authorization', admin.token)
         .send(invalidRoles[0])
         .end((err, res) => {
-          expect(res.status).to.equal(400);
+          expect(res.status).to.equal(409);
           expect(res.body.success).to.equal(false);
           expect(res.body.msg).to.equal('Oops! Unable to create role(s). Please try again.');
           expect(res.body.error).to.equal('title must be unique');
@@ -182,7 +182,7 @@ describe('ROLE API', () => {
           expect(res.status).to.equal(400);
           expect(res.body.success).to.equal(false);
           expect(res.body.msg).to.equal('Oops! Unable to update role(s). Please try again.');
-          expect(res.body.error).to.equal('title cannot be empty');
+          expect(res.body.error).to.equal('Title cannot be empty.');
           done();
         });
     });
@@ -303,27 +303,6 @@ describe('ROLE API', () => {
           expect(res.body.msg).to.equal('Forbidden! Restricted content.');
           done();
         });
-    });
-  });
-
-  describe('EDGE CASE', () => {
-    describe('Empty Db', () => {
-      before((done) => {
-        Db.Roles.destroy({ where: {} }).then(() => {
-          done();
-        });
-      });
-
-      it('GET - Should return error if no roles are found', () => {
-        request
-          .get('/roles')
-          .set('authorization', admin.token)
-          .end((err, res) => {
-            expect(res.status).to.equal(404);
-            expect(res.body.success).to.equal(false);
-            expect(res.body.msg).to.equal('Sorry! user(s) not found.');
-          });
-      });
     });
   });
 });
