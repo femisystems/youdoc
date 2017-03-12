@@ -17,7 +17,7 @@ The application leverages Node; Express for routing and sequelize for ORM.
 - Consume via postman
 
 ## Postman Collection
-[![Run in Postman](https://run.pstmn.io/button.svg)](https://app.getpostman.com/run-collection/89e2db021ae017f6bc7f)
+[![Run in Postman](https://run.pstmn.io/button.svg)](https://app.getpostman.com/run-collection/d3acd716903ffc8ed170)
 
 ## Endpoints
 - [Roles](#roles)
