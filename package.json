@@ -3,7 +3,7 @@
   "version": "1.0.0",
   "description": "A fullstack document management system built on NODE, EXPRESS, POSTGRESS SQLand REACT",
   "main": "server.js",
-  "scripts": { 
+  "scripts": {
     "postinstall": "npm install rimraf -g",
     "babel-serve": "nodemon --exec babel-node ./server/server.js",
     "serve-app": "node dist/server.js",
