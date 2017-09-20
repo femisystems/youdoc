@@ -20,6 +20,7 @@ class Utils {
     const payload = {
       userId: user.dataValues.id,
       username: user.dataValues.username,
+      email: user.dataValues.email,
       roleId: user.dataValues.roleId
     };
 
