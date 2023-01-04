@@ -1,19 +1,18 @@
 {
   "root": true,
-  "extends": "airbnb",
+  "parser": "@typescript-esling/parser",
+  "extends": [
+    "eslint:recommended",
+    "plugin:@typescript-eslint/eslint-recommended",
+    "plugin:@typescript-esling/recommended"
+  ],
   "plugins": [
-    "react",
-    "jsx-a11y",
-    "import"
+    "@typescript-eslint"
   ],
   "env": {
     "node": true,
     "es6": true,
-    "mocha": true,
-    "browser": 1
-  },
-  "globals": {
-    "window": true
+    "mocha": true
   },
   "rules": {
     "one-var": 0,

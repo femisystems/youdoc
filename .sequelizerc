@@ -1,8 +1,8 @@
 const path = require('path');
 
 module.exports = {
-  config: path.resolve('./config', 'config.json'),
-  modelsPath: path.resolve('./server/models'),
-  seedersPath: path.resolve('./server/db/seeders/'),
-  migrationsPath: path.resolve('./server/db/migrations')
+  config: path.resolve('src/core/database/config', 'config.ts'),
+  modelsPath: path.resolve('dist/src/core/database/models'),
+  migrationsPath: path.resolve('dist/src/core/database/migrations'),
+  seedersPath: path.resolve('dist/mock'),
 };
